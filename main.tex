@@ -1,0 +1,134 @@
+%!TeX encoding = UTF-8
+%!TeX program = pdflatex
+% !TeX spellcheck = it_IT
+
+\documentclass[binding=0.6cm, noexaminfo]{sapthesis}
+
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage{microtype}
+\usepackage{hyperref}
+\graphicspath{{images/}}
+
+\title{\textbf{Sapienza-DC: progettazione e sviluppo di un sistema RAG domain-aware}}
+\subtitle{Implementazione di un chatbot multi-dominio basato su Retrieval-Augmented Generation}
+\author{Fabio Pastore}
+\IDnumber{2129632}
+\course{Corso di Laurea in Ingegneria Informatica e Automatica}
+\courseorganizer{Facoltà di Ingegneria dell'Informazione, Informatica e Statistica (I3S)\\
+                Dipartimento di Ingegneria Informatica Automatica e Gestionale (DIAG)
+                }
+\AcademicYear{2025/2026}
+\copyyear{2026} 
+\thesistype{Tesi di laurea triennale} 
+
+\advisor{Prof. Roberto Navigli}
+\authoremail{pastore.2129632@studenti.uniroma1.it}
+
+\begin{document}
+
+\frontmatter
+\maketitle
+
+\dedication{To my family and friends.}
+
+\begin{abstract}
+% This is where you write the abstract of your thesis. It provides a brief summary of your research, methodology, and conclusions.
+Nella seguenti tesi viene descritta la realizzazione di Sapienza-DC,
+un chatbot RAG multi-dominio capace di rispondere alle richieste degli
+utenti mediante analisi e validazione di informazioni estratte da pagine web, fornendo risposte coerenti affiancate da un punteggio di affidabilità nonché dalle fonti utilizzate dall'LLM per rispondere.\\
+\\I capitoli contenuti in questo elaborato tratteranno gli obiettivi fondamentali di Sapienza-DC, la raccolta dei requisiti di progetto, l'analisi delle tecnologie utilizzate, l'architettura del sistema, la progettazione, la fase di implementazione e gli sviluppi del progetto, proposti in ordine cronologico; la gestione del contesto dell'LLM e un excursus sulle ottimizzazioni introdotte; la sicurezza della pipeline dinanzi a tentativi di prompt injection e una valutazione qualitativa, sotto forma di benchmark, del sistema complessivo.      
+\end{abstract}
+
+\tableofcontents
+
+\mainmatter
+
+\chapter{Introduzione}
+\section{Presentazione del progetto}
+Sapienza-DC è stato realizzato come progetto finale per il corso di Laboratorio di Ingegneria Informatica.\\
+\\In seguito alla realizzazione di un progetto preliminare, il quale consisteva nella realizzazione di un parser per opportuni domini assegnati a ciascun gruppo partecipante, sono stati selezionati i migliori progetti, al fine di avere l'opportunità di accedere ad un progetto personalizzato.\\
+\\Tra i vari progetti personalizzati veniva proposta la realizzazione di un chatbot di dominio capace di ricevere in input una query da parte dell'utente, selezionare un dominio su cui cercare informazioni per rispondere alla domanda, ricercare fonti su pagine web appartenenti a quest'ultimo, estrarre e processare i contenuti rilevanti da fornire a un LLM avente il compito di rispondere al quesito posto, fornendo aggiuntivamente le fonti di riferimento impiegate.
+
+\section{Requisiti di progetto}
+Le specifiche fornite preliminarmente per la realizzazione del progetto consistevano in una descrizione generale dell'architettura della pipeline da implementare:
+
+\begin{itemize}
+    \item consentire all'utente di porre al proprio sistema una query;
+    \item assicurarsi che la query del'utente possa essere risolta sfruttando i domini disponibili;
+    \item ricercare online pagine (nei domini disponibili) che possano contenere informazioni utili;
+    \item parsare le pagine (sfruttando i parser dell'esonero) e fornire ad un LLM la query assieme ai dati estratti da queste ultime;
+    \item restituire la risposta all'utente.
+\end{itemize}
+
+\noindent
+In aggiunta a quanto appena elencato, si richievano inoltre diverse funzionalità aggiuntive. In particolare, il sistema implementato sarebbe dovuto essere capace di: gestire richieste ambigue, chiedendo, ove necessario, chiarimenti all'utente; rigettare la query dell'utente qualora quest'ultima fosse ritenuta inaccettabile o inopportuna; classificare i contenuti delle pagine web per grado di pertinenza alla domanda, valutando eventualmente la possibilità di estrarre dati da domini qualunque in caso di query esterna ai domini assegnati; riassumere o selezionare porzioni delle informazioni ottenute in fase di parsing per evitare di saturare la context window del large language model; citare le fonti e stimare l'affidabilità della risposta fornita, gestendo opportunamente il caso in cui le informazioni in possesso fossero parziali o insufficienti per rispondere alla domanda dell'utente.\\
+\\Di seguito viene proposto il diagramma utilizzato per presentare i requisiti di progetto.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{diagramma_requisiti_progetto}
+    \caption{Diagramma esemplificativo fornito assieme ai requisiti di progetto.}
+    \label{fig:requisiti_progetto}
+\end{figure}
+
+\noindent
+Si noti come tali specifiche rappresentino solo una linea guida alla realizzazione del progetto, descrivendo solo gli aspetti generali e le funzionalità fondamentali che quest'ultimo dovrebbe implementare.\\
+\\Questo è voluto: tra gli obiettivi del progetto personalizzato vi è proprio quello di lasciare al gruppo la libertà, e dunque anche le difficoltà che ne conseguono, di produrre quanto richiesto utilizzando gli strumenti nonché tecnologie ritenute più consone.\\
+\\A tal riguardo, nel capitolo che segue introdurremo le principali tecnologie e framework utilizzati per sviluppare Sapienza-DC.   
+
+\chapter{Analisi delle tecnologie impiegate}
+
+\section{Concetti preliminari di NLP}
+
+\subsection{Retrieval-Augmented Generation (RAG)}
+
+\subsection{Large Language Model (LLM)}
+
+\subsection{Bi-encoder, cross-encoder}
+
+\section{Framework, strumenti e librerie di sviluppo}
+
+\subsection{FastAPI}
+
+\subsection{LangChain}
+
+\subsection{HuggingFace}
+
+\subsection{Ollama e llama.cpp}
+
+\subsection{SearXNG}
+
+\subsection{Crawl4AI}
+
+\subsection{Jinja2}
+
+\subsection{TailwindCSS}
+
+\section{Containerizzazione ed orchestrazione}
+
+\subsection{Architettura a microservizi: Docker e Docker Compose}
+
+\section{Database relazionale}
+
+\subsection{MariaDB}
+
+\chapter{Architettura del sistema}
+Your content goes here. If you compile this file, it will run perfectly without any errors, and the official logo will be placed precisely where the University guidelines require.
+
+\chapter{Implementazione della pipeline RAG}
+Fase implementativa.
+
+\chapter{Gestione del contesto e generazione delle risposte}
+
+\chapter{Ottimizzazioni, sicurezza e benchmark}
+
+\chapter{Conclusione}
+
+\backmatter
+
+% If you have a bibliography, uncomment the lines below:
+% \bibliographystyle{plain}
+% \bibliography{references}
+
+\end{document}
