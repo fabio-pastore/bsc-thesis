@@ -5,24 +5,27 @@
 \contentsline {section}{\numberline {1.2}Requisiti di progetto}{1}{section.1.2}%
 \contentsline {chapter}{\numberline {2}Analisi delle tecnologie impiegate}{3}{chapter.2}%
 \contentsline {section}{\numberline {2.1}Concetti preliminari di NLP}{3}{section.2.1}%
-\contentsline {subsection}{\numberline {2.1.1}Retrieval-Augmented Generation (RAG)}{3}{subsection.2.1.1}%
-\contentsline {subsection}{\numberline {2.1.2}Large Language Model (LLM)}{3}{subsection.2.1.2}%
-\contentsline {subsection}{\numberline {2.1.3}Bi-encoder, cross-encoder}{3}{subsection.2.1.3}%
-\contentsline {section}{\numberline {2.2}Framework, strumenti e librerie di sviluppo}{3}{section.2.2}%
-\contentsline {subsection}{\numberline {2.2.1}FastAPI}{3}{subsection.2.2.1}%
-\contentsline {subsection}{\numberline {2.2.2}LangChain}{3}{subsection.2.2.2}%
-\contentsline {subsection}{\numberline {2.2.3}HuggingFace}{3}{subsection.2.2.3}%
-\contentsline {subsection}{\numberline {2.2.4}Ollama e llama.cpp}{3}{subsection.2.2.4}%
-\contentsline {subsection}{\numberline {2.2.5}SearXNG}{3}{subsection.2.2.5}%
-\contentsline {subsection}{\numberline {2.2.6}Crawl4AI}{3}{subsection.2.2.6}%
-\contentsline {subsection}{\numberline {2.2.7}Jinja2}{3}{subsection.2.2.7}%
-\contentsline {subsection}{\numberline {2.2.8}TailwindCSS}{3}{subsection.2.2.8}%
-\contentsline {section}{\numberline {2.3}Containerizzazione ed orchestrazione}{3}{section.2.3}%
-\contentsline {subsection}{\numberline {2.3.1}Architettura a microservizi: Docker e Docker Compose}{3}{subsection.2.3.1}%
-\contentsline {section}{\numberline {2.4}Database relazionale}{3}{section.2.4}%
-\contentsline {subsection}{\numberline {2.4.1}MariaDB}{3}{subsection.2.4.1}%
-\contentsline {chapter}{\numberline {3}Architettura del sistema}{5}{chapter.3}%
-\contentsline {chapter}{\numberline {4}Implementazione della pipeline RAG}{7}{chapter.4}%
-\contentsline {chapter}{\numberline {5}Gestione del contesto e generazione delle risposte}{9}{chapter.5}%
-\contentsline {chapter}{\numberline {6}Ottimizzazioni, sicurezza e benchmark}{11}{chapter.6}%
-\contentsline {chapter}{\numberline {7}Conclusione}{13}{chapter.7}%
+\contentsline {subsection}{\numberline {2.1.1}Large Language Model (LLM)}{4}{subsection.2.1.1}%
+\contentsline {subsection}{\numberline {2.1.2}Retrieval-Augmented Generation (RAG)}{4}{subsection.2.1.2}%
+\contentsline {subsection}{\numberline {2.1.3}Bi-encoder, cross-encoder}{5}{subsection.2.1.3}%
+\contentsline {section}{\numberline {2.2}Framework, strumenti e librerie di sviluppo}{6}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}FastAPI}{6}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}LangChain}{6}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Hugging Face}{7}{subsection.2.2.3}%
+\contentsline {subsubsection}{\numberline {2.2.3.1}FastEmbed}{7}{subsubsection.2.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.2.3.2}SentenceTransformers}{7}{subsubsection.2.2.3.2}%
+\contentsline {subsection}{\numberline {2.2.4}Ollama e llama.cpp}{7}{subsection.2.2.4}%
+\contentsline {subsection}{\numberline {2.2.5}SearXNG}{9}{subsection.2.2.5}%
+\contentsline {subsection}{\numberline {2.2.6}Crawl4AI}{9}{subsection.2.2.6}%
+\contentsline {subsection}{\numberline {2.2.7}Jinja2}{9}{subsection.2.2.7}%
+\contentsline {subsection}{\numberline {2.2.8}TailwindCSS}{9}{subsection.2.2.8}%
+\contentsline {section}{\numberline {2.3}Containerizzazione ed orchestrazione}{9}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Architettura a microservizi: Docker e Docker Compose}{9}{subsection.2.3.1}%
+\contentsline {section}{\numberline {2.4}Database relazionale}{9}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}MariaDB}{9}{subsection.2.4.1}%
+\contentsline {chapter}{\numberline {3}Progettazione dell'applicazione}{11}{chapter.3}%
+\contentsline {chapter}{\numberline {4}Architettura del sistema}{13}{chapter.4}%
+\contentsline {chapter}{\numberline {5}Implementazione della pipeline RAG}{15}{chapter.5}%
+\contentsline {chapter}{\numberline {6}Gestione del contesto e generazione delle risposte}{17}{chapter.6}%
+\contentsline {chapter}{\numberline {7}Ottimizzazioni, sicurezza e benchmark}{19}{chapter.7}%
+\contentsline {chapter}{\numberline {8}Conclusione}{21}{chapter.8}%
