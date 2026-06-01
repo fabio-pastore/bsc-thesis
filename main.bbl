@@ -1,8 +1,87 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
 
-\bibitem{einstein1905}
-Albert Einstein.
-\newblock Does the inertia of a body depend upon its energy-content?
-\newblock {\em Annalen der Physik}, 18:639--641, 1905.
+\bibitem{docker_docs}
+Inc. Docker.
+\newblock Docker documentation.
+\newblock \url{https://docs.docker.com/}, 2026.
+\newblock Ultimo accesso: 01 Giugno 2026.
+
+\bibitem{mariadb_docs}
+MariaDB Foundation.
+\newblock Mariadb documentation.
+\newblock \url{https://mariadb.com/docs}, 2026.
+\newblock Ultimo accesso: 01 Giugno 2026.
+
+\bibitem{searxng_docs}
+Markus Heiser.
+\newblock Searxng documentation.
+\newblock \url{https://docs.searxng.org/}, 2026.
+\newblock Ultimo accesso: 01 Giugno 2026.
+
+\bibitem{crawl4ai_docs}
+Hossein.
+\newblock Crawl4ai documentation.
+\newblock \url{https://docs.crawl4ai.com/}, 2026.
+\newblock Ultimo accesso: 01 Giugno 2026.
+
+\bibitem{ollama_docs}
+Michael~Chiang Jeffrey~Morgan.
+\newblock Ollama documentation.
+\newblock \url{https://ollama.readthedocs.io/en/}, 2026.
+\newblock Ultimo accesso: 01 Giugno 2026.
+
+\bibitem{sapienzaDC_repo}
+Fabio Pastore.
+\newblock Repository ufficiale di sapienza-dc.
+\newblock \url{https://github.com/fabio-pastore/sapienza-DC}, 2026.
+\newblock Ultimo accesso: 01 Giugno 2026.
+
+\bibitem{fastembed_docs}
+Qdrant.
+\newblock Fastembed documentation.
+\newblock \url{https://qdrant.tech/documentation/fastembed/}, 2026.
+\newblock Ultimo accesso: 01 Giugno 2026.
+
+\bibitem{fastapi_docs}
+Sebastián Ramírez.
+\newblock Fastapi documentation.
+\newblock \url{https://fastapi.tiangolo.com/}, 2026.
+\newblock Ultimo accesso: 01 Giugno 2026.
+
+\bibitem{sentencetransformers_docs}
+Nils Reimers.
+\newblock Sentencetransformers documentation.
+\newblock \url{https://sbert.net/}, 2026.
+\newblock Ultimo accesso: 01 Giugno 2026.
+
+\bibitem{jinja2_docs}
+Armin Ronacher.
+\newblock Jinja2 documentation.
+\newblock \url{https://jinja.palletsprojects.com/en/stable/}, 2026.
+\newblock Ultimo accesso: 01 Giugno 2026.
+
+\bibitem{huggingface_docs}
+Hugging~Face Team.
+\newblock Hugging face documentation.
+\newblock \url{https://huggingface.co/docs}, 2026.
+\newblock Ultimo accesso: 01 Giugno 2026.
+
+\bibitem{langchain_docs}
+LangChain Team.
+\newblock Langchain documentation.
+\newblock \url{https://docs.langchain.com/}, 2026.
+\newblock Ultimo accesso: 01 Giugno 2026.
+
+\bibitem{mysql_docs}
+MySQL~Documentation Team.
+\newblock Mysql documentation.
+\newblock \url{https://dev.mysql.com/doc/}, 2026.
+\newblock Ultimo accesso: 01 Giugno 2026.
+
+\bibitem{tailwindcss_docs}
+Adam Wathan.
+\newblock Tailwindcss documentation.
+\newblock \url{https://v2.tailwindcss.com/docs}, 2026.
+\newblock Ultimo accesso: 01 Giugno 2026.
 
 \end{thebibliography}
