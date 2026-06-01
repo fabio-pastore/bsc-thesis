@@ -11,6 +11,7 @@
 \usepackage{mathrsfs}
 \usepackage{amsmath}
 \usepackage{amsfonts}
+\usepackage{rotating}
 \usepackage[hang]{footmisc}
 \setlength\footnotemargin{10pt}
 \graphicspath{{images/}}
@@ -54,9 +55,11 @@ I capitoli contenuti in questo elaborato tratteranno gli obiettivi fondamentali 
 
 \chapter{Introduzione}
 \section{Presentazione del progetto}
-Sapienza-DC~\cite{sapienzaDC_repo} è stato realizzato come progetto finale per il corso di Laboratorio di Ingegneria Informatica.\\
-\\In seguito alla realizzazione di un progetto preliminare, il quale consisteva nella realizzazione di un parser per opportuni domini assegnati a ciascun gruppo partecipante, sono stati selezionati i migliori progetti, al fine di avere l'opportunità di accedere ad un progetto personalizzato.\\
-\\Tra i vari progetti personalizzati veniva proposta la realizzazione di un chatbot di dominio capace di ricevere in input una query da parte dell'utente, selezionare un dominio su cui cercare informazioni per rispondere alla domanda, ricercare fonti su pagine web appartenenti a quest'ultimo, estrarre e processare i contenuti rilevanti da fornire a un LLM avente il compito di rispondere al quesito posto, fornendo aggiuntivamente le fonti di riferimento impiegate.
+Sapienza-DC~\cite{sapienzaDC_repo} è stato realizzato come progetto finale per il corso di Laboratorio di Ingegneria Informatica.
+
+In seguito alla realizzazione di un progetto preliminare, il quale consisteva nella realizzazione di un parser per opportuni domini assegnati a ciascun gruppo partecipante, sono stati selezionati i migliori progetti, al fine di avere l'opportunità di accedere ad un progetto personalizzato.
+
+Tra i vari progetti personalizzati veniva proposta la realizzazione di un chatbot di dominio capace di ricevere in input una query da parte dell'utente, selezionare un dominio su cui cercare informazioni per rispondere alla domanda, ricercare fonti su pagine web appartenenti a quest'ultimo, estrarre e processare i contenuti rilevanti da fornire a un LLM avente il compito di rispondere al quesito posto, fornendo aggiuntivamente le fonti di riferimento impiegate.
 
 \section{Requisiti di progetto}
 Le specifiche fornite preliminarmente per la realizzazione del progetto consistevano in una descrizione generale dell'architettura della pipeline da implementare:
@@ -70,8 +73,9 @@ Le specifiche fornite preliminarmente per la realizzazione del progetto consiste
 \end{itemize}
 
 \noindent
-In aggiunta a quanto appena elencato, si richievano inoltre diverse funzionalità aggiuntive. In particolare, il sistema implementato sarebbe dovuto essere capace di: gestire richieste ambigue, chiedendo, ove necessario, chiarimenti all'utente; rigettare la query dell'utente qualora quest'ultima fosse ritenuta inaccettabile o inopportuna; classificare i contenuti delle pagine web per grado di pertinenza alla domanda, valutando eventualmente la possibilità di estrarre dati da domini qualunque in caso di query esterna ai domini assegnati; riassumere o selezionare porzioni delle informazioni ottenute in fase di parsing per evitare di saturare la context window del large language model; citare le fonti e stimare l'affidabilità della risposta fornita, gestendo opportunamente il caso in cui le informazioni in possesso fossero parziali o insufficienti per rispondere alla domanda dell'utente.\\
-\\Di seguito viene proposto il diagramma utilizzato per presentare i requisiti di progetto.
+In aggiunta a quanto appena elencato, si richievano inoltre diverse funzionalità aggiuntive. In particolare, il sistema implementato sarebbe dovuto essere capace di: gestire richieste ambigue, chiedendo, ove necessario, chiarimenti all'utente; rigettare la query dell'utente qualora quest'ultima fosse ritenuta inaccettabile o inopportuna; classificare i contenuti delle pagine web per grado di pertinenza alla domanda, valutando eventualmente la possibilità di estrarre dati da domini qualunque in caso di query esterna ai domini assegnati; riassumere o selezionare porzioni delle informazioni ottenute in fase di parsing per evitare di saturare la context window del large language model; citare le fonti e stimare l'affidabilità della risposta fornita, gestendo opportunamente il caso in cui le informazioni in possesso fossero parziali o insufficienti per rispondere alla domanda dell'utente.
+
+Di seguito viene proposto il diagramma utilizzato per presentare i requisiti di progetto.
 
 \begin{figure}[htbp]
     \centering
@@ -81,32 +85,38 @@ In aggiunta a quanto appena elencato, si richievano inoltre diverse funzionalit�
 \end{figure}
 
 \noindent
-Si noti come tali specifiche rappresentino solo una linea guida alla realizzazione del progetto, descrivendo solo gli aspetti generali e le funzionalità fondamentali che quest'ultimo dovrebbe implementare.\\
-\\Questo è voluto: tra gli obiettivi del progetto personalizzato vi è proprio quello di lasciare al gruppo la libertà, e dunque anche le difficoltà che ne conseguono, di produrre quanto richiesto utilizzando gli strumenti nonché tecnologie ritenute più consone.\\
-\\A tal riguardo, nel capitolo che segue introdurremo le principali tecnologie e framework utilizzati per sviluppare Sapienza-DC.   
+Si noti come tali specifiche rappresentino solo una linea guida alla realizzazione del progetto, descrivendo solo gli aspetti generali e le funzionalità fondamentali che quest'ultimo dovrebbe implementare.
+
+Questo è voluto: tra gli obiettivi del progetto personalizzato vi è proprio quello di lasciare al gruppo la libertà, e dunque anche le difficoltà che ne conseguono, di produrre quanto richiesto utilizzando gli strumenti nonché tecnologie ritenute più consone.
+
+A tal riguardo, nel capitolo che segue introdurremo le principali tecnologie e framework utilizzati per sviluppare Sapienza-DC.   
 
 \chapter{Analisi delle tecnologie e metodologie impiegate}
 
 In questo capitolo verranno fornite informazioni inerenti alle principali tecnologie e metodologie utilizzate durante lo sviluppo di Sapienza-DC, in modo tale da chiarire il ruolo e il funzionamento di ciascuno strumento impiegato durante la fase di implementazione del progetto.
 
 \section{Concetti preliminari di NLP}
-L'NLP (Natural Language Processing) è una branca dell'Intelligenza Artificiale che studia la lettura, comprensione, interpretazione nonché generazione, da parte di un calcolatore, di linguaggio umano, in modo naturale.\\
-\\NLP combina in un unicum la linguistica computazionale, ossia le regole del linguaggio, con tecniche avanzate di machine learning\footnote{machine learning: branca dell'IA avente come obiettivo quello di apprendere autonomamente da un insieme di dati in modo tale da essere in grado successivamente di effettuare previsioni su nuovi dati. } e deep learning\footnote{deep learning: sottoinsieme del machine learning in cui si utilizzano reti neurali multistrato costituite da neuroni artificiali interconnessi. }. In una tipica pipeline NLP, il testo viene dapprima elaborato mediante tokenizzazione, la quale consiste nella suddivisione del testo in unità più piccole, quali parole o frasi. Dopodiché, ciascun token viene standardizzato, mediante conversione in minuscolo di ciascun carattere, la rimozione delle cosiddette stop word (parole del linguaggio comune utilizzate frequentemente, come "è", "la", etc.) nonché caratteri speciali o di punteggiatura, considerati come rumore in questa fase iniziale.\\
-\\Successivamente, ciascun token viene trasformato, mediante opportune tecniche di NLP, in rappresentazioni numeriche su cui un calcolatore può operare. Ad esempio, tramite opportuni modelli di embedding (incorporamento) è possibile trasformare un token in un vettore n-dimensionale di reali, ove è possibile memorizzare il significato semantico del token originale. Questo, peraltro, sarà proprio l'approccio utilizzato da Sapienza-DC, come vedremo più in avanti.\\
-\\A partire dai dati così ottenuti, vengono estratte ulteriori informazioni mediante opportune tecniche computazionali, al fine di identificare ruoli grammaticali delle parole, argomenti e sentiment, vale a dire il tono emotivo del testo. Infine, le nozioni raccolte vengono utilizzate per addestrare modelli di machine learning, capaci di apprendere tali relazioni e utilizzarle una volta completato l'addestramento per generare linguaggio naturale.         
+L'NLP (Natural Language Processing) è una branca dell'Intelligenza Artificiale che studia la lettura, comprensione, interpretazione nonché generazione, da parte di un calcolatore, di linguaggio umano, in modo naturale.
+
+NLP combina in un unicum la linguistica computazionale, ossia le regole del linguaggio, con tecniche avanzate di machine learning\footnote{machine learning: branca dell'IA avente come obiettivo quello di apprendere autonomamente da un insieme di dati in modo tale da essere in grado successivamente di effettuare previsioni su nuovi dati. } e deep learning\footnote{deep learning: sottoinsieme del machine learning in cui si utilizzano reti neurali multistrato costituite da neuroni artificiali interconnessi. }. In una tipica pipeline NLP, il testo viene dapprima elaborato mediante tokenizzazione, la quale consiste nella suddivisione del testo in unità più piccole, quali parole o frasi. Dopodiché, ciascun token viene standardizzato, mediante conversione in minuscolo di ciascun carattere, la rimozione delle cosiddette stop word (parole del linguaggio comune utilizzate frequentemente, come "è", "la", etc.) nonché caratteri speciali o di punteggiatura, considerati come rumore in questa fase iniziale.
+
+Successivamente, ciascun token viene trasformato, mediante opportune tecniche di NLP, in rappresentazioni numeriche su cui un calcolatore può operare. Ad esempio, tramite opportuni modelli di embedding (incorporamento) è possibile trasformare un token in un vettore n-dimensionale di reali, ove è possibile memorizzare il significato semantico del token originale. Questo, peraltro, sarà proprio l'approccio utilizzato da Sapienza-DC, come vedremo più in avanti.
+
+A partire dai dati così ottenuti, vengono estratte ulteriori informazioni mediante opportune tecniche computazionali, al fine di identificare ruoli grammaticali delle parole, argomenti e sentiment, vale a dire il tono emotivo del testo. Infine, le nozioni raccolte vengono utilizzate per addestrare modelli di machine learning, capaci di apprendere tali relazioni e utilizzarle una volta completato l'addestramento per generare linguaggio naturale.         
 
 \subsection{Large Language Model (LLM)}
-Un LLM è un particolare tipo di modello linguistico capace di generare linguaggio naturale mediante addestramento su una grande quantità di dati. Il termine "large" deriva dal grande (spesso nell'ordine di miliardi) numero di parametri del modello probabilistico appresi in fase di training. Gli LLM sono basati su deep learning e utilizzano come componenti fondamentali reti neurali e trasformatori\footnote {trasformatore: particolare architettura di rete neurale artificiale che permette l'elaborazione parallela di diverse porzioni di testo, cogliendo inoltre eventuali relazioni tra parole distanti nel testo grazie a un meccanismo noto come self-attention.} (transformers).\\
-\\Un LLM genera testo in modo puramente statistico, infatti, se \((w_1, w_2,\, \dots \,, w_T)\) sono parole che costituiscono una frase $f$, allora la probabilità che l'LLM $\mathscr{L}$ generi $f$ è data da: 
+Un LLM è un particolare tipo di modello linguistico capace di generare linguaggio naturale mediante addestramento su una grande quantità di dati. Il termine "large" deriva dal grande (spesso nell'ordine di miliardi) numero di parametri del modello probabilistico appresi in fase di training. Gli LLM sono basati su deep learning e utilizzano come componenti fondamentali reti neurali e trasformatori\footnote {trasformatore: particolare architettura di rete neurale artificiale che permette l'elaborazione parallela di diverse porzioni di testo, cogliendo inoltre eventuali relazioni tra parole distanti nel testo grazie a un meccanismo noto come self-attention.} (transformers).
+
+Un LLM genera testo in modo puramente statistico, infatti, se \((w_1, w_2,\, \dots \,, w_T)\) sono parole che costituiscono una frase $f$, allora la probabilità che l'LLM $\mathscr{L}$ generi $f$ è data da: 
 \[\mathbb{P}(w_1, w_2,\, \dots \,, w_T) = \prod_{j=1}^{T} \mathbb{P}(w_j \, | \, w_1, w_2,\, \dots \,, w_{j-1})\]
 dove la probabilità di generare la j-esima parola $w_j$ dipende dai parametri appresi durante l'addestramento del modello. La generazione, detta autoregressiva, avviene un token alla volta ed è pertanto sequenziale:  ciascun nuovo token dipenderà direttamente da quelli generati in precedenza. Vi sarebbero numerosissime tematiche da approfondire a tal riguardo, ma, per brevità, considereremo sufficienti queste nozioni intuitive.  
 
 \subsection{Retrieval-Augmented Generation (RAG)}
-Retrieval-Augmented Generation, ossia la generazione potenziata mediante recupero di dati, è un approccio che consiste nell'ottimizzazione dell'output di un LLM.\\
-\\RAG prevede l'estrazione di informazioni e conoscenze utili da fonti autorevoli, al fine di accrescere le nozioni possedute dal modello. Tale strategia diviene estremamente utile quando è necessario che l'LLM fornisca una risposta a query altamente specifiche o inerenti a fatti recenti, altrimenti non contenuti nel dataset di addestramento dell'LLM.\\
-\\Questa tecnica è adottata da Sapienza-DC per estrarre contenuti ed informazioni domain-specific con lo scopo di generare una risposta alle query proposte al chatbot da parte dell'utente. 
+Retrieval-Augmented Generation, ossia la generazione potenziata mediante recupero di dati, è un approccio che consiste nell'ottimizzazione dell'output di un LLM.
 
-\newpage
+RAG prevede l'estrazione di informazioni e conoscenze utili da fonti autorevoli, al fine di accrescere le nozioni possedute dal modello. Tale strategia diviene estremamente utile quando è necessario che l'LLM fornisca una risposta a query altamente specifiche o inerenti a fatti recenti, altrimenti non contenuti nel dataset di addestramento dell'LLM.
+
+Questa tecnica è adottata da Sapienza-DC per estrarre contenuti ed informazioni domain-specific con lo scopo di generare una risposta alle query proposte al chatbot da parte dell'utente. 
 
 \begin{figure}[htbp]
     \centering
@@ -117,61 +127,94 @@ Retrieval-Augmented Generation, ossia la generazione potenziata mediante recuper
 \footnotetext{Fonte immagine: \href{https://obot.ai/wp-content/uploads/2025/09/RAG_1200_x_800px_c15f070854.png}{obot.ai}. Rilasciata sotto la seguente licenza: \href{https://creativecommons.org/licenses/by/4.0/deed.it}{CC BY 4.0}.}
 
 \subsection{Bi-encoder, cross-encoder}
-Un bi-encoder (o dual-encoder) è un modello utilizzato per convertire testo in vettori di reali, detti embedding dell'informazione di partenza. Il nome deriva dall'utilizzo di due reti neurali separate aventi lo scopo di trasformare rispettivamente query e documenti di riferimento nei relativi embedding.\\
-\\L'idea a questo punto è molto semplice: verificare, mediante opportune operazioni sui vettori così ottenuti, quali documenti, o porzioni di essi, risultino più semanticamente affini alla query fornita dallo user. Un approccio utile a questo scopo che vedremo successivamente consisterà nel calcolo della cosine similarity tra $v_q$ e $v_c$, vettori rispettivamente della query $q$ e del chunk $c$, appartenente a un determinato documento ottenuto dalla corrispettiva pagina web.\\
-\\I bi-encoder sono notoriamente veloci, tuttavia, analizzando separatamente query e chunk dei documenti non godono di un'accuratezza eccellente. Per questo motivo è necessario utilizzare anche i cross-encoder. Questi ultimi sono modelli aventi lo stesso identico scopo, ma che offrono una precisione molto maggiore dei dual-encoder, a discapito di un maggiore costo computazionale.\\
-\\In particolare, i cross-encoder devono necessariamente elaborare contemporaneamente query e chunk di testo, sfruttando i meccanismi di attenzione offerti dai transformer affinché sia colto il contesto della domanda e la reale pertinenza tra quest'ultima e la porzione di documento sotto esame. L'output di un cross-encoder non consiste in un vettore, ma in uno score, indice del grado di rilevanza del chunk $c$ rispetto alla query $q$.\\
-\\Nella fase di implementazione, utilizzeremo i cross-encoder, in seguito a un filtraggio preliminare mediante bi-encoder e cosine similarity, per effettuare reranking (riordinamento) dei chunk vari chunk estratti dalle fonti di interesse.       
+Un bi-encoder (o dual-encoder) è un modello utilizzato per convertire testo in vettori di reali, detti embedding dell'informazione di partenza. Il nome deriva dall'utilizzo di due reti neurali separate aventi lo scopo di trasformare rispettivamente query e documenti di riferimento nei relativi embedding.
+
+L'idea a questo punto è molto semplice: verificare, mediante opportune operazioni sui vettori così ottenuti, quali documenti, o porzioni di essi, risultino più semanticamente affini alla query fornita dallo user. Un approccio utile a questo scopo che vedremo successivamente consisterà nel calcolo della cosine similarity tra $v_q$ e $v_c$, vettori rispettivamente della query $q$ e del chunk $c$, appartenente a un determinato documento ottenuto dalla corrispettiva pagina web.
+
+I bi-encoder sono notoriamente veloci, tuttavia, analizzando separatamente query e chunk dei documenti non godono di un'accuratezza eccellente. Per questo motivo è necessario utilizzare anche i cross-encoder. Questi ultimi sono modelli aventi lo stesso identico scopo, ma che offrono una precisione molto maggiore dei dual-encoder, a discapito di un maggiore costo computazionale.
+
+In particolare, i cross-encoder devono necessariamente elaborare contemporaneamente query e chunk di testo, sfruttando i meccanismi di attenzione offerti dai transformer affinché sia colto il contesto della domanda e la reale pertinenza tra quest'ultima e la porzione di documento sotto esame. L'output di un cross-encoder non consiste in un vettore, ma in uno score, indice del grado di rilevanza del chunk $c$ rispetto alla query $q$.
+
+Nella fase di implementazione, utilizzeremo i cross-encoder, in seguito a un filtraggio preliminare mediante bi-encoder e cosine similarity, per effettuare reranking (riordinamento) dei chunk vari chunk estratti dalle fonti di interesse.       
 
 \section{Framework, strumenti e librerie di sviluppo}
 
 \subsection{FastAPI}
-FastAPI~\cite{fastapi_docs} è un framework web moderno, open source e ad alte prestazioni, progettato per la sviluppo di API\footnote{API - Application Programming Interface: un insieme di regole e protocolli che permettono a due applicazioni di comunicare correttamente.} (Application Programming Interface) REST (REpresentational State Transfer) in Python.\\
-\\Rilasciato nel 2018, FastAPI è ben presto divenuto uno degli standard per lo sviluppo backend in Python, grazie alla sua efficienza nonché facilità di utilizzo.\\
-\\Il framework usufruisce di due librerie fondamentali quali Starlette, un toolkit web ASGI (Asynchronous Server Gateway Interface) per la gestione di servizi asincroni, e Pydantic, grazie a cui è possibile una validazione automatica e personalizzabile dei dati e la creazione di modelli Pydantic per la definizione dei tipi di input e output di ciascun endpoint\footnote{endpoint: nell'ambito delle API, un URL specifico tramite cui un'applicazione riceve ed elabora richieste API}.\\
-\\Tali funzionalità facilitano e rendono estremamente intuitivo lo sviluppo di backend, garantendo prestazioni equiparabili ad altre tecnologie popolari come Node.js per lo sviluppo server-side.\\
-\\Tra le funzionalità più apprezzate di FastAPI risalta la generazione automatica della documentazione API. Ogni qualvolta viene definito un nuovo endpoint, FastAPI genera automaticamente documentazione e interfacce Web UI (Swagger UI) mediante cui inviare richieste ai fini, ad esempio, di testing dell'applicazione.\\
-\\Infine, il framework segue e adotta i principali standard web moderni per lo sviluppo di API basate su HTTP (HyperText Transfer Protocol), quali OpenAPI e JSON Schema per la validazione nonché serializzazione dei dati scambiati.    
+FastAPI~\cite{fastapi_docs} è un framework web moderno, open source e ad alte prestazioni, progettato per la sviluppo di API\footnote{API - Application Programming Interface: un insieme di regole e protocolli che permettono a due applicazioni di comunicare correttamente.} (Application Programming Interface) REST (REpresentational State Transfer) in Python.
+
+Rilasciato nel 2018, FastAPI è ben presto divenuto uno degli standard per lo sviluppo backend in Python, grazie alla sua efficienza nonché facilità di utilizzo.
+
+Il framework usufruisce di due librerie fondamentali quali Starlette, un toolkit web ASGI (Asynchronous Server Gateway Interface) per la gestione di servizi asincroni, e Pydantic, grazie a cui è possibile una validazione automatica e personalizzabile dei dati e la creazione di modelli Pydantic per la definizione dei tipi di input e output di ciascun endpoint\footnote{endpoint: nell'ambito delle API, un URL specifico tramite cui un'applicazione riceve ed elabora richieste API}.
+
+Tali funzionalità facilitano e rendono estremamente intuitivo lo sviluppo di backend, garantendo prestazioni equiparabili ad altre tecnologie popolari come Node.js per lo sviluppo server-side.
+
+Tra le funzionalità più apprezzate di FastAPI risalta la generazione automatica della documentazione API. Ogni qualvolta viene definito un nuovo endpoint, FastAPI genera automaticamente documentazione e interfacce Web UI (Swagger UI) mediante cui inviare richieste ai fini, ad esempio, di testing dell'applicazione.
+
+Infine, il framework segue e adotta i principali standard web moderni per lo sviluppo di API basate su HTTP (HyperText Transfer Protocol), quali OpenAPI e JSON Schema per la validazione nonché serializzazione dei dati scambiati.    
 
 \subsection{LangChain}
-LangChain~\cite{langchain_docs} è un framework open source progettato per facilitare lo sviluppo di applicazioni che fanno uso di LLM.\\
-\\Gli impieghi possibili di LangChain sono numerosi, ma ai fini dello sviluppo di Sapienza-DC ci limiteremo a utilizzare la classe RecursiveCharacterTextSplitter per l'estrazione di chunk coerenti dalle fonti di riferimento, preservando la semantica delle informazioni originali.   
+LangChain~\cite{langchain_docs} è un framework open source progettato per facilitare lo sviluppo di applicazioni che fanno uso di LLM.
+
+Gli impieghi possibili di LangChain sono numerosi, ma ai fini dello sviluppo di Sapienza-DC ci limiteremo a utilizzare la classe RecursiveCharacterTextSplitter per l'estrazione di chunk coerenti dalle fonti di riferimento, preservando la semantica delle informazioni originali.   
 
 \subsection{Hugging Face}
 Hugging Face~\cite{huggingface_docs} è una piattaforma open source dedicata all'intelligenza artificiale e al machine learning. Grazie alla libreria Model Hub è possibile il download di modelli già addestrati per svariati scopi, tra cui quelli di cui usufruiremo ai fini dello sviluppo del progetto.
 
 \subsubsection{FastEmbed}
-FastEmbed~\cite{fastembed_docs} è una libreria Python adatta a generare embedding di testi e immagini. Come già accennato in precedenza l'embedding permette di ottenere un vettore di reali che mantengano la semantica linguistica, nel caso di testo, del dato originale.\\
-\\Tra gli innumerevoli modelli offerti da FastEmbed si è scelto di utilizzare intfloat/multilingual-e5-small come bi-encoder, il cui download è possibile grazie alla Model Hub di Hugging Face.
+FastEmbed~\cite{fastembed_docs} è una libreria Python adatta a generare embedding di testi e immagini. Come già accennato in precedenza l'embedding permette di ottenere un vettore di reali che mantengano la semantica linguistica, nel caso di testo, del dato originale.
+
+Tra gli innumerevoli modelli offerti da FastEmbed si è scelto di utilizzare intfloat/multilingual-e5-small come bi-encoder, il cui download è possibile grazie alla Model Hub di Hugging Face.
 
 \subsubsection{SentenceTransformers}
 SentenceTransformers~\cite{sentencetransformers_docs} è un framework ideato per la computazione di embedding e l'utilizzo di modelli di reranking. Utilizzeremo quest'ultimo per poter disporre di ms-marco-MiniLM-L-6-v2, un cross-encoder adatto ai nostri scopi. Anche in questo caso il download del modello avverrà automaticamente tramite Hugging Face durante l'inizializzazione della nostra applicazione.
 
 
 \subsection{Ollama e llama.cpp}
-Ollama~\cite{ollama_docs} è un framework open source concepito per semplificare l'esecuzione, la configurazione e la gestione locale degli LLM su sistemi operativi come macOS, Windows e Linux.\\
-\\Il framework espone un set di API RESTful standard che consente di interagire programmaticamente con i modelli scaricati. Grazie al supporto di librerie ufficiali e sviluppate dalla community per linguaggi come Python e JavaScript, è possibile integrare le capacità di ragionamento degli LLM all'interno di applicazioni, script o flussi di lavoro aziendali in modo estremamente semplice.\\
-\\Ollama offre, oltretutto, un'immagine Docker ufficiale da eseguire in un opportuno container. Maggiori informazioni su Docker e sul concetto di container verranno fornite nella relativa sezione di questo capitolo.\\  
-\\Si noti per di più che, poiché i modelli sono eseguiti interamente in locale, il sistema non trasmette alcuna informazione a server esterni, garantendo massima privacy e totale indipendenza da connessioni internet o provider terzi.\\
-\\Inoltre, giacché l'elaborazione grava esclusivamente sull'hardware dell'utente, il costo marginale per ogni singola query posta all'LLM diviene fondamentalmente nullo.\\
-\\In aggiunta a ciò, il framework supporta e aggiorna costantemente una libreria di modelli open weights, tra cui Llama, Mistral, Gemma e Phi-3, permettendo di selezionare l'architettura più idonea in base al caso d'uso specifico.\\
-\\Per permettere a reti neurali complesse di funzionare su hardware consumer, Ollama implementa un processo noto come quantizzazione dei modelli. Questa tecnica riduce la precisione matematica dei pesi dell'LLM, abbattendo pertanto in maniera drastica la quantità di RAM nonché la potenza di calcolo richieste per l'esecuzione del modello.\\
-\\Tuttavia, questo approccio comporta alcuni trade-off inevitabili. In primis, a causa dei limiti hardware dei dispositivi consumer, i modelli eseguiti localmente presentano un numero di parametri inferiore e, conseguentemente, una qualità dell'output e capacità di ragionamento più limitate.\\
-\\In secondo luogo, l'effettiva velocità di esecuzione di Ollama è rigidamente vincolata all'hardware della macchina ospitante, prediligendo architetture basate su GPU a quelle CPU. Naturalmente, l'esecuzione di un LLM tramite Ollama è comunque possibile su macchine sprovviste di GPU, a patto di accettare un'inferenza più lenta del modello.\\
-\\L'obiettivo di Sapienza-DC consisterà difatti nel permettere a qualsiasi utente, dotato di una scheda video o anche semplicemente del proprio processore, di eseguire il progetto localmente, fornendo la possibilità di affidarsi, in caso di necessità, anche ad API esterne, qualora l'hardware della propria macchina dovesse risultare non sufficientemente performante. Entreremo maggiormente nei dettagli di questa tematica nei capitoli successivi.\\
-\\A tal proposito, vedremo come sia possibile utilizzare direttamente llama.cpp per gestire manualmente il caricamento, la gestione nonché l'esecuzione di query verso LLM locali, con lo scopo di ridurre l'overhead introdotto da Ollama, il quale non è altro che un wrapper di quest'ultimo.\\
-\\Brevemente, llama.cpp è un'implementazione in linguaggio C/C++ del codice di inferenza dei modelli LLaMA (Large Language Model Meta AI), successivamente esteso a molteplici altre architetture, il cui scopo fondamentale consiste nel massimizzare la velocità di esecuzione locale di LLM. Rimuovendo l'overhead dovuto a Ollama e accettando la maggiore difficoltà implementativa che consegue da questa scelta, saremo in grado di minimizzare i requisiti hardware richiesti per eseguire modelli localmente, soprattutto su macchine sprovviste di GPU.     
+Ollama~\cite{ollama_docs} è un framework open source concepito per semplificare l'esecuzione, la configurazione e la gestione locale degli LLM su sistemi operativi come macOS, Windows e Linux.
+
+Il framework espone un set di API RESTful standard che consente di interagire programmaticamente con i modelli scaricati. Grazie al supporto di librerie ufficiali e sviluppate dalla community per linguaggi come Python e JavaScript, è possibile integrare le capacità di ragionamento degli LLM all'interno di applicazioni, script o flussi di lavoro aziendali in modo estremamente semplice.
+
+Ollama offre, oltretutto, un'immagine Docker ufficiale da eseguire in un opportuno container. Maggiori informazioni su Docker e sul concetto di container verranno fornite nella relativa sezione di questo capitolo.
+
+Si noti per di più che, poiché i modelli sono eseguiti interamente in locale, il sistema non trasmette alcuna informazione a server esterni, garantendo massima privacy e totale indipendenza da connessioni internet o provider terzi.
+
+Inoltre, giacché l'elaborazione grava esclusivamente sull'hardware dell'utente, il costo marginale per ogni singola query posta all'LLM diviene fondamentalmente nullo.
+
+In aggiunta a ciò, il framework supporta e aggiorna costantemente una libreria di modelli open weights, tra cui Llama, Mistral, Gemma e Phi-3, permettendo di selezionare l'architettura più idonea in base al caso d'uso specifico.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{diagramma_di_flusso_ollama.png}
+    \caption{Diagramma di flusso di un prompt effettuato a un LLM tramite Ollama.}
+    \label{fig:diagramma_flusso_ollama}
+\end{figure}
+
+
+Per permettere a reti neurali complesse di funzionare su hardware consumer, Ollama implementa un processo noto come quantizzazione dei modelli. Questa tecnica riduce la precisione matematica dei pesi dell'LLM, abbattendo pertanto in maniera drastica la quantità di RAM nonché la potenza di calcolo richieste per l'esecuzione del modello.
+
+Tuttavia, questo approccio comporta alcuni trade-off inevitabili. In primis, a causa dei limiti hardware dei dispositivi consumer, i modelli eseguiti localmente presentano un numero di parametri inferiore e, conseguentemente, una qualità dell'output e capacità di ragionamento più limitate.
+
+In secondo luogo, l'effettiva velocità di esecuzione di Ollama è rigidamente vincolata all'hardware della macchina ospitante, prediligendo architetture basate su GPU a quelle CPU. Naturalmente, l'esecuzione di un LLM tramite Ollama è comunque possibile su macchine sprovviste di GPU, a patto di accettare un'inferenza più lenta del modello.
+
+L'obiettivo di Sapienza-DC consisterà difatti nel permettere a qualsiasi utente, dotato di una scheda video o anche semplicemente del proprio processore, di eseguire il progetto localmente, fornendo la possibilità di affidarsi, in caso di necessità, anche ad API esterne, qualora l'hardware della propria macchina dovesse risultare non sufficientemente performante. Entreremo maggiormente nei dettagli di questa tematica nei capitoli successivi.
+
+A tal proposito, vedremo come sia possibile utilizzare direttamente llama.cpp per gestire manualmente il caricamento, la gestione nonché l'esecuzione di query verso LLM locali, con lo scopo di ridurre l'overhead introdotto da Ollama, il quale non è altro che un wrapper di quest'ultimo.
+
+Brevemente, llama.cpp è un'implementazione in linguaggio C/C++ del codice di inferenza dei modelli LLaMA (Large Language Model Meta AI), successivamente esteso a molteplici altre architetture, il cui scopo fondamentale consiste nel massimizzare la velocità di esecuzione locale di LLM. Rimuovendo l'overhead dovuto a Ollama e accettando la maggiore difficoltà implementativa che consegue da questa scelta, saremo in grado di minimizzare i requisiti hardware richiesti per eseguire modelli localmente, soprattutto su macchine sprovviste di GPU.     
 
 \subsection{SearXNG}
 Utilizzato in una prima versione del progetto, SearXNG~\cite{searxng_docs} è un metamotore di ricerca che aggrega risultati da svariati servizi di rcerca e database. Garantisce anonimità e privacy per gli utenti che lo utilizzano, i quali non subiscono tracking né profilazione.   
 
 \subsection{Crawl4AI}
-Crawl4AI~\cite{crawl4ai_docs} è una libreria Python open source impiegata principalmente per estrarre e ripulire dati in modo strutturato e automatico da pagine web.\\  
-\\In realtà, Sapienza-DC non utilizza direttamente questa libreria, ma fa affidamento a un secondo progetto precedentemente sviluppato, MWP (Minerva Web Parser), per effettuare scraping e parsing di pagine web mediante Crawl4AI. Maggiori informazioni sul funzionamento di MWP verranno presentate nei capitoli successivi.\\
-\\Minerva Web Parser è stato realizzato come progetto di esonero (al quale si accennava nell'introduzione di questo elaborato) per il corso di Laboratorio di Ingegneria Informatica, ed è stato successivamente aggiornato per includere nuove funzionalità durante lo sviluppo di Sapienza-DC stesso.  
+Crawl4AI~\cite{crawl4ai_docs} è una libreria Python open source impiegata principalmente per estrarre e ripulire dati in modo strutturato e automatico da pagine web.
+
+In realtà, Sapienza-DC non utilizza direttamente questa libreria, ma fa affidamento a un secondo progetto precedentemente sviluppato, MWP (Minerva Web Parser), per effettuare scraping e parsing di pagine web mediante Crawl4AI. Maggiori informazioni sul funzionamento di MWP verranno presentate nei capitoli successivi.
+
+Minerva Web Parser è stato realizzato come progetto di esonero (al quale si accennava nell'introduzione di questo elaborato) per il corso di Laboratorio di Ingegneria Informatica, ed è stato successivamente aggiornato per includere nuove funzionalità durante lo sviluppo di Sapienza-DC stesso.  
 \subsection{Jinja2}
-Jinja2~\cite{jinja2_docs} è un engine di templating utilizzato per definire pagine web generiche contenenti opportuni segnaposto da popolare a runtime tramite chiamate API al backend.\\
-\\Verrà utilizzato per implementare un frontend in grado di servire, previa ottenimento di dati dal server API, pagine HTML (HyperText Markup Language) dinamiche.  
+Jinja2~\cite{jinja2_docs} è un engine di templating utilizzato per definire pagine web generiche contenenti opportuni segnaposto da popolare a runtime tramite chiamate API al backend.
+
+Verrà utilizzato per implementare un frontend in grado di servire, previa ottenimento di dati dal server API, pagine HTML (HyperText Markup Language) dinamiche.  
 \subsection{TailwindCSS}
 TailwindCSS~\cite{tailwindcss_docs} è un framework CSS\footnote{CSS - Cascading Style Sheets: linguaggio utilizzato per definire la formattazione e il layout di documenti HTML} open source per lo sviluppo di UI moderne ed eleganti. Tailwind mette a disposizione una serie di classi CSS dette di utility da combinare e utilizzare insieme ad altre classi per definire lo stile di ciascun elemento in modo intuitivo e modulare.
 
@@ -186,13 +229,17 @@ La containerizzazione è una tecnologia che consente di racchiudere un'applicazi
         \item \textbf{isolamento} - ciascun container opera indipendentemente dagli altri, in modo tale da evitare possibili interferenze;
         \item \textbf{efficienza} - i container condividono il kernel del sistema operativo della macchina sulla quale vengono eseguiti e sono pertanto più leggeri delle macchine virtuali, garantendo dunque un minore overhead computazionale.
 \end{itemize}
-L'orchestrazione di container consiste invece nel processo di automazione della gestione di questi ultimi, al fine di sviluppare applicazioni su larga scala. Un'applicazione può difatti sfruttare molteplici container per implementare diverse funzionalità in modo incredibilmente modulare.\\
-\\L'impiego di container separati permette inoltre di evitare problematiche relative a SPOF (Single Point Of Failure). Se un servizio non dovesse risultare disponibile sarà il singolo container a non essere raggiungibile, mentre gli altri servizi offerti dall'app rimarranno online, purché non dipendenti dal container momentaneamente fuori uso.   
+L'orchestrazione di container consiste invece nel processo di automazione della gestione di questi ultimi, al fine di sviluppare applicazioni su larga scala. Un'applicazione può difatti sfruttare molteplici container per implementare diverse funzionalità in modo incredibilmente modulare.
+
+L'impiego di container separati permette inoltre di evitare problematiche relative a SPOF (Single Point Of Failure). Se un servizio non dovesse risultare disponibile sarà il singolo container a non essere raggiungibile, mentre gli altri servizi offerti dall'app rimarranno online, purché non dipendenti dal container momentaneamente fuori uso.   
 \subsection{Architettura a microservizi: Docker e Docker Compose}
-L'approccio sopra descritto prende il nome di architettura a microservizi. Ribadiamo sinteticamente l'intuizione alla base di quest'ultimo: dividere le funzionalità offerte dalla nostra applicazione in una serie di microservizi ospitati in altrettanti container, opportunamente orchestrati.\\
-\\Al fine di implementare quanto appena visto nel progetto, faremo uso di Docker~\cite{docker_docs}, una piattaforma open source per la distribuzione automatizzata di applicazioni all'interno di container isolati.\\
-\\Docker fornisce un ambiente isolato, riproducibile e portabile, pensato per l'esecuzione nonché la distribuzione di un progetto software in un ambiente di testing o di produzione.\\
-\\Per orchestrare ciascun container viene inoltre reso disponibile Docker Compose, uno strumento per la gestione di applicazioni multi-container basato su file YAML\footnote{YAML - Yet Another Markup Language: un formato di serializzazione di dati basato su linguaggio naturale.}.        
+L'approccio sopra descritto prende il nome di architettura a microservizi. Ribadiamo sinteticamente l'intuizione alla base di quest'ultimo: dividere le funzionalità offerte dalla nostra applicazione in una serie di microservizi ospitati in altrettanti container, opportunamente orchestrati.
+
+Al fine di implementare quanto appena visto nel progetto, faremo uso di Docker~\cite{docker_docs}, una piattaforma open source per la distribuzione automatizzata di applicazioni all'interno di container isolati.
+
+Docker fornisce un ambiente isolato, riproducibile e portabile, pensato per l'esecuzione nonché la distribuzione di un progetto software in un ambiente di testing o di produzione.
+
+Per orchestrare ciascun container viene inoltre reso disponibile Docker Compose, uno strumento per la gestione di applicazioni multi-container basato su file YAML\footnote{YAML - Yet Another Markup Language: un formato di serializzazione di dati basato su linguaggio naturale.}.        
 \section{Database relazionale}
 Un database relazionale è un particolare tipo di base di dati in cui i dati sono organizzati sotto forma di righe e di colonne. Ciascuna tabella della base di dati rappresenta una determinata relazione $\mathscr{R} \subseteq S_1 \times S_2 \times \dots \times S_n$, cioè un sottoinsieme del prodotto cartesiano di $n$ insiemi. Ciascuna tupla $t \in \mathscr{R}$ sarà nella forma $t = (s_1, s_2, \, \dots \,, s_n)$, dove $s_1 \in S_1, s_2 \in S_2 \, \dots \, , s_n \in S_n$. Nella pratica, ogni riga della tabella consisterà in una $n$-upla di elementi che assumono valori in un nel dominio (un intero, una stringa. etc.) della corrispettiva colonna, detta attributo o campo. Si noti infine che, essendo $\mathscr{R}$ un insieme, $\neg \exists \,(t,\, \hat{t}\,) \in \mathscr{R} \, | \, t = \hat{t}$, cioè $\mathscr{R}$ non ammette tuple duplicate.
 \subsection{SQL}
@@ -201,9 +248,48 @@ SQL (Structured Query Language) è il linguaggio utilizzato per interagire progr
 MariaDB~\cite{mariadb_docs} è un sistema di gestione di basi di dati relazionali open source. In particolare, non è altro che un fork di MySQL~\cite{mysql_docs}. Progettato per garantire compatibilità con MySQL stesso, MariaDB offre un'immagine Docker per la gestione l'interazione con database mediante container.
 
 \section{Metodologia di sviluppo agile}
-La metodologia agile consiste in un approccio allo sviluppo basato sulla distribuzione di software implementati secondo un processo rapido e iterativo. Contrapponendosi ai modelli tradizionali di sviluppo del software, come ad esempio il modello a cascata (waterfall model\footnote{waterfall model: metodologia di sviluppo software basata sulla definizione precisa e strutturata di un insieme di requisiti iniziali da rispettare, seguita da un'implementazione prevedibile e lineare di questi ultimi.}), la metodologia agile propone un approccio meno strutturato e incentrato sulla consegna ripetuta nel tempo di diversi MVPs (Minimum Viable Products).\\
-\\Questi ultimi vengono sottoposti, volta per volta, ad analisi da parte dei clienti nonché degli sviluppatori con l'obiettivo di rifinire l'approccio utilizzato, modificando anche completamente la soluzione proposta qualora ritenuto necessario, per il raggiungimento di un prodotto migliore nella successiva iterazione. Si tratta di una metodologia frequentemente impiegata in progetti dinamici e adattivi, come, ad esempio, Sapienza-DC.    
+La metodologia agile consiste in un approccio allo sviluppo basato sulla distribuzione di software implementati secondo un processo rapido e iterativo. Contrapponendosi ai modelli tradizionali di sviluppo del software, come ad esempio il modello a cascata (waterfall model\footnote{waterfall model: metodologia di sviluppo software basata sulla definizione precisa e strutturata di un insieme di requisiti iniziali da rispettare, seguita da un'implementazione prevedibile e lineare di questi ultimi.}), la metodologia agile propone un approccio meno strutturato e incentrato sulla consegna ripetuta nel tempo di diversi MVPs (Minimum Viable Products).
+
+Questi ultimi vengono sottoposti, volta per volta, ad analisi da parte dei clienti nonché degli sviluppatori con l'obiettivo di rifinire l'approccio utilizzato, modificando anche completamente la soluzione proposta qualora ritenuto necessario, per il raggiungimento di un prodotto migliore nella successiva iterazione. Si tratta di una metodologia frequentemente impiegata in progetti dinamici e adattivi, come, ad esempio, Sapienza-DC.
+
 \chapter{Progettazione dell'applicazione}
+Avendo ora a disposizione le conoscenze preliminari necessarie a comprendere l'impiego dei principali strumenti utilizzati per sviluppare Sapienza-DC, è bene effettuare, prima dell'implementazione vera e propria dell'applicativo, alcune dovute considerazioni riguardo la progettazione delle componenti fondamentali che andranno a costituire l'architettura finale del progetto.
+
+Si noti che, come già menzionato, la metodologia di sviluppo agile non prevede obbligatoriamente una raccolta estensiva di requisiti (se non le principali funzionalità ricercate nell'applicativo) né tantomeno la realizzazione iniziale di diagrammi e modelli tipici dell'approccio a cascata. Difatti, l'assenza di requisiti altamente specifici richiede uno sviluppo dinamico e soggetto a continui cambiamenti, motivo per cui i diagrammi che proporremo di seguito rispecchiano il risultato di quanto ottenuto a fine progetto.   
+
+\section{Diagramma delle classi UML}
+Un diagramma delle classi UML (\textit{Unified Modeling Language}) è un diagramma strutturale utilizzato per definire le principali classi, i loro attributi e le relazioni che legano queste ultime. Durante l'esecuzione del software una classe può essere istanziata sotto forma di uno o più oggetti, che definiscono il livello estensionale di quest'ultima. 
+
+Nella programmazione orientata agli oggetti, il diagramma delle classi diviene uno strumento particolarmente utile per disporre di una visione complessiva riguardo il funzionamento del sistema nonché delle relazioni che sussistono tra le varie componenti che lo costituiscono.
+
+A puro scopo nozionistico, si noti che ciascuna classe nel diagramma è contraddistinta da un nome, una serie di attributi locali, ciascuno con il proprio tipo, e da una serie di operazioni associate ad essa.
+
+Per evitare di appesantire il diagramma UML che presenteremo di seguito, si è deciso di non includere nelle specifiche delle operazioni di ciascuna classe i tipi dei parametri in input, così come si è preferito sostituire con la dicitura (...) i parametri accettati dalle operazioni, qualora ve ne fossero in numero elevato.
+
+\begin{sidewaysfigure}[htbp]
+    \centering
+    \includegraphics[width=1.125\textheight]{diagramma_UML_classi_sdc.png}
+    \caption{Diagramma delle classi UML del progetto.}
+    \label{fig:diagramma_classi_UML_sdc}
+\end{sidewaysfigure}
+
+\clearpage 
+
+
+\section{Modello ER}
+Il modello ER (Entità-Relazione) è un modello di dati utilizzato per esprimere schemi concettuali inerenti ai dati stessi. Anche in questo caso descriveremo tali schemi in modo grafico, mediante un opportuno diagramma. Ogni schema descrive l'aspetto intensionale del modello di dati e a uno stesso schema possono corrispondere, nel tempo, più istanze, le quali costituiscono invece l'aspetto estensionale del modello.
+
+In maniera del tutto simile a quanto visto per i diagrammi delle classi UML, il modello ER introduce costrutti come le entità (analogo delle classi in UML), gli attributi di entità, le relazioni a cui ciascuna entità partecipa con il corrispettivo ruolo, attributi di relazione, IS-A, generalizzazioni e alcuni vincoli caratteristici del modello ER.
+
+Come per il diagramma delle classi UML, anche per lo schema concettuale del modello ER, ottenuto mediante la corrispettiva progettazione concettuale, verrà fornito direttamente nella sua versione finale, ossia quanto ottenuto al termine dell'implementazione di Sapienza-DC.
+
+\subsection{Schema concettuale}
+
+\subsection{Progettazione logica}
+
+\subsection{Traduzione diretta e ristrutturazione dello schema logico}
+
+
 
 \chapter{Architettura del sistema}
 Your content goes here. If you compile this file, it will run perfectly without any errors, and the official logo will be placed precisely where the University guidelines require.

@@ -7,28 +7,33 @@
 \contentsline {section}{\numberline {2.1}Concetti preliminari di NLP}{3}{section.2.1}%
 \contentsline {subsection}{\numberline {2.1.1}Large Language Model (LLM)}{4}{subsection.2.1.1}%
 \contentsline {subsection}{\numberline {2.1.2}Retrieval-Augmented Generation (RAG)}{4}{subsection.2.1.2}%
-\contentsline {subsection}{\numberline {2.1.3}Bi-encoder, cross-encoder}{5}{subsection.2.1.3}%
+\contentsline {subsection}{\numberline {2.1.3}Bi-encoder, cross-encoder}{4}{subsection.2.1.3}%
 \contentsline {section}{\numberline {2.2}Framework, strumenti e librerie di sviluppo}{6}{section.2.2}%
 \contentsline {subsection}{\numberline {2.2.1}FastAPI}{6}{subsection.2.2.1}%
 \contentsline {subsection}{\numberline {2.2.2}LangChain}{6}{subsection.2.2.2}%
-\contentsline {subsection}{\numberline {2.2.3}Hugging Face}{7}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.3}Hugging Face}{6}{subsection.2.2.3}%
 \contentsline {subsubsection}{\numberline {2.2.3.1}FastEmbed}{7}{subsubsection.2.2.3.1}%
 \contentsline {subsubsection}{\numberline {2.2.3.2}SentenceTransformers}{7}{subsubsection.2.2.3.2}%
 \contentsline {subsection}{\numberline {2.2.4}Ollama e llama.cpp}{7}{subsection.2.2.4}%
-\contentsline {subsection}{\numberline {2.2.5}SearXNG}{9}{subsection.2.2.5}%
+\contentsline {subsection}{\numberline {2.2.5}SearXNG}{8}{subsection.2.2.5}%
 \contentsline {subsection}{\numberline {2.2.6}Crawl4AI}{9}{subsection.2.2.6}%
 \contentsline {subsection}{\numberline {2.2.7}Jinja2}{9}{subsection.2.2.7}%
 \contentsline {subsection}{\numberline {2.2.8}TailwindCSS}{9}{subsection.2.2.8}%
 \contentsline {subsubsection}{\numberline {2.2.8.1}Utility class}{9}{subsubsection.2.2.8.1}%
-\contentsline {section}{\numberline {2.3}Containerizzazione ed orchestrazione}{10}{section.2.3}%
+\contentsline {section}{\numberline {2.3}Containerizzazione ed orchestrazione}{9}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}Architettura a microservizi: Docker e Docker Compose}{10}{subsection.2.3.1}%
-\contentsline {section}{\numberline {2.4}Database relazionale}{11}{section.2.4}%
-\contentsline {subsection}{\numberline {2.4.1}SQL}{11}{subsection.2.4.1}%
+\contentsline {section}{\numberline {2.4}Database relazionale}{10}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}SQL}{10}{subsection.2.4.1}%
 \contentsline {subsection}{\numberline {2.4.2}MariaDB}{11}{subsection.2.4.2}%
 \contentsline {section}{\numberline {2.5}Metodologia di sviluppo agile}{11}{section.2.5}%
 \contentsline {chapter}{\numberline {3}Progettazione dell'applicazione}{13}{chapter.3}%
-\contentsline {chapter}{\numberline {4}Architettura del sistema}{15}{chapter.4}%
-\contentsline {chapter}{\numberline {5}Implementazione della pipeline RAG}{17}{chapter.5}%
-\contentsline {chapter}{\numberline {6}Ottimizzazioni, sicurezza e benchmark}{19}{chapter.6}%
-\contentsline {chapter}{\numberline {7}Conclusione}{21}{chapter.7}%
-\contentsline {chapter}{Bibliografia}{23}{section*.4}%
+\contentsline {section}{\numberline {3.1}Diagramma delle classi UML}{13}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Modello ER}{15}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Schema concettuale}{15}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Progettazione logica}{15}{subsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.2.3}Traduzione diretta e ristrutturazione dello schema logico}{15}{subsection.3.2.3}%
+\contentsline {chapter}{\numberline {4}Architettura del sistema}{17}{chapter.4}%
+\contentsline {chapter}{\numberline {5}Implementazione della pipeline RAG}{19}{chapter.5}%
+\contentsline {chapter}{\numberline {6}Ottimizzazioni, sicurezza e benchmark}{21}{chapter.6}%
+\contentsline {chapter}{\numberline {7}Conclusione}{23}{chapter.7}%
+\contentsline {chapter}{Bibliografia}{25}{section*.6}%
