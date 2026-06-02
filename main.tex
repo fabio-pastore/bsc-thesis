@@ -9,10 +9,42 @@
 \usepackage{microtype}
 \usepackage{hyperref}
 \usepackage{mathrsfs}
+\usepackage{enumitem}
+\usepackage{float}
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{rotating}
 \usepackage[hang]{footmisc}
+\usepackage{listings}
+\usepackage{xcolor} 
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstset{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},       
+    keywordstyle=\color{magenta},         
+    numberstyle=\tiny\color{codegray},    
+    stringstyle=\color{codepurple},       
+    basicstyle=\ttfamily\footnotesize,   
+    breakatwhitespace=false,              
+    breaklines=true,                      
+    captionpos=b,                         
+    keepspaces=true,                      
+    numbers=left,                         
+    numbersep=5pt,                        
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2                            
+}
+
+\renewcommand{\lstlistingname}{Listato}
+% \renewcommand{\lstlistlistingname}{Elenco dei listati}
+
 \setlength\footnotemargin{10pt}
 \graphicspath{{images/}}
 \setcounter{secnumdepth}{3}
@@ -64,13 +96,13 @@ Tra i vari progetti personalizzati veniva proposta la realizzazione di un chatbo
 \section{Requisiti di progetto}
 Le specifiche fornite preliminarmente per la realizzazione del progetto consistevano in una descrizione generale dell'architettura della pipeline da implementare:
 
-\begin{itemize}
+\begin{enumerate}[label=(\roman*)]
     \item consentire all'utente di porre al proprio sistema una query;
     \item assicurarsi che la query del'utente possa essere risolta sfruttando i domini disponibili;
     \item ricercare online pagine (nei domini disponibili) che possano contenere informazioni utili;
     \item parsare le pagine (sfruttando i parser dell'esonero) e fornire ad un LLM la query assieme ai dati estratti da queste ultime;
     \item restituire la risposta all'utente.
-\end{itemize}
+\end{enumerate}
 
 \noindent
 In aggiunta a quanto appena elencato, si richievano inoltre diverse funzionalità aggiuntive. In particolare, il sistema implementato sarebbe dovuto essere capace di: gestire richieste ambigue, chiedendo, ove necessario, chiarimenti all'utente; rigettare la query dell'utente qualora quest'ultima fosse ritenuta inaccettabile o inopportuna; classificare i contenuti delle pagine web per grado di pertinenza alla domanda, valutando eventualmente la possibilità di estrarre dati da domini qualunque in caso di query esterna ai domini assegnati; riassumere o selezionare porzioni delle informazioni ottenute in fase di parsing per evitare di saturare la context window del large language model; citare le fonti e stimare l'affidabilità della risposta fornita, gestendo opportunamente il caso in cui le informazioni in possesso fossero parziali o insufficienti per rispondere alla domanda dell'utente.
@@ -135,7 +167,7 @@ I bi-encoder sono notoriamente veloci, tuttavia, analizzando separatamente query
 
 In particolare, i cross-encoder devono necessariamente elaborare contemporaneamente query e chunk di testo, sfruttando i meccanismi di attenzione offerti dai transformer affinché sia colto il contesto della domanda e la reale pertinenza tra quest'ultima e la porzione di documento sotto esame. L'output di un cross-encoder non consiste in un vettore, ma in uno score, indice del grado di rilevanza del chunk $c$ rispetto alla query $q$.
 
-Nella fase di implementazione, utilizzeremo i cross-encoder, in seguito a un filtraggio preliminare mediante bi-encoder e cosine similarity, per effettuare reranking (riordinamento) dei chunk vari chunk estratti dalle fonti di interesse.       
+Nella fase di implementazione, utilizzeremo i cross-encoder, in seguito a un filtraggio preliminare mediante bi-encoder e cosine similarity, per effettuare reranking (riordinamento) dei chunk vari chunk estratti dalle fonti di interesse.
 
 \section{Framework, strumenti e librerie di sviluppo}
 
@@ -216,7 +248,7 @@ Jinja2~\cite{jinja2_docs} è un engine di templating utilizzato per definire pag
 
 Verrà utilizzato per implementare un frontend in grado di servire, previa ottenimento di dati dal server API, pagine HTML (HyperText Markup Language) dinamiche.  
 \subsection{TailwindCSS}
-TailwindCSS~\cite{tailwindcss_docs} è un framework CSS\footnote{CSS - Cascading Style Sheets: linguaggio utilizzato per definire la formattazione e il layout di documenti HTML} open source per lo sviluppo di UI moderne ed eleganti. Tailwind mette a disposizione una serie di classi CSS dette di utility da combinare e utilizzare insieme ad altre classi per definire lo stile di ciascun elemento in modo intuitivo e modulare.
+TailwindCSS~\cite{tailwindcss_docs} è un framework CSS\footnote{CSS - Cascading Style Sheets: linguaggio utilizzato per definire la formattazione e il layout di documenti HTML.} open source per lo sviluppo di UI moderne ed eleganti. Tailwind mette a disposizione una serie di classi CSS dette di utility da combinare e utilizzare insieme ad altre classi per definire lo stile di ciascun elemento in modo intuitivo e modulare.
 
 \subsubsection{Utility class}
 
@@ -277,18 +309,142 @@ Per evitare di appesantire il diagramma UML che presenteremo di seguito, si è d
 
 
 \section{Modello ER}
-Il modello ER (Entità-Relazione) è un modello di dati utilizzato per esprimere schemi concettuali inerenti ai dati stessi. Anche in questo caso descriveremo tali schemi in modo grafico, mediante un opportuno diagramma. Ogni schema descrive l'aspetto intensionale del modello di dati e a uno stesso schema possono corrispondere, nel tempo, più istanze, le quali costituiscono invece l'aspetto estensionale del modello.
+Il modello Entità-Relazione (ER) è un modello di dati impiegato per la progettazione concettuale di basi di dati. La rappresentazione di tali schemi concettuali avviene tipicamente in modo grafico, mediante diagrammi Entità-Relazione. Ogni schema descrive l'aspetto intensionale dei dati; a uno stesso schema possono corrispondere, nel tempo, più istanze, le quali ne costituiscono invece l'aspetto estensionale.
 
-In maniera del tutto simile a quanto visto per i diagrammi delle classi UML, il modello ER introduce costrutti come le entità (analogo delle classi in UML), gli attributi di entità, le relazioni a cui ciascuna entità partecipa con il corrispettivo ruolo, attributi di relazione, IS-A, generalizzazioni e alcuni vincoli caratteristici del modello ER.
+Analogamente a quanto illustrato per i diagrammi delle classi UML, anche il modello ER introduce costrutti simili. Tra questi figurano le entità (analogo delle classi UML), gli attributi di entità, le relazioni (o associazioni) a cui ciascuna entità partecipa con il rispettivo ruolo, gli attributi di relazione, le gerarchie di generalizzazione e specializzazione (IS-A), nonché alcuni vincoli di integrità caratteristici del modello Entità-Relazione.
 
 Come per il diagramma delle classi UML, anche per lo schema concettuale del modello ER, ottenuto mediante la corrispettiva progettazione concettuale, verrà fornito direttamente nella sua versione finale, ossia quanto ottenuto al termine dell'implementazione di Sapienza-DC.
 
-\subsection{Schema concettuale}
+\subsection{Progettazione concettuale}
+La progettazione concettuale prevede la traduzione dei requisiti forniti nel relativo schema concettuale del modello ER. Nel nostro caso, poiché l'applicazione non deve gestire quantità ingenti di dati, ma solo tenere traccia delle conversazioni e dei messaggi inviati dall'utente, nonché garantire il salvataggio dei dati estratti dalle pagine web (identificate tramite URL), ai fini di \textit{caching}\footnote{caching: processo di archiviazione temporanea di copie di dati, effettuato con lo scopo di garantire latenza minore in fase di recupero delle informazioni.}, lo schema concettuale risultante è piuttosto semplice.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.025\textwidth]{schema_concettuale_SDC.png}
+    \caption{Schema concettuale del modello ER.}
+    \label{fig:diagramma_schema_concettuale}
+\end{figure}
+
 
 \subsection{Progettazione logica}
+La progettazione logica permette di tradurre lo schema concettuale ottenuto al termine della fase di progettazione concettuale in uno schema relazionale per la nostra base di dati. 
 
-\subsection{Traduzione diretta e ristrutturazione dello schema logico}
+Un accorgimento di vitale importanza da tenere presente in questa fase della progettazione è il seguente: si vuole evitare ad ogni costo la perdita di informazioni nel passaggio da uno schema all'altro, affinché anche lo schema relazionale continui a rispettare i requisiti imposti inizialmente. 
 
+\subsubsection{Ristrutturazione dello schema concettuale}
+La prima fase della progettazione logica prevede la ristrutturazione dello schema concettuale precedentemente ottenuto. Essa si articola nei seguenti sei passaggi:
+
+\begin{enumerate}
+    \item analisi delle ridondanze;
+    \item eliminazione degli attributi multivalore;
+    \item eliminazione degli attributi composti;
+    \item eliminazione delle IS-A e di eventuali generalizzazioni;
+    \item scelta degli identificatori principali di entità e relazioni;
+    \item specifica degli ulteriori vincoli esterni.
+\end{enumerate}
+
+Giacché lo schema concettuale da ristrutturare è elementare, l'unico passo applicabile è il quinto. In particolare, si sceglie come identificatore principale dell'entità ParsedURL l'attributo \textit{id}. Le rimanenti scelte sono immediate e non vengono dunque esplicitate. Lo schema ristrutturato appare pertanto fondamentalmente invariato, così come i vincoli esterni definiti in precedenza.      
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.025\textwidth]{schema_concettuale_ristrutturato_SDC.png}
+    \caption{Schema concettuale ristrutturato.}
+    \label{fig:diagramma_schema_concettuale_ristrutturato}
+\end{figure}
+
+\subsubsection{Traduzione diretta}
+Lo scopo della traduzione diretta è quello di trasformare lo schema concettuale ristrutturato in uno schema relazionale. Ciascuna relazione viene rappresentata secondo la seguente notazione:
+\[\mathscr{R}(\underline{\mathscr{A}_1}, \underline{\mathscr{A}_2}, \mathscr{A}_3, \mathscr{A}^{*}_4,\, \dots \,, \mathscr{A}_n)\]
+dove gli attributi sottolineati indicano la chiave primaria, gli attributi segnati con l'asterisco attributi per cui è ammesso il valore nullo, contrariamente agli attributi non contrassegnati mediante quest'ultimo.
+
+Altre informazioni essenziali come eventuali vincoli di \textit{foreign key}\footnote{foreign key: è un vincolo di integrità referenziale definito fra una sequenza non vuota $\mathcal{X}$ di $n$ attributi di
+una relazione $\mathscr{R}_1$ ed una sequenza $\mathcal{Y}$ di $n$ attributi che formano
+una chiave di una relazione $\mathscr{R}_2$; è un'asserzione che impone
+che per ogni istanza $\mathscr{B}$ della base di dati ogni combinazione di
+valori su $\mathcal{X}$ che non contengono NULL e che sono presenti
+nella istanza di $\mathscr{R}_1$ in $\mathscr{B}$ compaia come combinazione di valori
+su $\mathcal{Y}$ nella istanza di $\mathscr{R}_2$ in $\mathscr{B}$.}, inclusioni, vincoli di chiave o ulteriori vincoli di tupla o inter-tupla sono da definire al di sotto della relazione stessa.
+
+Una volta terminata la traduzione diretta, otteniamo il seguente schema $\mathcal{S}$ per la nostra base di dati $\mathscr{B}$:\\
+
+\indent
+\textbf{Session}(\underline{session\_id}, title*, last\_domain*, created\_at)\\
+\indent\indent vincolo di tupla: title is NULL $\Rightarrow $ title = "New Chat"\\
+\indent\indent vincolo di tupla: last\_domain is NULL $\Rightarrow$ last\_domain = ""\\
+\indent\indent vincolo di tupla: last\_domain is not NULL $\Rightarrow$ last\_domain $\in$ \{"www.marvel.com",\\ 
+\indent\indent\indent\indent\indent\indent\,\,\,\, "www.ipsos.com", "www.raiplaysound.com", "it.wikipedia.org",\\
+\indent\indent\indent\indent\indent\indent\,\,\,\, "*"\}\\
+\indent
+\textbf{Message}(\underline{id}, role, content, created\_at)\\
+\indent\indent foreign key: Message[id] $\subseteq$ Contains[message]\\
+\indent\indent vincolo di tupla: role $\in$ \{"user", "assistant"\}\\
+\indent
+\textbf{ParsedURL}(\underline{id}, url, parsed\_text*, created\_at)\\
+\indent\indent chiave: url\\
+\indent\indent vincolo esterno: parsed\_text is not NULL $\Rightarrow$ parsed\_text is in MD format\\
+\indent\indent vincolo esterno: url is a valid URL\\ 
+\indent
+\textbf{Contains}(\underline{message}, session)\\
+\indent\indent foreign key: Contains[message] $\subseteq$ Message[id]\\
+\indent\indent foreign key: Contains[session] $\subseteq$ Session[session\_id]\\
+\indent\indent vincolo esterno: $(m, s) \in \text{Contains} \Rightarrow \text{timestamp}(m) > \text{timestamp}(s)$\\
+
+Si noti infine che si è scelto di assegnare, per comodità, opportuni valori di default agli attributi \textit{title} e \textit{last\_domain} della tabella Session.
+
+\subsubsection{Ristrutturazione dello schema logico}
+L'ultima fase della progettazione logica prevedere una ristrutturazione dello schema relazionale per motivi di efficienza. Ai fini della nostra applicazione, è di interesse conoscere, ogni qualvolta si accede a un messaggio $m$, la sessione $s$ a cui esso appartiene.
+
+Notando a questo punto che le tabelle Message e Contains sono fortemente accoppiate, si predispone l'accorpamento di Contains a Message, ottenendo il seguente schema relazionale finale per la nostra base di dati:\\
+
+\indent
+\textbf{Session}(\underline{session\_id}, title*, last\_domain*, created\_at)\\
+\indent\indent vincolo di tupla: title is NULL $\Rightarrow $ title = "New Chat"\\
+\indent\indent vincolo di tupla: last\_domain is NULL $\Rightarrow$ last\_domain = ""\\
+\indent\indent vincolo di tupla: last\_domain is not NULL $\Rightarrow$ last\_domain $\in$ \{"www.marvel.com",\\ 
+\indent\indent\indent\indent\indent\indent\,\,\,\, "www.ipsos.com", "www.raiplaysound.com", "it.wikipedia.org",\\
+\indent\indent\indent\indent\indent\indent\,\,\,\, "*"\}\\
+\indent
+\textbf{Message}(\underline{id}, session, role, content, created\_at)\\
+\indent\indent foreign key: Message[session] $\subseteq$ Session[session\_id]\\
+\indent\indent vincolo di tupla: role $\in$ \{"user", "assistant"\}\\
+\indent\indent vincolo esterno: $m \in \text{Message} \Rightarrow \text{m.created\_at} > \text{timestamp}(\text{m.session})$\\
+\indent
+\textbf{ParsedURL}(\underline{id}, url, parsed\_text*, created\_at)\\
+\indent\indent chiave: url\\
+\indent\indent vincolo esterno: parsed\_text is not NULL $\Rightarrow$ parsed\_text is in MD format\\
+\indent\indent vincolo esterno: url is a valid URL\\ 
+
+La progettazione della nostra base di dati è a questo punto ultimata. Per completezza, si fornisce di seguito il codice SQL per la definizione delle tabelle del database definitivo.\\ 
+
+
+
+\begin{lstlisting}[language=SQL, caption={Codice SQL per la creazione delle tabelle della base di dati.}, label={lst:init_db}]
+CREATE TABLE IF NOT EXISTS sessions (
+    session_id VARCHAR(36) PRIMARY KEY,
+    title VARCHAR(255) DEFAULT 'New Chat',
+    last_domain VARCHAR(255) DEFAULT '',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS messages (
+id INT AUTO_INCREMENT PRIMARY KEY,
+session_id VARCHAR(36) NOT NULL,
+role VARCHAR(20) NOT NULL,
+content TEXT NOT NULL,
+created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (session_id) REFERENCES sessions(session_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS parsed_urls (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    url TEXT NOT NULL UNIQUE,
+    parsed_text LONGTEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+\end{lstlisting}
+
+Si noti infine l'aggiunta della clausola ON DELETE CASCADE, la quale predispone l'eliminazione automatica e coerente di tutti i messaggi associati a una determinata sessione nel caso in cui quest'ultima dovesse essere eliminata.   
 
 
 \chapter{Architettura del sistema}
