@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.5.29)  3 JUN 2026 01:09
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.5.29)  3 JUN 2026 01:18
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -747,7 +747,7 @@ Package pdftex.def Info: images/diagramma_di_flusso_ollama.png  used on input li
 
 ]
 Capitolo 3.
-<images/diagramma_UML_classi_sdc.png, id=383, 4490.52657pt x 1740.5025pt>
+<images/diagramma_UML_classi_sdc.png, id=385, 4490.52657pt x 1740.5025pt>
 File: images/diagramma_UML_classi_sdc.png Graphic file (type png)
 <use images/diagramma_UML_classi_sdc.png>
 Package pdftex.def Info: images/diagramma_UML_classi_sdc.png  used on input line 303.
@@ -758,7 +758,7 @@ Overfull \hbox (79.57503pt too wide) in paragraph at lines 303--304
  []
 
 [13] [14 <./images/diagramma_UML_classi_sdc.png>]
-<images/schema_concettuale_SDC.png, id=395, 1445.4pt x 813.0375pt>
+<images/schema_concettuale_SDC.png, id=397, 1445.4pt x 813.0375pt>
 File: images/schema_concettuale_SDC.png Graphic file (type png)
 <use images/schema_concettuale_SDC.png>
 Package pdftex.def Info: images/schema_concettuale_SDC.png  used on input line 323.
@@ -771,7 +771,7 @@ Overfull \hbox (9.89758pt too wide) in paragraph at lines 323--324
 [15
 
  <./images/schema_concettuale_SDC.png (PNG copy)>]
-<images/schema_concettuale_ristrutturato_SDC.png, id=402, 1445.4pt x 813.0375pt>
+<images/schema_concettuale_ristrutturato_SDC.png, id=404, 1445.4pt x 813.0375pt>
 File: images/schema_concettuale_ristrutturato_SDC.png Graphic file (type png)
 <use images/schema_concettuale_ristrutturato_SDC.png>
 Package pdftex.def Info: images/schema_concettuale_ristrutturato_SDC.png  used on input line 350.
@@ -821,16 +821,11 @@ Underfull \hbox (badness 10000) in paragraph at lines 399--416
 
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 417--418
-
- []
-
 (C:\Users\fabio\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstlang1.sty
 File: lstlang1.sty 2025/11/14 1.11b listings language file
 )
-Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on input line 421.
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 421.
+Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on input line 420.
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 420.
  (C:\Users\fabio\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
@@ -868,17 +863,17 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: A7097E1330CCF080DF0C4AB0A42D5074;6738.
  ) 
 Here is how much of TeX's memory you used:
- 19139 strings out of 467683
- 312043 string characters out of 5414721
- 1052637 words of memory out of 5000000
+ 19140 strings out of 467683
+ 312055 string characters out of 5414721
+ 1052600 words of memory out of 5000000
  47549 multiletter control sequences out of 15000+600000
  731986 words of font info for 213 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  84i,13n,131p,1200b,1541s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/fabio/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.pfb><C:/Users/fabio/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/fabio/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmex10.pfb><C:/Users/fabio/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi10.pfb><C:/Users/fabio/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pfb><C:/Users/fabio/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi9.pfb><C:/Users/fabio/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/fabio/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr6.pfb><C:/Users/fabio/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr7.pfb><C:/Users/fabio/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/fabio/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr9.pfb><C:/Users/fabio/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri10.pfb><C:/Users/fabio/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss10.pfb><C:/Users/fabio/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss12.pfb><C:/Users/fabio/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss17.pfb><C:/Users/fabio/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmssbx10.pfb><C:/Users/fabio/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/fabio/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/fabio/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy9.pfb><C:/Users/fabio/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt10.pfb><C:/Users/fabio/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt9.pfb><C:/Users/fabio/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb><C:/Users/fabio/AppData/Local/Programs/MiKTeX/fonts/type1/public/rsfs/rsfs10.pfb>
-Output written on main.pdf (35 pages, 1860948 bytes).
+Output written on main.pdf (35 pages, 1861517 bytes).
 PDF statistics:
- 653 PDF objects out of 1000 (max. 8388607)
- 146 named destinations out of 1000 (max. 500000)
+ 655 PDF objects out of 1000 (max. 8388607)
+ 147 named destinations out of 1000 (max. 500000)
  62812 words of extra memory for PDF output out of 74296 (max. 10000000)
 

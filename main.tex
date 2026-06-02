@@ -235,7 +235,7 @@ A tal proposito, vedremo come sia possibile utilizzare direttamente llama.cpp pe
 Brevemente, llama.cpp è un'implementazione in linguaggio C/C++ del codice di inferenza dei modelli LLaMA (Large Language Model Meta AI), successivamente esteso a molteplici altre architetture, il cui scopo fondamentale consiste nel massimizzare la velocità di esecuzione locale di LLM. Rimuovendo l'overhead dovuto a Ollama e accettando la maggiore difficoltà implementativa che consegue da questa scelta, saremo in grado di minimizzare i requisiti hardware richiesti per eseguire modelli localmente, soprattutto su macchine sprovviste di GPU.     
 
 \subsection{SearXNG}
-Utilizzato in una prima versione del progetto, SearXNG~\cite{searxng_docs} è un metamotore di ricerca che aggrega risultati da svariati servizi di rcerca e database. Garantisce anonimità e privacy per gli utenti che lo utilizzano, i quali non subiscono tracking né profilazione.   
+Utilizzato in una prima versione del progetto, SearXNG~\cite{searxng_docs} è un metamotore di ricerca che aggrega risultati da svariati servizi di ricerca e database\footnote{database: base di dati, una raccolta organizzata di informazioni o dati strutturati.}. Garantisce anonimità e privacy per gli utenti che lo utilizzano, i quali non subiscono tracking né profilazione.   
 
 \subsection{Crawl4AI}
 Crawl4AI~\cite{crawl4ai_docs} è una libreria Python open source impiegata principalmente per estrarre e ripulire dati in modo strutturato e automatico da pagine web.
@@ -414,8 +414,7 @@ Notando a questo punto che le tabelle Message e Contains sono fortemente accoppi
 \indent\indent vincolo esterno: parsed\_text is not NULL $\Rightarrow$ parsed\_text is in MD format\\
 \indent\indent vincolo esterno: url is a valid URL\\ 
 
-La progettazione della nostra base di dati è a questo punto ultimata. Per completezza, si fornisce di seguito il codice SQL per la definizione delle tabelle del database definitivo.\\ 
-
+La progettazione della nostra base di dati è a questo punto ultimata. Per completezza, si fornisce di seguito il codice SQL per la definizione delle tabelle del database definitivo.
 
 
 \begin{lstlisting}[language=SQL, caption={Codice SQL per la creazione delle tabelle della base di dati.}, label={lst:init_db}]
@@ -444,7 +443,7 @@ CREATE TABLE IF NOT EXISTS parsed_urls (
 
 \end{lstlisting}
 
-Si noti infine l'aggiunta della clausola ON DELETE CASCADE, la quale predispone l'eliminazione automatica e coerente di tutti i messaggi associati a una determinata sessione nel caso in cui quest'ultima dovesse essere eliminata.   
+Si noti infine l'aggiunta della clausola ON DELETE CASCADE, la quale predispone l'eliminazione automatica e coerente di tutti i messaggi associati a una determinata sessione nel caso in cui quest'ultima dovesse essere eliminata. Questa scelta permette di mantenere, in ogni istante, l'integrità referenziale del database.   
 
 
 \chapter{Architettura del sistema}
