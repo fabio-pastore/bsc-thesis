@@ -57,7 +57,7 @@ Tali funzionalità facilitano e rendono estremamente intuitivo lo sviluppo di ba
 
 Tra le funzionalità più apprezzate di FastAPI risalta la generazione automatica della documentazione API. Ogni qualvolta viene definito un nuovo endpoint, FastAPI genera automaticamente documentazione e interfacce Web UI (Swagger UI) mediante cui inviare richieste ai fini, ad esempio, di testing dell'applicazione.
 
-Infine, il framework segue e adotta i principali standard web moderni per lo sviluppo di API basate su HTTP (HyperText Transfer Protocol), quali OpenAPI e JSON Schema per la validazione nonché serializzazione dei dati scambiati.    
+Infine, il framework segue e adotta i principali standard web moderni per lo sviluppo di API basate su HTTP (\textit{Hypertext Transfer Protocol}), quali OpenAPI e JSON Schema per la validazione nonché serializzazione dei dati scambiati.    
 
 \subsection{LangChain}
 LangChain~\cite{langchain_docs} è un framework open source progettato per facilitare lo sviluppo di applicazioni che fanno uso di LLM.
@@ -115,7 +115,7 @@ Utilizzato in una prima versione del progetto, SearXNG~\cite{searxng_docs} è un
 \subsection{Crawl4AI}
 Crawl4AI~\cite{crawl4ai_docs} è una libreria Python open source impiegata principalmente per estrarre e ripulire dati in modo strutturato e automatico da pagine web.
 
-In realtà, Sapienza-DC non utilizza direttamente questa libreria, ma fa affidamento a un secondo progetto precedentemente sviluppato, MWP (Minerva Web Parser), per effettuare scraping e parsing di pagine web mediante Crawl4AI. Maggiori informazioni sul funzionamento di MWP verranno presentate nei capitoli successivi.
+In realtà, Sapienza-DC non utilizza direttamente questa libreria, ma fa affidamento a un secondo progetto precedentemente sviluppato, MWP~\cite{mwp_repo} (Minerva Web Parser), per effettuare scraping e parsing di pagine web mediante Crawl4AI. Maggiori informazioni sul funzionamento di MWP verranno presentate nei capitoli successivi.
 
 Minerva Web Parser è stato realizzato come progetto di esonero (al quale si accennava nell'introduzione di questo elaborato) per il corso di Laboratorio di Ingegneria Informatica, ed è stato successivamente aggiornato per includere nuove funzionalità durante lo sviluppo di Sapienza-DC stesso.  
 \subsection{Jinja2}
@@ -158,4 +158,18 @@ MariaDB~\cite{mariadb_docs} è un sistema di gestione di basi di dati relazional
 La metodologia agile consiste in un approccio allo sviluppo basato sulla distribuzione di software implementati secondo un processo rapido e iterativo. Contrapponendosi ai modelli tradizionali di sviluppo del software, come ad esempio il modello a cascata (waterfall model\footnote{waterfall model: metodologia di sviluppo software basata sulla definizione precisa e strutturata di un insieme di requisiti iniziali da rispettare, seguita da un'implementazione prevedibile e lineare di questi ultimi.}), la metodologia agile propone un approccio meno strutturato e incentrato sulla consegna ripetuta nel tempo di diversi MVP\footnote{MVP - Minimum Viable Product: una versione basilare di un prodotto o servizio volta ad offrire solo le funzionalità essenziali richieste dal cliente.}.
 
 Questi ultimi vengono sottoposti, volta per volta, ad analisi da parte dei clienti nonché degli sviluppatori con l'obiettivo di rifinire l'approccio utilizzato, modificando anche completamente la soluzione proposta qualora ritenuto necessario, per il raggiungimento di un prodotto migliore nella successiva iterazione. Si tratta di una metodologia frequentemente impiegata in progetti dinamici e adattivi, come, ad esempio, Sapienza-DC.
+
+\section{Paradigma client-server}
+Il paradigma client-server rappresenta uno dei modelli più importanti per la comunicazione web e lo sviluppo di sistemi distribuiti. Il modello si fonda sulla separazione netta tra entità che richiedono un certo numero di servizi o risorse, detti client, e i fornitori di questi ultimi, detti server, che si occupano di servire le richieste ricevute dai client.
+
+La comunicazione tra client e server avviene, a livello applicativo, attraverso richieste e risposte HTTP/HTTPS, nei corpi delle quali possono essere inclusi dati, formattati secondo diversi standard, tra cui JSON\footnote{JSON - JavaScript Object Notation: formato testuale di serializzazione dei dati.}, XML\footnote{XML - eXtensible Markup Language: un metalinguaggio per la definizione di linguaggi di markup.} e molti altri. Tale comunicazione avviene solitamente secondo una logica stateless, cioè priva di stato, per la quale il server non mantiene una cronologia delle richieste ricevute precedentemente dal client, ma elabora ognuna di esse in modo indipendente.
+
+Alcuni vantaggi di questo approccio includono, ad esempio, una migliore scalabilità, sicurezza e manutenibilità dei sistemi e delle applicazioni web.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{diagramma_architettura_client_server.png}
+    \caption{Diagramma sull'architettura client-server.}
+    \label{fig:diagramma_architettura_client_server}
+\end{figure}
 

@@ -134,8 +134,8 @@ La progettazione della nostra base di dati è a questo punto ultimata. Per compl
 \begin{lstlisting}[language=SQL, caption={Codice SQL per la creazione delle tabelle della base di dati.}, label={lst:init_db}]
 CREATE TABLE IF NOT EXISTS sessions (
     session_id VARCHAR(36) PRIMARY KEY,
-    title VARCHAR(255) DEFAULT 'New Chat',
-    last_domain VARCHAR(255) DEFAULT '',
+    title VARCHAR(255) DEFAULT "New Chat",
+    last_domain VARCHAR(255) DEFAULT "",
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

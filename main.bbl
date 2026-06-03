@@ -30,8 +30,14 @@ Michael~Chiang Jeffrey~Morgan.
 \newblock \url{https://ollama.readthedocs.io/en/}, 2026.
 \newblock Ultimo accesso: 01 Giugno 2026.
 
+\bibitem{mwp_repo}
+Fabio Pastore, Yi~Hao Wu, and Alessandro Zannone.
+\newblock Repository ufficiale di minerva web parser.
+\newblock \url{https://github.com/fabio-pastore/minerva-web-parser}, 2026.
+\newblock Ultimo accesso: 04 Giugno 2026.
+
 \bibitem{sapienzaDC_repo}
-Fabio Pastore.
+Fabio Pastore, Yi~Hao Wu, and Alessandro Zannone.
 \newblock Repository ufficiale di sapienza-dc.
 \newblock \url{https://github.com/fabio-pastore/sapienza-DC}, 2026.
 \newblock Ultimo accesso: 01 Giugno 2026.
