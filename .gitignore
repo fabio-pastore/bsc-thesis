@@ -1,0 +1,24 @@
+# File ausiliari e di log di LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+
+# File generati per la bibliografia
+*.bbl
+*.blg
+
+# Reminder privati per me stesso
+*.txt
+
+# Altri file temporanei comuni di LaTeX (per sicurezza futura)
+*.fls
+*.fdb_latexmk
+*.lof
+*.lot
+*.idx
+*.ind
+*.ilg
+*.bcf
+*.run.xml
