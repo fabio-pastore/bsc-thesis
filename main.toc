@@ -35,7 +35,11 @@
 \contentsline {subsubsection}{\numberline {3.2.2.2}Traduzione diretta}{17}{subsubsection.3.2.2.2}%
 \contentsline {subsubsection}{\numberline {3.2.2.3}Ristrutturazione dello schema logico}{17}{subsubsection.3.2.2.3}%
 \contentsline {chapter}{\numberline {4}Architettura del sistema}{19}{chapter.4}%
-\contentsline {chapter}{\numberline {5}Implementazione della pipeline RAG}{21}{chapter.5}%
-\contentsline {chapter}{\numberline {6}Ottimizzazioni, sicurezza e benchmark}{23}{chapter.6}%
-\contentsline {chapter}{\numberline {7}Conclusione}{25}{chapter.7}%
-\contentsline {chapter}{Bibliografia}{27}{section*.8}%
+\contentsline {section}{\numberline {4.1}Architettura lato server (backend)}{20}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Architettura lato client (frontend)}{21}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Architettura per la persistenza dei dati (MariaDB)}{22}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Architettura di integrazione ed estrazione dal web (MWP)}{22}{section.4.4}%
+\contentsline {chapter}{\numberline {5}Implementazione della pipeline RAG}{23}{chapter.5}%
+\contentsline {chapter}{\numberline {6}Ottimizzazioni, sicurezza e benchmark}{25}{chapter.6}%
+\contentsline {chapter}{\numberline {7}Conclusione}{27}{chapter.7}%
+\contentsline {chapter}{Bibliografia}{29}{section*.9}%
