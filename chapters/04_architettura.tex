@@ -1,0 +1,64 @@
+\chapter{Architettura del sistema}
+Nel seguente capitolo tratteremo i principali dettagli inerenti all'architettura di Sapienza-DC. Come già anticipato nel secondo capitolo, il progetto adotta un'architettura a microservizi containerizzata tramite Docker e orchestrata mediante Docker Compose.
+
+I microservizi che costituiscono l'applicazione sono tre e consistono sommariamente in un backend per la gestione nonché elaborazione lato server delle chiamate API, un frontend che agisce da \textit{proxy}\footnote{proxy API: un'interfaccia o un server intermedio che si colloca tra applicazione client e server backend.} API per l'inoltro di richieste lato client al server API, servendo e popolando dinamicamente pagine HTML tramite templating Jinja2 e JS; un database basato su MariaDB per la gestione e la persistenza dei dati dell'applicativo. Naturalmente, ciascun microservizio viene eseguito su un container dedicato al fine di garantire modularità, isolamento e portabilità del progetto.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{diagramma_architetturale_sdc.png}
+    \caption{Diagramma architetturale di Sapienza-DC.}
+    \label{fig:diagramma_architetturale_sdc}
+\end{figure}
+
+In realtà, l'applicazione non potrebbe operare correttamente senza un quarto microservizio, esterno al progetto, al quale il backend effettua a sua volta richieste di parsing. 
+
+Tale microservizio coincide difatti nell'API server di Minerva Web Parser, il quale espone alcune API essenziali per la nostra pipeline RAG. In quanto progetto da noi stessi sviluppato, tratteremo brevemente anche alcuni dettagli architetturali e implementativi di MWP. 
+
+Per ognuno dei microservizi sopra elencati descriveremo dunque nel dettaglio i principali moduli che li costituiscono, nonché le relative funzionalità offerte.
+
+\section{Architettura lato server (backend)}
+Il backend costituisce il cuore logico dell'applicazione e si occupa di gestire, tra le altre cose, l'esposizione delle API RESTful per il frontend; il salvataggio, l'inserimento e l'eliminazione dei dati nel database MariaDB; l'interazione nonché interfacciamento con API remote o modelli locali per l'impiego di LLM, opportunamente istruiti mediante tecniche di \textit{prompt engineering}\footnote{prompt engineering: l'insieme delle tecniche utilizzate per scrivere istruzioni, cioè prompt, efficaci nonché precisi, volti a guidare un LLM verso la generazione dell'output desiderato.}; il processamento e la valutazione della query dell'utente; la corretta attuazione della pipeline di Retrieval-Augmented Generation; il reperimento dinamico di informazioni rilevanti alla query da pagine web tramite MWP, prevedendo inoltre opportuni meccanismi di \textit{fallback}\footnote{fallback: termine inglese utilizzato per indicare un piano di riserva o una soluzione di ripiego da utilizzare qualora quella principale dovesse fallire.}. In particolare, i moduli in cui si articola sono i seguenti:
+
+\begin{itemize}
+    \item \textbf{api\_server}: consta di un'applicazione esposta tramite FastAPI; espone un insieme di endpoint RESTful atti a gestire le sessioni dell'utente, la selezione dinamica dell'LLM, il routing della query ricevuta e in generale il flusso di esecuzione della pipeline RAG; grazie all'utilizzo del protocollo SSE\footnote{SSE - \textit{Server Sent Events}: una tecnologia web che permette a un srver di inviare aggiornamenti in tempo reale a un client attraverso una connessione HTTP persistente.} è inoltre in grado di realizzare lo streaming dei token testuali generati dall'LLM, insieme a messaggi inerenti allo stato corrente di avanzamento della pipeline stessa.
+    \item \textbf{db\_manager}: come intuibile dal nome alquanto evocativo, questo modulo si occupa della connessione e dell'accesso, da parte del backend, alla base di dati del nostro applicativo, oltre all'esecuzione delle principali operazioni previste sulle tabelle presenti nel DB\footnote{DB: database, base di dati.}.
+    \item \textbf{llm\_manager}: implementa e coordina l'interazione con i modelli linguistici, astraendo quest'ultima rispetto al paradigma di computazione sottostante, sia essa eseguita localmente oppure su un server remoto acceduto attraverso chiamate API, compatibili con OpenAI\footnote{OpenAI: azienda focalizzata sulla ricerca nel campo dell'intelligenza artificiale, celebre per aver sviluppato ChatGPT.}.Ulteriore compito di questo modulo consiste nella generazione dei prompt per gli LLM, su cui ci soffermeremo maggiormente nel capitolo che segue.
+    \item \textbf{query\_handler}: modulo incaricato del processamento iniziale della query ricevuta dall'utente, il controllo della validità nonché adeguatezza di quest'ultima, la chiamata ai moduli di scraping necessari ad effettuare la ricerca di URL di pagine web contenenti informazioni presumibilmente rilevanti alla query nonché la generazione della risposta alla medesima.
+    \item \textbf{rag}: estrae, attraverso opportune tecniche algoritmiche che approfondiremo in fase di implementazione della pipeline RAG, le informazioni utili a rispondere alla query dell'utente a partire dai dati ricercati sul web. Il paradigma impiegato è noto come \textit{Two-Stage Retrieval} e consiste, come sappiamo, nell'utilizzo di un bi-encoder e di un cross-encoder in successione per stilare una classifica, ordinata in senso decrescente, delle informazioni più semanticamente pertinenti rispetto alla query $q$. Oltre a ciò, questo modulo si interfaccia con il servizio esterno MWP per reperire, dato un insieme $\mathscr{K}$ di $k$ URL di pagine web, le informazioni contenute in ciascuna di esse in forma testuale.
+    \item \textbf{url\_retriever}: reperisce dinamicamente i primi $k$ URL rilevanti a partire dalla query dell'utente, preliminarmente riscritta in un formato adatto per la ricerca su un \textit{search engine}\footnote{search engine: anche detto motore di ricerca, è un sistema avente come obiettivo principale quello di reperire informazioni su Internet.}. Al fine di minimizzare il numero di eventualità in cui tale ricerca dovesse fallire, il modulo impiega un utile meccanismo di fallback, le cui specifiche introdurremo nel prossimo capitolo.                       
+\end{itemize}
+
+\section{Architettura lato client (frontend)}
+Il frontend è un microservizio leggero, progettato per inoltare le richieste al backend di Sapienza-DC e fornire al contempo un'interfaccia utente moderna e intuitiva. Esso è costituito da un unico modulo \textbf{src} che si occupa della realizzazione delle funzionalità sopra descritte. Concretamente, quest'ultimo garantisce quanto segue:
+
+\begin{itemize}
+    \item la gestione efficiente del \textit{rendering}\footnote{rendering: processo attraverso il quale un browser web interpreta il codice sorgente di una pagina, trasformandolo in una rappresentazione grafica da visualizzare sullo schermo dell'utente.} delle pagine web dell'applicativo, usufruendo dei template di Jinja2 e delle classi utility di TailwindCSS per offrire una UI elegante e \textit{responsive}\footnote{responsive: nell'ambito dello sviluppo web, un sito è detto responsive se si adatta automaticamente e coerentemente alle dimensioni dello schermo del dispositivo che viene utilizzato per visitarlo.}.
+    \item l'inoltro tempestivo delle richieste del client browser verso il backend tramite API proxy e il controllo asincrono dei flussi SSE provenienti da quest'ultimo. Ciascun token ricevuto viene utilizzato per aggiornare progressivamente l'interfaccia utente, in modo tale da fornire un'esperienza di utilizzo fluida e reattiva. Si noti che qualora non avessimo utilizzato questo approccio, l'utente avrebbe dovuto attendere diversi secondi (o minuti in caso di inferenza locale su CPU), senza alcun riscontro visivo, il processamento della propria query e la generazione della risposta finale. L'aggiornamento in tempo reale dello stato attuale della pipeline, nonché lo streaming token per token della risposta dell'LLM rassicura pertanto l'utente riguardo al corretto funzionamento dell'applicazione e all'effettiva elaborazione della richiesta inoltrata. 
+\end{itemize}
+
+\section{Architettura per la persistenza dei dati (MariaDB)}
+Come ormai noto, il database basato su MariaDB rappresenta un microservizio a sé stante ospitato nel rispettivo container Docker, ove sono ospitate le tre tabelle \textbf{sessions}, \textbf{messages} e \textbf{parsed\_urls} definite in fase di progettazione. Gli obiettivi della base di dati dovrebbero essere a questo punto lampanti, ma li riassumiamo nuovamente per meri fini di completezza della trattazione:
+\begin{itemize}
+    \item la gestione della cronologia della conversazioni con l'utente associate a una determinata sessione; questo garantisce che il chatbot sia in grado di mantenere il contesto dei messaggi scambiati in precedenza, in modo tale da sostenere un dialogo coerente e logico;
+    \item l'indicizzazione e la memorizzazione (caching) di URL di cui è già stato fatto scraping per minimizzare la latenza nel recupero dei dati dalle fonti selezionate ed evitare problematiche relative a \textit{rate limiting}\footnote{rate limiting: tecnica di sicurezza e di controllo del traffico volta a limitare il numero di richieste che un determinato utente può inviare a un server in un intervallo di tempo prestabilito.}. Qualora lo stesso URL dovesse essere selezionato come rilevante per rispondere a una query successiva dell'utente, il backend procederà a recuperare le informazioni già estratte direttamente dal DB, abbattendo i tempi di attesa da parte dell'utente e riducendo per di più il carico computazionale della pipeline RAG, giacché il processo di parsing è intrinsecamente costoso.   
+\end{itemize}
+
+\section{Architettura di integrazione ed estrazione di dati dal web (MWP)}
+Minerva Web Parser è un servizio esterno ma vitale per il corretto funzionamento di Sapienza-DC. Le prerogative di quest'ultimo sono, in buona sostanza, le seguenti:
+\begin{itemize}
+    \item estrarre tramite Crawl4AI il contenuto di una data pagina web, prevedendone la conseguente pulizia da contenuti non informativi; MWP naviga l'URL per il quale viene richiesta l'estrazione di dati e ne estrae il codice sorgente (HTML), selezionando unicamente gli elementi del DOM\footnote{DOM - \textit{Document Object Model}: un'interfaccia standardizzata per la rappresentazione della struttura di una pagina web sotto forma di albero.} contenenti dati significativi. L'abilità di MWP di scartare correttamente elementi accessori è essenziale: se includessimo difatti nel contesto dell'LLM anche questi ultimi, esauriremmo velocemente la context window del modello, portando inevitabilmente a un repentino degrado delle prestazioni del medesimo;
+    \item effettuare parsing adattivo per ciascun dominio di interesse. Dato un URL in input, MWP riconosce automaticamente il dominio e applica strategie di parsing personalizzate per massimizzare la qualità dei contenuti estratti, contemplando inoltre strategie di aggiramento per eventuali sistemi anti-bot presenti sulle pagine da processare;
+    \item prevedere opportune strategie di fallback in caso di domini generici. Sebbene MWP sia stato inizialmente progettato esclusivamente per l'estrazione da un insieme predefinito di domini, durante lo sviluppo del progetto, si è reso possibile, attraverso un opportuno aggiornamento di MWP, effettuare parsing di URL provenienti da domini qualsiasi. Mediante un procedimento di parsing generico, il quale sacrifica parte della precisione, garantita invece in fase di parsing di domini già configurati, per massimizzare l'estrazione di dati rilevanti. Tale paradigma conferisce al sistema di RAG una notevole versatilità nonché tolleranza alle ampie variazioni strutturali che possono esistere tra pagine web distinte, in modo tale da permettere alla pipeline di recuperare conoscenze da forum, blog e notiziari, senza prevedere l'implementazione di procedure di parsing specifiche per ciascun dominio;
+    \item permettere lo scraping dei risultati ottenuti a partire da una query effettuata a un motore di ricerca. Al fine di ottenere gli URL delle pagine web di cui effettuare parsing, è necessario \textit{in primis} effettuare una ricerca su un search engine. La risoluzione di questo problema non è banale e verrà trattata più estensivamente nel capitolo successivo.        
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{mwp_pipeline_diagram.png}
+    \caption{Pipeline implementata da MWP per l'estrazione di dati da pagine web.}
+    \label{fig:diagramma_mwp_flowchart}
+\end{figure}
+
+Questo termina l'esposizione inerente allo studio dell'architettura di progetto. Nel quinto capitolo discuteremo nei dettagli l'implementazione della pipeline RAG, le difficoltà riscontrate e come queste ultime siano state sormontate.   
+
+

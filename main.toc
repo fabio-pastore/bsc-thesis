@@ -38,8 +38,8 @@
 \contentsline {section}{\numberline {4.1}Architettura lato server (backend)}{20}{section.4.1}%
 \contentsline {section}{\numberline {4.2}Architettura lato client (frontend)}{21}{section.4.2}%
 \contentsline {section}{\numberline {4.3}Architettura per la persistenza dei dati (MariaDB)}{22}{section.4.3}%
-\contentsline {section}{\numberline {4.4}Architettura di integrazione ed estrazione dal web (MWP)}{22}{section.4.4}%
-\contentsline {chapter}{\numberline {5}Implementazione della pipeline RAG}{23}{chapter.5}%
-\contentsline {chapter}{\numberline {6}Ottimizzazioni, sicurezza e benchmark}{25}{chapter.6}%
-\contentsline {chapter}{\numberline {7}Conclusione}{27}{chapter.7}%
-\contentsline {chapter}{Bibliografia}{29}{section*.9}%
+\contentsline {section}{\numberline {4.4}Architettura di integrazione ed estrazione di dati dal web (MWP)}{22}{section.4.4}%
+\contentsline {chapter}{\numberline {5}Implementazione della pipeline RAG}{25}{chapter.5}%
+\contentsline {chapter}{\numberline {6}Ottimizzazioni, sicurezza e benchmark}{27}{chapter.6}%
+\contentsline {chapter}{\numberline {7}Conclusione}{29}{chapter.7}%
+\contentsline {chapter}{Bibliografia}{31}{section*.10}%
