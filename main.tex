@@ -22,7 +22,7 @@
 \setlength{\topmargin}{-11.5pt}
 
 % --- PALETTE NEUTRA AD ALTO CONTRASTO (HIGH-CONTRAST ACADEMIC) ---
-\definecolor{backcolour}{rgb}{0.94, 0.94, 0.94}     % Grigio chiaro elegante e neutro
+\definecolor{backcolour}{rgb}{0.95, 0.95, 0.95}     % Grigio chiaro elegante e neutro
 \definecolor{commentcolor}{rgb}{0.4, 0.4, 0.4}      % Grigio scuro nitido per i commenti
 \definecolor{keywordcolor}{rgb}{0.0, 0.18, 0.45}    % Blu notte intenso ad alto contrasto per le keyword
 \definecolor{stringcolor}{rgb}{0.5, 0.05, 0.05}     % Rosso cremisi scuro e netto per le stringhe
@@ -72,6 +72,10 @@
 \advisor{Prof. Roberto Navigli}
 \authoremail{pastore.2129632@studenti.uniroma1.it}
 
+% Scommenta la riga seguente e specifica il file (o i file separati da virgola) a cui stai lavorando
+% Questo velocizzerà drasticamente la compilazione saltando gli altri capitoli, ma mantenendone riferimenti e numeri di pagina.
+\includeonly{chapters/05_implementazione}
+
 \begin{document}
 
 \frontmatter
@@ -92,13 +96,13 @@ I capitoli contenuti in questo elaborato tratteranno gli obiettivi fondamentali 
 
 \mainmatter
 
-\input{chapters/01_introduzione}
-\input{chapters/02_tecnologie}
-\input{chapters/03_progettazione}
-\input{chapters/04_architettura}
-\input{chapters/05_implementazione}
-\input{chapters/06_ottimizzazioni}
-\input{chapters/07_conclusione}
+\include{chapters/01_introduzione}
+\include{chapters/02_tecnologie}
+\include{chapters/03_progettazione}
+\include{chapters/04_architettura}
+\include{chapters/05_implementazione}
+\include{chapters/06_ottimizzazioni}
+\include{chapters/07_conclusione}
 \backmatter
 
 % If you have a bibliography, uncomment the lines below:

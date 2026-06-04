@@ -83,15 +83,15 @@ Una volta terminata la traduzione diretta, otteniamo il seguente schema $\mathca
 
 \indent
 \textbf{Session}(\underline{session\_id}, title*, last\_domain*, created\_at)\\
-\indent\indent vincolo di tupla: title is NULL $\Rightarrow $ title = "New Chat"\\
-\indent\indent vincolo di tupla: last\_domain is NULL $\Rightarrow$ last\_domain = ""\\
-\indent\indent vincolo di tupla: last\_domain is not NULL $\Rightarrow$ last\_domain $\in$ \{"www.marvel.com",\\ 
-\indent\indent\indent\indent\indent\indent\,\,\,\, "www.ipsos.com", "www.raiplaysound.com", "it.wikipedia.org",\\
-\indent\indent\indent\indent\indent\indent\,\,\,\, "*"\}\\
+\indent\indent vincolo di tupla: title is NULL $\Rightarrow $ title = ``New Chat''\\
+\indent\indent vincolo di tupla: last\_domain is NULL $\Rightarrow$ last\_domain = ``''\\
+\indent\indent vincolo di tupla: last\_domain is not NULL $\Rightarrow$ last\_domain $\in$ \{``www.marvel.com'',\\ 
+\indent\indent\indent\indent\indent\indent\,\,\,\, ``www.ipsos.com'', ``www.raiplaysound.com'', ``it.wikipedia.org'',\\
+\indent\indent\indent\indent\indent\indent\,\,\,\, ``*''\}\\
 \indent
 \textbf{Message}(\underline{id}, role, content, created\_at)\\
 \indent\indent foreign key: Message[id] $\subseteq$ Contains[message]\\
-\indent\indent vincolo di tupla: role $\in$ \{"user", "assistant"\}\\
+\indent\indent vincolo di tupla: role $\in$ \{``user'', ``assistant''\}\\
 \indent
 \textbf{ParsedURL}(\underline{id}, url, parsed\_text*, created\_at)\\
 \indent\indent chiave: url\\
@@ -112,15 +112,15 @@ Notando a questo punto che le tabelle Message e Contains sono fortemente accoppi
 
 \indent
 \textbf{Session}(\underline{session\_id}, title*, last\_domain*, created\_at)\\
-\indent\indent vincolo di tupla: title is NULL $\Rightarrow $ title = "New Chat"\\
-\indent\indent vincolo di tupla: last\_domain is NULL $\Rightarrow$ last\_domain = ""\\
-\indent\indent vincolo di tupla: last\_domain is not NULL $\Rightarrow$ last\_domain $\in$ \{"www.marvel.com",\\ 
-\indent\indent\indent\indent\indent\indent\,\,\,\, "www.ipsos.com", "www.raiplaysound.com", "it.wikipedia.org",\\
-\indent\indent\indent\indent\indent\indent\,\,\,\, "*"\}\\
+\indent\indent vincolo di tupla: title is NULL $\Rightarrow $ title = ``New Chat''\\
+\indent\indent vincolo di tupla: last\_domain is NULL $\Rightarrow$ last\_domain = ``''\\
+\indent\indent vincolo di tupla: last\_domain is not NULL $\Rightarrow$ last\_domain $\in$ \{``www.marvel.com'',\\ 
+\indent\indent\indent\indent\indent\indent\,\,\,\, ``www.ipsos.com'', ``www.raiplaysound.com'', ``it.wikipedia.org'',\\
+\indent\indent\indent\indent\indent\indent\,\,\,\, ``*''\}\\
 \indent
 \textbf{Message}(\underline{id}, session, role, content, created\_at)\\
 \indent\indent foreign key: Message[session] $\subseteq$ Session[session\_id]\\
-\indent\indent vincolo di tupla: role $\in$ \{"user", "assistant"\}\\
+\indent\indent vincolo di tupla: role $\in$ \{``user'', ``assistant''\}\\
 \indent\indent vincolo esterno: $m \in \text{Message} \Rightarrow \text{m.created\_at} > \text{timestamp}(\text{m.session})$\\
 \indent
 \textbf{ParsedURL}(\underline{id}, url, parsed\_text*, created\_at)\\
