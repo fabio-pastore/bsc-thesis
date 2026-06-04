@@ -2,7 +2,7 @@
 
 In questo capitolo tratteremo estensivamente la fase implementativa del progetto e, come preannunciato, quali siano state le principali sfide da risolvere durante lo sviluppo di quest'ultimo. Per ragioni di brevità, ci concentreremo principalmente sull'implementazione della componente essenziale, e a mio avviso maggiormente affascinante, di Sapienza-DC: la pipeline RAG. In ciascuna delle sezioni presentate, descriveremo le varie componenti della pipeline di retrieval-augmented generation, ciascuna avente un obiettivo ben preciso, evidenziando gli approcci nonché tecnologie impiegate al fine di raggiungere quest'ultimo.    
 \section{Processamento preliminare della query dell'utente e disambiguazione}
-Si è pensato fin da subito di processare la richiesta dell'utente tramite un LLM (detto \textit{guardrail}\footnote{guardrail}), richiedendo a quest'ultimo, mediante un prompt adeguato, di classificare la query come \texttt{ACCEPTED} o \texttt{REJECTED}. Nel caso in cui dovesse essere rifiutata, l'utente viene notificato con il messaggio \texttt{"Your query appears to be meaningless or invalid. Please ask a clear, answerable question"}. 
+Si è pensato fin da subito di processare la richiesta dell'utente tramite un LLM (detto \textit{guardrail}\footnote{guardrail: blocco di sicurezza progettato per impedire a un LLM di generare contenuti dannosi o pericolosi.}), richiedendo a quest'ultimo, mediante un prompt adeguato, di classificare la query come \texttt{ACCEPTED} o \texttt{REJECTED}. Nel caso in cui dovesse essere rifiutata, l'utente viene notificato con il messaggio \texttt{"Your query appears to be meaningless or invalid. Please ask a clear, answerable question"}. 
 
 In seguito è stata introdotta una terza possibile categorizzazione della query dell'utente, ossia \texttt{AMBIGUOUS}, nel caso in cui il soggetto della richiesta dovesse risultare omesso oppure dovessero essere individuate entità con
 molteplici significati (\textit{i.e.} la parola ``mercurio'' può intendere l'elemento chimico, ma anche il pianeta). In tal caso il sistema sospende il retrieval e richiede delucidazioni all’utente tramite
@@ -19,9 +19,7 @@ Non è semplice trovare un procedimento deterministico che risponda in maniera p
 
 Si noti che in alcuni casi potrebbe accadere che la richiesta effettuata dall'utente non possa trovare risposta in alcuno dei domini sopra riportati. Per questo motivo, in un secondo momento, si è permesso all'LLM di decidere di assegnare un dominio generico (individuato tramite \texttt{"⁎"}) alla query ricevuta come meccanismo di fallback.
 
-Quando ciò accade si tenta di cercare le informazioni necessarie per rispondere alla domanda su un dominio qualunque, effettuando un parsing generico di pagine web ritenute pertinenti.
-
-A un secondo LLM viene dunque affidato il compito di sintetizzare la domanda dell'utente in poche \textit{keyword}\footnote{keyword} che costituiranno la query per il motore di ricerca.
+Quando ciò accade si tenta di cercare le informazioni necessarie per rispondere alla domanda su un dominio qualunque, effettuando un parsing generico di pagine web ritenute pertinenti. A un secondo LLM viene dunque affidato il compito di sintetizzare la domanda dell'utente in poche \textit{keyword}\footnote{keyword: letteralmente ``parola chiave''} che costituiranno la query per il motore di ricerca.
 
 \begin{figure}[H]
     \centering
@@ -47,14 +45,14 @@ Una prima soluzione alla quale si è giunti consistenva nell'utilizzo della libr
 \subsection{SearXNG e qwant}
 Un tentativo successivo ha visto l'impiego di SearXNG, un \textit{metasearch engine} open-source che aggrega risultati di ricerche web dai principali servizi di ricerca disponibili (Google, Bing, Brave, etc.). L'unico servizio di ricerca che si è rivelato essere realmente utilizzabile è stato \textbf{qwant}, dal momento che tutti gli altri motori hanno cominciato a bloccare immediatamente le richieste provenienti dal nostro IP.
 
-Anche in questo caso, tuttavia, dopo alcuni giorni di testing, l'unico motore di ricerca ancora a nostra disposizione ha sospeso il nostro IP, lasciandoci difatto senza alcuna alternativa per la ricerca di pagine web da cui estrarre i dati per la nostra pipeline.
+Anche in questo caso, tuttavia, dopo alcuni giorni di testing, l'unico motore di ricerca ancora a nostra disposizione ha sospeso il nostro indirizzo IP, lasciandoci difatto senza alcuna alternativa per la ricerca di pagine web da cui estrarre i dati per la nostra pipeline.
 
 \subsection{Custom web scraper per Startpage.com}
 In seguito a un'ampia riflessione si è giunti a una nuova soluzione: parsare le pagine stesse contenenti i risultati di una determinata query effettuata su un search engine. Trovare un modo concreto di farlo si è rivelato essere non banale.
 
-Infatti, l'analisi del DOM di una pagina restituita da una ricerca su Google ha ben presto evidenziato una problematica sostanziale: ogni singolo \textit{div}\footnote{div:} o \textit{span}\footnote{span:} contenente i risultati della ricerca era caratterizzato da classi e id generati in modo del tutto casuale per ogni nuova ricerca, rendendo impossibile estrarre i dati in modo automatizzato.
+Infatti, l'analisi del DOM di una pagina restituita da una ricerca su Google ha ben presto evidenziato una problematica sostanziale: ogni singolo \textit{div}\footnote{div: in HTML, è un contenitore utilizzato per raggruppare altri elementi in un singolo blocco.} o \textit{span}\footnote{span: in HTML, raggruppa elementi al suo interno, ma, diversamente dai div, opera in linea.} contenente i risultati della ricerca era caratterizzato da classi e id generati in modo del tutto casuale per ogni nuova ricerca, rendendo impossibile estrarre i dati in modo automatizzato.
 
-Ciononostante, dopo diverso tempo dedicato alla ricerca di possibili soluzioni, si è stati in grado di trovare un motore di ricerca privato che fa utilizzo di una ben nota API di ricerca a pagamento: SerpAPI\footnote{sus}. Tale motore di ricerca è \href{https://www.startpage.com}{Startpage} e, al contrario di Google, non implementa meccanismi \textit{anti-crawling}\footnote{anti-crawling:} nelle pagine restituite in seguito a una query.
+Ciononostante, dopo diverso tempo dedicato alla ricerca di possibili soluzioni, si è stati in grado di trovare un motore di ricerca privato che fa utilizzo di una ben nota API di ricerca a pagamento: SerpAPI~\cite{serpapi_docs}. Tale motore di ricerca è \href{https://www.startpage.com}{Startpage} e, al contrario di Google, non implementa meccanismi \textit{anti-crawling}\footnote{anti-crawling: insieme di tecniche e tecnologie impiegate per proteggere una pagina web da accessi automatizzati effettuati attraverso l'impiego di \textit{crawler}, cioè bot.} nelle pagine restituite in seguito a una query.
 
 Pertanto, usufruendo ancora una volta della libreria Crawl4AI e modificando leggermente il progetto dell'esonero (Minerva Web Parser) in modo tale da introdurre un nuovo parser (\texttt{StartpageSearchEngineParser}) capace di restituire, data una query, un dominio di interesse e un intero \textit{k}, i primi \textit{k} risultati di tale ricerca (senza duplicati) su Startpage. Inoltre, tramite l'aggiunta di un semplice endpoint \texttt{/get\_query\_results} abbiamo difatti creato una nostra API personalizzata al fine di permettere lo scraping e il retrieval degli URL risultanti da una ricerca su web.
 
@@ -69,27 +67,25 @@ def retrieve_relevant_urls(
     target_domain: str, # dominio target
     max_results: int | None = None # numero massimo di risultati
     ) -> list[dict[str, str]]:
-        """
-        <docstring funzione>
-        """
-        limit = max_results if max_results is not None\ 
-                else self.__STARTPAGE_SEARCH_RESULTS_LIMIT
+    ...
+    limit = max_results if max_results is not None\ 
+            else self.__STARTPAGE_SEARCH_RESULTS_LIMIT
 
-        generic_search: bool = (target_domain == '*')
-        # costruisce la query da effettuare con l'operatore site:
-        filtered_query = f"{search_query} site:{target_domain}"\
-                         if (not generic_search)\
-                         else f"{search_query}"
+    generic_search: bool = (target_domain == '*')
+    # costruisce la query da effettuare con l'operatore site:
+    filtered_query = f"{search_query} site:{target_domain}"\
+                        if (not generic_search)\
+                        else f"{search_query}"
 
-        # estrae il risultato della ricerca da Startpage
-        data = self.mwp_client.parse_query(
-            filtered_query, 
-            target_domain if (not generic_search) else "*", 
-            limit)
-        scraped_urls: list[str] = []
-        if (data):
-            scraped_urls: list[str] = data
-            ...
+    # estrae il risultato della ricerca da Startpage
+    data = self.mwp_client.parse_query(
+        filtered_query, 
+        target_domain if (not generic_search) else "*", 
+        limit)
+    scraped_urls: list[str] = []
+    if (data):
+        scraped_urls: list[str] = data
+        ...
 \end{lstlisting}
 
 \begin{figure}[H]
@@ -107,9 +103,7 @@ def retrieve_relevant_urls(
 \end{figure}
 
 \subsection{Estrazione dei dati dagli URL selezionati}
-A questo punto, dati gli URL ottenuti da una query al motore di ricerca e il dominio target è immediato estrarne in contenuti in formato markdown.
-
-Tuttavia, bisogna tenere presente che a una determinata query \textit{q}, in caso di fallback, può essere assegnato un dominio generico \texttt{"⁎"}. Anche in questo caso abbiamo dovuto modificare leggermente il progetto di esonero, aggiungendo un secondo parser, \texttt{GenericParser}, adatto ad estrarre in modo approssimativo i contenuti di una qualunque pagina web.
+A questo punto, dati gli URL ottenuti da una query al motore di ricerca e il dominio target è immediato estrarne in contenuti in formato markdown. Tuttavia, bisogna tenere presente che a una determinata query \textit{q}, in caso di fallback, può essere assegnato un dominio generico \texttt{"⁎"}. Anche in questo caso abbiamo dovuto modificare leggermente il progetto di esonero, aggiungendo un secondo parser, \texttt{GenericParser}, adatto ad estrarre in modo approssimativo i contenuti di una qualunque pagina web.
 
 \begin{figure}[H]
     \centering
@@ -118,7 +112,7 @@ Tuttavia, bisogna tenere presente che a una determinata query \textit{q}, in cas
     \label{fig:mwp_parsing_rag}
 \end{figure}
 
-Naturalmente, come già precedentemente sottolineato, risulta impossibile effettuare quest'operazione senza introdurre una quantità minima di rumore (dati inutili) dovuto alla sostanziale differenza che si può avere tra pagine di domini diversi. Si tratta di un \textit{trade-off}\footnote{tradeoff} che abbiamo ritenuto accettabile.
+Naturalmente, come già precedentemente sottolineato, risulta impossibile effettuare quest'operazione senza introdurre una quantità minima di rumore (dati inutili) dovuto alla sostanziale differenza che si può avere tra pagine di domini diversi. Si tratta di un \textit{trade-off}\footnote{tradeoff: compromesso per il quale al fine di ottenere un vantaggio si accetta di cedere o rinunciare a qualcos'altro.} che abbiamo ritenuto accettabile.
 
 \subsection{Supplemento dei dati ottenuti tramite generic parsing}
 Per permettere all'LLM che risponde alla query dell'utente di disporre della massima quantità di informazioni relative all'argomento della conversazione, ogni ricerca per il dominio \textit{X} viene supplementata con i primi \textit{k} risultati della stessa ricerca effettuata su domini generici, purché il dominio scelto dal guardrail non sia già \texttt{"⁎"}.
@@ -126,27 +120,47 @@ Per permettere all'LLM che risponde alla query dell'utente di disporre della mas
 Questo equivale ad effettuare due query al search engine, dove la prima è \texttt{"site:X \{query\}"} mentre la seconda consiste semplicemente nel ricercare "\texttt{"\{query\}"} senza utilizzare l'operatore \texttt{"site:"}. 
 
 \subsection{Fallback su Wikipedia OpenSearch API}
+Nell'eventualità in cui lo scraping da Startpage dovesse fallire, il sistema garantisce la continuità del servizio di information retrieval, sebbene di qualità inferiore, usufruendo dell'API gratuita OpenSearch~\cite{opensearchapi_docs} per Wikipedia. Questo assicura la robustezza della pipeline RAG anche in condizioni di operazione anomale. Il meccanismo è implementato mediante una logica alquanto semplice, come si può nel seguente frammento di codice contenuto nel metodo \texttt{process\_query} della classe \texttt{QueryHandler}.
+
+\begin{lstlisting}[language=Python, caption={Logica di fallback mediante API OpenSearch di Wikipedia.}, label={lst:fallback_wiki_opensearch_api}]
+def process_query(
+    self, 
+    session_id: str, 
+    raw_query: str
+    ) -> IntentResult:
+    ...
+    search_results: list[dict[str, str]] = self.url_retriever\
+    .retrieve_from_multiple_domains(
+        search_query, 
+        domains_to_search, # lista di domini su cui cercare 
+        per_domain_limit
+    )
+
+    # fallback a API OpenSearch di Wikipedia in caso di necessità
+    if not search_results:
+        print(f"[QueryHandler] StartpageUrlRetriever returned 0 
+        results for '{search_query}'. Falling back to Wikipedia
+        OpenSearch API...")
+        wiki_urls = self.wiki_retriever.\
+        retrieve_relevant_urls(search_query)
+        if wiki_urls:
+            search_results = wiki_urls
+    ...
+
+\end{lstlisting}
 
 \section{Selezione dei contenuti rilevanti, generazione e gestione del contesto per l'LLM}
-In questa sezione verrà trattato il processo tramite cui si è in grado di scegliere quali testi (\texttt{parsed\_text}) e quali porzioni di questi ultimi sono da considerare rilevanti e dunque da fornire all'LLM che risponde alla query dell'utente.
+In questa sezione verrà trattato il processo tramite cui si è in grado di scegliere quali testi (\texttt{parsed\_text}) e quali porzioni di questi ultimi sono da considerare rilevanti e dunque da fornire all'LLM che risponde alla query dell'utente. Si tratta fondamentalmente della sfida più ardua nella costruzione della pipeline RAG: il contesto dell'LLM non è infinito e va dunque gestito opportunamente in modo tale da non saturarlo.
 
-Si tratta fondamentalmente della sfida più ardua nella costruzione della pipeline RAG: il contesto dell'LLM non è infinito e va dunque gestito opportunamente in modo tale da non saturarlo.
-
-Difatti, se decidessimo di fornire pagine intere come fonti di riferimento al modello, non solo rischieremmo di esaurire la context window ma introdurremmo un notevole overhead in fase di risposta, diminuendo notevolmente il throughput della pipeline.
-
-L'idea alla base è quella di stilare una classifica dei pezzi (o chunk) di testo che contengono, con maggiore probabilità, la risposta alla domanda dell'utente.
+Difatti, se decidessimo di fornire pagine intere come fonti di riferimento al modello, non solo rischieremmo di esaurire la context window ma introdurremmo un notevole overhead in fase di risposta, diminuendo notevolmente il throughput della pipeline. L'idea alla base è quella di stilare una classifica dei pezzi (o chunk) di testo che contengono, con maggiore probabilità, la risposta alla domanda dell'utente.
 
 Una volta ottenuta la classifica (o ranking) di questi ultimi, è sufficiente prendere i primi \textit{k} chunk, i quali andranno a costituire il \texttt{query\_context} dell'LLM, ossia l'insieme di testi di riferimento nonché informazioni che il modello utilizzerà per rispondere all'utente, purché in essi vi sia la risposta alla query.
 
-In caso contrario, il modello risponderà semplicemente con \texttt{"Mi dispiace, ma non ho abbastanza informazioni per rispondere a questa domanda"}.
-
-Di seguito è proposto un resoconto degli approcci utilizzati, in fase di sviluppo del progetto, per raggiungere l'obiettivo appena descritto. 
+In caso contrario, il modello risponderà semplicemente con \texttt{"Mi dispiace, ma non ho abbastanza informazioni per rispondere a questa domanda"}. Di seguito viene proposto un resoconto degli approcci utilizzati, in fase di sviluppo del progetto, per raggiungere l'obiettivo appena descritto. 
 \subsection{Chunking manuale e token count}
-Un primo approccio \textit{naive}\footnote{naive:} è stato quello di dividere manualmente il \texttt{parsed\_text} ottenuto da ciascun URL in chunk di lunghezza arbitraria.
+Un primo approccio \textit{naive}\footnote{naive: ingenuo, sprovveduto} è stato quello di dividere manualmente il \texttt{parsed\_text} ottenuto da ciascun URL in chunk di lunghezza arbitraria.
 
-In questa prima soluzione proposta, i chunk venivano classificati per ordine di count decrescente di \texttt{query\_token} contenuti in essi.
-
-Purtroppo, questa soluzione semplice ed estremamente conveniente comportava in realtà risultati piuttosto scarsi.
+In questa prima soluzione proposta, i chunk venivano classificati per ordine di count decrescente di \texttt{query\_token} contenuti in essi. Purtroppo, questa soluzione semplice ed estremamente conveniente comportava in realtà risultati piuttosto scarsi.
 
 \subsection{Chunking manuale e bi-encoding, ranking mediante cosine similarity}
 Un altro difetto del primo approccio consisteva nel fatto di tagliare arbitrariamente il chunk una volta raggiunti \textit{k} caratteri. Questo poteva comportare il troncamento di paragrafi, frasi o addirittura parole.
@@ -155,30 +169,22 @@ In questa seconda iterazione di selezione abbiamo voluto rifinire il processo di
 
 In realtà anche questo modo di procedere non era perfetto: due frasi separate da newline e appartenenti allo stesso paragrafo potevano essere divise in chunk diversi, comportando la dispersione di informazioni.
 
-A questo punto sia query che chunk estratti venivano convertiti in vettori \textit{n}-dimensionali, dove \textit{n} dipende dal modello di embedding utilizzato.
+A questo punto sia query che chunk estratti venivano convertiti in vettori \textit{n}-dimensionali, dove \textit{n} dipende dal modello di embedding utilizzato. Il modello utilizzato in questa fase è stato inizialmente \texttt{nomic-embed-text}. Ogni porzione di testo da tradurre veniva tradotto in un vettore mediante l'opportuna chiamata API.
 
-Il modello utilizzato in questa fase è stato inizialmente \texttt{nomic-embed-text}. Ogni porzione di testo da tradurre veniva tradotto in un vettore mediante l'opportuna chiamata API.
-
-Infine, per ciascuna coppia <\texttt{query\_vec}, \texttt{chunk\_vec}> veniva calcolata la metrica di cosine similarity, utilizzata successivamente come score per i singoli chunk. La lista di chunk veniva riordinata sulla base di questi ultimi e tutti i chunk con punteggi inferiori a una certa soglia, ossia \texttt{COSINE\_SIMILARITY\_THRESHOLD}, venivano automaticamente scartati.
-
-Ora, si selezionavano i primi \textit{k} nella lista e si costruiva il contesto per l'LLM, fino al raggiungimento di una lunghezza massima predefinita, cioè \texttt{MAX\_OUTPUT\_LENGTH}.
+Infine, per ciascuna coppia <\texttt{query\_vec}, \texttt{chunk\_vec}> veniva calcolata la metrica di cosine similarity, utilizzata successivamente come score per i singoli chunk. La lista di chunk veniva riordinata sulla base di questi ultimi e tutti i chunk con punteggi inferiori a una certa soglia, ossia \texttt{COSINE\_SIMILARITY\_THRESHOLD}, venivano automaticamente scartati. Come ultimo passo, si selezionavano i primi \textit{k} nella lista e si costruiva il contesto per l'LLM, fino al raggiungimento di una lunghezza massima predefinita, cioè \texttt{MAX\_OUTPUT\_LENGTH}.
 
 \subsection{RecursiveCharacterTextSplitter, bi-encoding e cross-encoding}
 Nell'implementazione finale di questa componente della pipeline si è deciso di sostituire il chunking manuale dei testi con una funzione utility, \texttt{RecursiveCharacter\allowbreak TextSplitter} della libreria \texttt{LangChain}.
 
-Tale modifica permette di suddividere in modo preciso il testo in chunk, senza perdere informazioni e mantenendo una soglia limite di \textit{k} caratteri.
+Tale modifica permette di suddividere in modo preciso il testo in chunk, senza perdere informazioni e mantenendo una soglia limite di \textit{k} caratteri. Ancora una volta si procede al bi-encoding di query e chunk, tuttavia con un modello più leggero (\texttt{intfloat/multilingual-e5-small}, fornito dalla libreria \texttt{TextEmbedder}) e in esecuzione direttamente nel container del backend (nell'iterazione precedente il modello si trovava in esecuzione su un container separato, introducendo maggiore overhead).
 
-Ancora una volta si procede al bi-encoding di query e chunk, tuttavia con un modello più leggero (\texttt{intfloat/multilingual-e5-small}, fornito dalla libreria \texttt{TextEmbedder}) e in esecuzione direttamente nel container del backend (nell'iterazione precedente il modello si trovava in esecuzione su un container separato, introducendo maggiore overhead).
-
-In aggiunta a ciò, \texttt{TextEmbedder} permette l'embedding di testo in \textit{batch}, operazione indubbiamente più efficiente dell'embedding iterativo di ogni singolo chunk ottenuto dai testi estratti nella fase precedente.
-
-Il passaggio successivo rimane invariato, difatti, una volta effettuato l'encoding si stila una lista sulla base dello score in termini di cosine similarity e si scartano tutti i chunk al di sotto della soglia stabilita.
+In aggiunta a ciò, \texttt{TextEmbedder} permette l'embedding di testo in \textit{batch}, operazione indubbiamente più efficiente dell'embedding iterativo di ogni singolo chunk ottenuto dai testi estratti nella fase precedente. Il passaggio successivo rimane invariato, difatti, una volta effettuato l'encoding si stila una lista sulla base dello score in termini di cosine similarity e si scartano tutti i chunk al di sotto della soglia stabilita.
 
 Tuttavia, un alto score di cosine similarity garantisce solo la vicinanza semantica del chunk per cui è stato calcolato alla query dell'utente, ma non assicura che quest'ultimo contenga veramente la risposta alla domanda posta.
 
-Per questo motivo, si è deciso di implementare un re-ranking dei primi \textit{k} chunk così ottenuti per costruire la "graduatoria" finale. Si utilizza pertanto un cross-encoder (nel nostro caso \texttt{ms-marco-MiniLM-L-6-v2}), in grado di stabilire quali siano realmente i chunk contenenti le informazioni utili a rispondere alla \texttt{user\_query}.
+Per questo motivo, si è deciso di implementare un re-ranking dei primi \textit{k} chunk così ottenuti per costruire la graduatoria finale. Si utilizza pertanto un cross-encoder (nel nostro caso \texttt{ms-marco-MiniLM-L-6-v2}), in grado di stabilire quali siano realmente i chunk contenenti le informazioni utili a rispondere alla \texttt{user\_query}.
 
-Dopo l'applicazione, anche in questo caso, di una soglia di punteggio minimo, ossia \texttt{CROSS\_ENCODING\_SIMILARITY\_THRESHOLD},  si aggiungono i chunk al \texttt{query\_context}, fino al raggiungimento della lunghezza massima per quest'ultimo. Per completezza, viene di seguito presentato la porzione di codice (contenuto nella classe \texttt{ChunkSelector}) ove viene effettuato quanto appena descritto. \newpage
+Dopo l'applicazione, anche in questo caso, di una soglia di punteggio minimo, ossia \texttt{CROSS\_ENCODING\_SIMILARITY\_THRESHOLD},  si aggiungono i chunk al \texttt{query\_context}, fino al raggiungimento della lunghezza massima per quest'ultimo. Per completezza, viene di seguito presentata la porzione di codice (contenuto nella classe \texttt{ChunkSelector}) ove viene effettuato quanto appena descritto. \newpage
 
 \begin{lstlisting}[language=Python, caption={Codice Python che implementa la fase di two-stage chunk retrieval.}, label={lst:chunk_ranking}]
 def select_relevant_chunks(
@@ -230,9 +236,7 @@ Tale implementazione assicura che, qualora le informazioni estratte, o quantomen
 \section{Iniezione del \texttt{query\_context} nel contesto dell'LLM e generazione della risposta finale per l'utente}
 Si tratta difatti del passaggio più semplice tra tutti quelli visti finora. L'unica difficoltà consiste nell'effettuare \textit{grounding} dell'LLM, vale a dire evitare, attraverso \textit{prompt engineering}, che il modello utilizzi informazioni di cui è già in possesso per rispondere alla domanda dell'utente.
 
-L'obiettivo è proprio quello di avere un modello che sia in grado di rispondere alla \texttt{user\_query} se e solo se la risposta è effettivamente contenuta nelle fonti ad esso fornite.
-
-Ora è sufficiente iniettare la \texttt{user\_query} nel prompt dell'LLM assieme al contesto della query (\texttt{query\_context}) e attendere la sua risposta.
+L'obiettivo è proprio quello di avere un modello che sia in grado di rispondere alla \texttt{user\_query} se e solo se la risposta è effettivamente contenuta nelle fonti ad esso fornite. Ora è sufficiente iniettare la \texttt{user\_query} nel prompt dell'LLM assieme al contesto della query (\texttt{query\_context}) e attendere la sua risposta.
 
 \subsection{Stima dell'affidabilità ed assegnazione da parte dell'LLM del relativo score}
 Al termine della propria risposta, una regola ferrea stabilita in fase di prompting impone all'LLM di emettere obbligatoriamente una breve sezione denominata ``affidabilità'', costituita da un breve commento sulla propria risposta, in cui il modello specifica quante delle informazioni fornite derivino direttamente dal testo e quanto queste ultime siano da ritenere pertanto attendibili.
@@ -246,18 +250,29 @@ Si noti che, come già asserito, l'LLM è istruito in modo tale da utilizzare es
         query_context_data: str
         ) -> str:
 
-    prompt = f"""
-    ...
-    1. RELIABILITY DETERMINATION (HIGHEST PRIORITY): At the end of EVERY answer, UNLESS you are using the exact fallback string from Rule 5, you MUST add a new line containing the reliability score.
-   - If the Question is in Italian: 'Affidabilità: <comment> (<score>/5)'
-   - If the Question is in English: 'Reliability: <comment> (<score>/5)'
-   The <comment> MUST briefly justify the score based on how well the reference texts support the answer. [...]
+        prompt = f"""
+        ...
+        1. RELIABILITY DETERMINATION (HIGHEST PRIORITY): At the end 
+        of EVERY answer UNLESS you are using the exact fallback 
+        string from Rule 5, you MUST add a new line containing 
+        the reliability score.
+        - If the Question is in Italian: 'Affidabilità: 
+        <comment> (<score>/5)'
+        - If the Question is in English: 'Reliability: 
+        <comment> (<score>/5)'
+        The <comment> MUST briefly justify the score based 
+        on how well the reference texts support the answer. [...]
 
-    2. STRICT GROUNDING: You must ONLY use facts explicitly mentioned in the <reference_texts>. [...] NEVER use outside knowledge.
-
-    5. INSUFFICIENT INFO: If the <reference_texts> do not contain any information to answer the question, output EXACTLY this string and NOTHING ELSE:
-        - For Italian: 'Mi dispiace, ma non ho abbastanza informazioni per rispondere a questa domanda.'
-    ...
+        2. STRICT GROUNDING: You must ONLY use facts explicitly 
+        mentioned in the <reference_texts>. [...] 
+        NEVER use outside knowledge.
+        ...
+        5. INSUFFICIENT INFO: If the <reference_texts> do not 
+        contain any information to answer the question, output 
+        EXACTLY this string and NOTHING ELSE:
+            - For Italian: 'Mi dispiace, ma non ho abbastanza 
+            informazioni per rispondere a questa domanda.'
+        ...
 
 \end{lstlisting}
 
@@ -266,9 +281,7 @@ Il modello fornisce, accanto al commento, un punteggio indicativo (da \textit{1}
 Questo garantisce \textit{in primis} trasparenza e permette inoltre all'utente di stabilire in modo indicativo in che porzione attenersi alla risposta appena ricevuta, sebbene sia sempre opportuno che quest'ultimo verifichi indipendentemente tali informazioni.
 
 \subsection{Trasparenza ed enumerazione delle fonti di riferimento}
-A tal riguardo, in fondo alla risposta del modello sono sempre indicate le fonti utilizzate da quest'ultimo per rispondere alla domanda dell'utente.
-
-Questo permette permette, tra le altre cose, una verifica celere di quanto riportato nella risposta generata dall'LLM.
+A tal riguardo, in fondo alla risposta del modello sono sempre indicate le fonti utilizzate da quest'ultimo per rispondere alla domanda dell'utente. Questo permette permette, tra le altre cose, una verifica celere di quanto riportato nella risposta generata dall'LLM.
 
 \begin{figure}[H]
     \centering
@@ -277,7 +290,7 @@ Questo permette permette, tra le altre cose, una verifica celere di quanto ripor
     \label{fig:risposta_llm_spiderman}
 \end{figure}
 
-Questo conclude la trattazione sulla pipeline implementata durante lo sviluppo del progetto. Per sintetizzare quanto detto nonché chiarire eventuali dubbi sulle diverse fasi previste da quest'ultima, si propone, nella pagina a seguire, un diagramma riepilogativo.
+Questo conclude la trattazione sulla pipeline implementata durante lo sviluppo del progetto. Per sintetizzare quanto esposto nonché chiarire eventuali dubbi sulle diverse fasi previste da quest'ultima, si propone, nella pagina a seguire, un diagramma riepilogativo.
 
 \begin{sidewaysfigure}[htbp]
     \centering
