@@ -1,6 +1,6 @@
 \chapter{Implementazione della pipeline RAG}
 
-In questo capitolo tratteremo estensivamente la fase implementativa del progetto e, come preannunciato, quali siano state le principali sfide da risolvere durante lo sviluppo di quest'ultimo. In ciascuna delle sezioni presentate, descriveremo le varie componenti della pipeline di retrieval-augmented generation, ciascuna avente un obiettivo ben preciso, evidenziando gli approcci nonché tecnologie impiegate al fine di raggiungere quest'ultimo. 
+In questo capitolo tratteremo estensivamente la fase implementativa del progetto e, come preannunciato, quali siano state le principali sfide da risolvere durante lo sviluppo di quest'ultimo. Per ragioni di brevità, ci concentreremo principalmente sull'implementazione della componente essenziale, e a mio avviso maggiormente affascinante, di Sapienza-DC: la pipeline RAG. In ciascuna delle sezioni presentate, descriveremo le varie componenti della pipeline di retrieval-augmented generation, ciascuna avente un obiettivo ben preciso, evidenziando gli approcci nonché tecnologie impiegate al fine di raggiungere quest'ultimo.    
 \section{Processamento preliminare della query dell'utente e disambiguazione}
 Si è pensato fin da subito di processare la richiesta dell'utente tramite un LLM (detto \textit{guardrail}\footnote{guardrail}), richiedendo a quest'ultimo, mediante un prompt adeguato, di classificare la query come \texttt{ACCEPTED} o \texttt{REJECTED}. Nel caso in cui dovesse essere rifiutata, l'utente viene notificato con il messaggio \texttt{"Your query appears to be meaningless or invalid. Please ask a clear, answerable question"}. 
 
@@ -54,7 +54,7 @@ In seguito a un'ampia riflessione si è giunti a una nuova soluzione: parsare le
 
 Infatti, l'analisi del DOM di una pagina restituita da una ricerca su Google ha ben presto evidenziato una problematica sostanziale: ogni singolo \textit{div}\footnote{div:} o \textit{span}\footnote{span:} contenente i risultati della ricerca era caratterizzato da classi e id generati in modo del tutto casuale per ogni nuova ricerca, rendendo impossibile estrarre i dati in modo automatizzato.
 
-Per puro caso, tuttavia, si è stati in grado di trovare un motore di ricerca privato che fa utilizzo di una ben nota API di ricerca a pagamento: SerpAPI\footnote{sus}. Tale motore di ricerca è \href{https://www.startpage.com}{Startpage} e, al contrario di Google, non implementa meccanismi \textit{anti-crawling}\footnote{anti-crawling:} nelle pagine restituite in seguito a una query.
+Ciononostante, dopo diverso tempo dedicato alla ricerca di possibili soluzioni, si è stati in grado di trovare un motore di ricerca privato che fa utilizzo di una ben nota API di ricerca a pagamento: SerpAPI\footnote{sus}. Tale motore di ricerca è \href{https://www.startpage.com}{Startpage} e, al contrario di Google, non implementa meccanismi \textit{anti-crawling}\footnote{anti-crawling:} nelle pagine restituite in seguito a una query.
 
 Pertanto, usufruendo ancora una volta della libreria Crawl4AI e modificando leggermente il progetto dell'esonero (Minerva Web Parser) in modo tale da introdurre un nuovo parser (\texttt{StartpageSearchEngineParser}) capace di restituire, data una query, un dominio di interesse e un intero \textit{k}, i primi \textit{k} risultati di tale ricerca (senza duplicati) su Startpage. Inoltre, tramite l'aggiunta di un semplice endpoint \texttt{/get\_query\_results} abbiamo difatti creato una nostra API personalizzata al fine di permettere lo scraping e il retrieval degli URL risultanti da una ricerca su web.
 
@@ -142,7 +142,7 @@ In caso contrario, il modello risponderà semplicemente con \texttt{"Mi dispiace
 
 Di seguito è proposto un resoconto degli approcci utilizzati, in fase di sviluppo del progetto, per raggiungere l'obiettivo appena descritto. 
 \subsection{Chunking manuale e token count}
-Un primo approccio \textit{naive} è stato quello di dividere manualmente il \texttt{parsed\_text} ottenuto da ciascun URL in chunk di lunghezza arbitraria.
+Un primo approccio \textit{naive}\footnote{naive:} è stato quello di dividere manualmente il \texttt{parsed\_text} ottenuto da ciascun URL in chunk di lunghezza arbitraria.
 
 In questa prima soluzione proposta, i chunk venivano classificati per ordine di count decrescente di \texttt{query\_token} contenuti in essi.
 
@@ -178,7 +178,7 @@ Tuttavia, un alto score di cosine similarity garantisce solo la vicinanza semant
 
 Per questo motivo, si è deciso di implementare un re-ranking dei primi \textit{k} chunk così ottenuti per costruire la "graduatoria" finale. Si utilizza pertanto un cross-encoder (nel nostro caso \texttt{ms-marco-MiniLM-L-6-v2}), in grado di stabilire quali siano realmente i chunk contenenti le informazioni utili a rispondere alla \texttt{user\_query}.
 
-Dopo l'applicazione, anche in questo caso, di una soglia di punteggio minimo, ossia \texttt{CROSS\_ENCODING\_SIMILARITY\_THRESHOLD},  si aggiungono i chunk al \texttt{query\_context}, fino al raggiungimento della lunghezza massima per quest'ultimo. Per completezza, viene di seguito presentato la porzione di codice (contenuto nella classe \texttt{ChunkSelector}) ove viene effettuato quanto appena descritto.
+Dopo l'applicazione, anche in questo caso, di una soglia di punteggio minimo, ossia \texttt{CROSS\_ENCODING\_SIMILARITY\_THRESHOLD},  si aggiungono i chunk al \texttt{query\_context}, fino al raggiungimento della lunghezza massima per quest'ultimo. Per completezza, viene di seguito presentato la porzione di codice (contenuto nella classe \texttt{ChunkSelector}) ove viene effettuato quanto appena descritto. \newpage
 
 \begin{lstlisting}[language=Python, caption={Codice Python che implementa la fase di two-stage chunk retrieval.}, label={lst:chunk_ranking}]
 def select_relevant_chunks(
@@ -235,7 +235,31 @@ L'obiettivo è proprio quello di avere un modello che sia in grado di rispondere
 Ora è sufficiente iniettare la \texttt{user\_query} nel prompt dell'LLM assieme al contesto della query (\texttt{query\_context}) e attendere la sua risposta.
 
 \subsection{Stima dell'affidabilità ed assegnazione da parte dell'LLM del relativo score}
-Al termine della propria risposta, una regola ferrea stabilita in fase di prompting impone all'LLM di emettere obbligatoriamente una breve sezione denominata "affidabilità", costituita da un breve commento sulla propria risposta, in cui il modello specifica quante delle informazioni fornite derivino direttamente dal testo e quanto queste ultime siano da ritenere pertanto attendibili.
+Al termine della propria risposta, una regola ferrea stabilita in fase di prompting impone all'LLM di emettere obbligatoriamente una breve sezione denominata ``affidabilità'', costituita da un breve commento sulla propria risposta, in cui il modello specifica quante delle informazioni fornite derivino direttamente dal testo e quanto queste ultime siano da ritenere pertanto attendibili.
+
+Si noti che, come già asserito, l'LLM è istruito in modo tale da utilizzare esclusivamente le informazioni direttamente ricavabili dalle fonti estratte, e non nozioni già in suo possesso. Nel seguente listato viene fornita la porzione di prompt responsabile del grounding dell'LLM, contenuto nella classe \texttt{PromptBuilder} del modulo \texttt{llm\_manager}.
+
+\begin{lstlisting}[language=Python, caption={Porzione di prompt che gestisce il grounding dell'LLM.}, label={lst:grounding_prompt}]
+@staticmethod
+    def build_answer_user_query_prompt(
+        query: str, 
+        query_context_data: str
+        ) -> str:
+
+    prompt = f"""
+    ...
+    1. RELIABILITY DETERMINATION (HIGHEST PRIORITY): At the end of EVERY answer, UNLESS you are using the exact fallback string from Rule 5, you MUST add a new line containing the reliability score.
+   - If the Question is in Italian: 'Affidabilità: <comment> (<score>/5)'
+   - If the Question is in English: 'Reliability: <comment> (<score>/5)'
+   The <comment> MUST briefly justify the score based on how well the reference texts support the answer. [...]
+
+    2. STRICT GROUNDING: You must ONLY use facts explicitly mentioned in the <reference_texts>. [...] NEVER use outside knowledge.
+
+    5. INSUFFICIENT INFO: If the <reference_texts> do not contain any information to answer the question, output EXACTLY this string and NOTHING ELSE:
+        - For Italian: 'Mi dispiace, ma non ho abbastanza informazioni per rispondere a questa domanda.'
+    ...
+
+\end{lstlisting}
 
 Il modello fornisce, accanto al commento, un punteggio indicativo (da \textit{1} a \textit{5}) dell'indice di affidabilità (o \textit{reliability}) della risposta data all'utente.
 
@@ -245,3 +269,21 @@ Questo garantisce \textit{in primis} trasparenza e permette inoltre all'utente d
 A tal riguardo, in fondo alla risposta del modello sono sempre indicate le fonti utilizzate da quest'ultimo per rispondere alla domanda dell'utente.
 
 Questo permette permette, tra le altre cose, una verifica celere di quanto riportato nella risposta generata dall'LLM.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{risposta_llm_spiderman.png}
+    \caption{La risposta finale alla query ``Chi è Spiderman?'', generata dall'LLM.}
+    \label{fig:risposta_llm_spiderman}
+\end{figure}
+
+Questo conclude la trattazione sulla pipeline implementata durante lo sviluppo del progetto. Per sintetizzare quanto detto nonché chiarire eventuali dubbi sulle diverse fasi previste da quest'ultima, si propone, nella pagina a seguire, un diagramma riepilogativo.
+
+\begin{sidewaysfigure}[htbp]
+    \centering
+    \includegraphics[width=1.0\textheight]{sapienza-dc-pipeline-rag-diagram.png}
+    \caption{Diagramma della pipeline di retrieval-augmented generation (RAG).}
+    \label{fig:diagramma_pipeline_RAG}
+\end{sidewaysfigure}
+
+\clearpage 
