@@ -7,7 +7,14 @@ Si tratta di un'ottimizzazione già preannunciata. Difatti, il parsing delle pag
 
 Pertanto, i testi estratti (\texttt{parsed\_text}) vengono indicizzati per URL nel database locale; eventuali query successive sugli stessi indirizzi leggeranno direttamente dalla cache, minimizzando la latenza e massimizzando conseguentemente il troughput della pipeline RAG.
 
-Si è tenuto conto anche del fatto che una pagina potesse essere aggiornata nel tempo, motivo per cui l'utente può scegliere di cercare sempre sul web per ottenere informazioni aggiornate, spuntando semplicemente con il proprio cursore la casella etichettata \texttt{"Always search for updated information"}. La seguente porzione di codice, contenuta nel modulo \texttt{api\_server/} e in particolare in \texttt{server.py}, implementa quanto appena illustrato. \textbf{QUI AGGIUNTI FOTO PULSANTE}
+Si è tenuto conto anche del fatto che una pagina potesse essere aggiornata nel tempo, motivo per cui l'utente può scegliere di cercare sempre sul web per ottenere informazioni aggiornate, spuntando semplicemente con il proprio cursore la casella etichettata \texttt{"Always search for updated information"}. La seguente porzione di codice, contenuta nel modulo \texttt{api\_server/} e in particolare in \texttt{server.py}, implementa quanto appena illustrato.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{sdc-always-search-checkbox.png}
+    \caption{Opzione per abilitare la ricerca da fonti sempre aggiornate.}
+    \label{fig:sdc-always-search-checkbox}
+\end{figure}
 
 \begin{lstlisting}[language=Python, caption={Implementazione del sistema di caching dei contenuti degli URL.}, label={lst:parsed_text_caching}]
 @app.post("/chat")
@@ -33,24 +40,29 @@ def chat(message: ChatInput) -> StreamingResponse:
 \end{lstlisting}
 
 \subsection{Da Ollama a llama.cpp}
-Anche questa modifica era in realtà stata anticipata nel secondo capitolo. In un secondo momento, si è deciso di sostituire \texttt{Ollama} direttamente con \textbf{llama.cpp}, permettendo di caricare nonché gestire direttamente modelli \texttt{.gguf} quantizzati a 4-bit (\textit{i.e.} \texttt{Ministral-3-3B-Instruct-2512-Q4\_K\_M}), permettendo di ridurre sostanzialmente l'overhead dovuto al \textit{wrapper} e l'uso di RAM.
+Anche questa modifica era in realtà stata anticipata nei precedenti capitoli. In un secondo momento, si è deciso di sostituire \texttt{Ollama} direttamente con \textbf{llama.cpp}, permettendo di caricare nonché gestire direttamente modelli \texttt{.gguf} quantizzati a 4-bit (\textit{i.e.} \texttt{Ministral-3-3B-Instruct-2512-Q4\_K\_M}), permettendo di ridurre sostanzialmente l'overhead dovuto al \textit{wrapper} e l'uso di RAM.
 Tale configurazione permette anche agli utenti che non dispongono di una GPU e che fanno girare l'LLM direttamente su CPU, caricandolo in memoria, di eseguire il progetto con requisiti di sistema meno stringenti.
 
 \subsection{BYOK (Bring Your Own Key)}
-È stata introdotta tramite interfaccia grafica la possibilità di scegliere a runtime il \textit{provider}\footnote{provider: dall'inglese, ``fornitore''} LLM. L'utente può infatti scegliere tra un modello a suo piacimento, caricato localmente nella directory di progetto \texttt/models, e API remote compatibili con OpenAI, per le quali possiede un'opportuna \texttt{API\_KEY}\footnote{API key: sos}. A seguire viene proposta un'immagine raffigurante il menù reso disponibile all'utente al fine di scegliere il fornitore del modello utilizzato dal sistema.
+È stata introdotta tramite interfaccia grafica la possibilità di scegliere a runtime il \textit{provider}\footnote{provider: dall'inglese, ``fornitore''} LLM. L'utente può infatti scegliere tra un modello a suo piacimento, caricato localmente nella directory di progetto \texttt/models, e API remote compatibili con OpenAI, per le quali possiede un'opportuna \texttt{API\_KEY}\footnote{API key: è una chiave univoca utilizzata per identificare un utente o un'applicazione che accede a un determinato servizio tramite una chiamata API.}. A seguire viene proposta un'immagine raffigurante il menu reso disponibile all'utente al fine di scegliere il fornitore del modello utilizzato dal sistema.
 
-\textbf{FOTO MENU' SELEZIONE LLM}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{sdc-model-provider-selection.png}
+    \caption{Menu per la selezione del provider LLM.}
+    \label{fig:sdc-llm-provider-selection-menu}
+\end{figure}
 
 \subsection{CYM (Choose Your Model)}
 Come menzionato nella sezione precedente, l'utente è libero di scegliere il modello che preferisce e in generale quello più adatto ad essere eseguito sulla propria macchina, scaricando semplicemente il file \texttt{.gguf} dell'LLM e copiandolo nell'opportuna directory del progetto.
 Si noti che la pipeline è stata testata esclusivamente mediante \texttt{Ministral-3-3B-Instruct-2512-Q4\_K\_M} e che i risultati ottenuti in seguito a una stessa query potrebbero variare a seconda del modello utilizzato.
 
 \subsection{Docker-compose per build CPU e GPU}
-L'utente può scegliere se sfruttare la propria \textit{GPU}, qualora presente sul sistema, per eseguire i modelli molto più velocemente. Per fare ciò, è sufficiente effettuare la \textit{build} del progetto utilizzando \texttt{docker-compose.gpu.yaml}, senza necessità di modificare la directory\footnote{directory:} del progetto o di effettuare il download di nuovi file manualmente.
+L'utente può scegliere se sfruttare la propria \textit{GPU}, qualora presente sul sistema, per eseguire i modelli molto più velocemente. Per fare ciò, è sufficiente effettuare la \textit{build} del progetto utilizzando \texttt{docker-compose.gpu.yaml}, senza necessità di modificare la directory\footnote{directory: cartella} del progetto o di effettuare il download di nuovi file manualmente.
 \section{Sicurezza e mitigazione di prompt injection}
-Una delle principali problematiche riscontrate in fase di testing consisteva nel fatto che ciascun livello della pipeline fosse altamente sensibile ad attacchi di prompt injection o \textit{persona replacement}\footnote{persona replacement: }. Per rammentare quanto già spiegato nei primi capitoli riguardo questo tipo di attacchi, essi  si riducono a un tentativo da parte di un utente malintenzionato di introdurre istruzioni malevoli nel flusso di input (\texttt{user\_query}) al fine di sovrascrivere le direttive di sistema (\texttt{system\_prompt}\footnote{system prompt: }), alterando il comportamento previsto del modello o provocando talvolta l'esfiltrazione di dati sensibili in un proceso noto come \textit{data hijacking}.
+Una delle principali problematiche riscontrate in fase di testing consisteva nel fatto che ciascun livello della pipeline fosse altamente sensibile ad attacchi di prompt injection o \textit{persona replacement}\footnote{persona replacement: tecnica di prompt injection mediante cui un attaccante tenta di modificare le istruzioni fornite al modello, con lo scopo di fare assumere a quest'ultimo un'identità diversa da quella originalmente assegnatagli.}. Per rammentare quanto già spiegato nei primi capitoli riguardo questo tipo di attacchi, essi  si riducono a un tentativo da parte di un utente malintenzionato di introdurre istruzioni malevoli nel flusso di input (\texttt{user\_query}) al fine di sovrascrivere le direttive di sistema (\texttt{system\_prompt}\footnote{system prompt: prompt di sistema, vale a dire l'insieme di istruzioni ``segrete'' (cioè che l'utente non vede esternamente) volte a definire la personalità, il ruolo e i limiti di un modello.}), alterando il comportamento previsto del modello o provocando talvolta l'esfiltrazione di dati sensibili in un proceso noto come \textit{data hijacking}.
 
-Al fine di assicurare la robustezza nonché sicurezza dell'intera pipeline RAG, il progetto adotta un approccio rigorosamente orientato al modello \textit{Zero-Trust}\footnote{ZTA - Zero Trust Architecture:}. Come accennato in precedenza, la responsabilità della sicurezza non è affidata esclusivamente all'LLM guardrail, bensì a ciascun LLM della pipeline. Questo assicura pertanto che l'integrità di quest'ultima non dipenda integralmente dalla capacità di un singolo modello di deflettere prompt malevoli, evitando di avere un single point of failure. 
+Al fine di assicurare la robustezza nonché sicurezza dell'intera pipeline RAG, il progetto adotta un approccio rigorosamente orientato al modello \textit{Zero-Trust}\footnote{ZTA - Zero Trust Architecture: modello di sicurezza informatica che prevede l'assenza totale di fiducia nei confronti dell'utente e la necessità di continue verifiche per garantire la sicurezza del sistema.}. Come accennato in precedenza, la responsabilità della sicurezza non è affidata esclusivamente all'LLM guardrail, bensì a ciascun LLM della pipeline. Questo assicura pertanto che l'integrità di quest'ultima non dipenda integralmente dalla capacità di un singolo modello di deflettere prompt malevoli, evitando di avere un single point of failure. 
 
 L'architettura implementa, a tal scopo, una strategia di difesa a più strati basata sulle seguenti strategie:
 
@@ -59,29 +71,34 @@ L'architettura implementa, a tal scopo, una strategia di difesa a più strati ba
     
     \item \textbf{direttive esplicite anti-injection}: all'interno del prompt di sistema viene iniettata una regola a priorità assoluta che istruisce il a ignorare qualsivoglia comando tenti di alterare la sua \textit{persona} o di invalidare le regole precedenti impostegli;
     
-    \item \textbf{neutralizzazione di tentativi di manipolazione emotiva}: gli attacchi di \textit{jailbreaking}\footnote{jailbreaking:} moderni sfruttano spesso meccanismi di leva psicologicha o scenari ipotetici per indurre il modello a violare i propri vincoli operativi. Le direttive di sistema inibiscono sistematicamente questo tipo di attacchi, imponendo all'LLM un'assoluta obiettività distaccata: nessuna supplica emotiva o scenario fittizio potrà costituire una deroga alle policy\footnote{policy:} di sicurezza stabilite.
+    \item \textbf{neutralizzazione di tentativi di manipolazione emotiva}: gli attacchi di \textit{jailbreaking}\footnote{jailbreaking: tentativo malevolo di aggirare le restrizioni di sicurezza o le linee guida di un LLM.} moderni sfruttano spesso meccanismi di leva psicologicha o scenari ipotetici per indurre il modello a violare i propri vincoli operativi. Le direttive di sistema inibiscono sistematicamente questo tipo di attacchi, imponendo all'LLM un'assoluta obiettività distaccata: nessuna supplica emotiva o scenario fittizio potrà costituire una deroga alle policy\footnote{policy: letteralmente ``politica'', in questo caso da intendere al plurale.} di sicurezza stabilite.
     
-    \item \textbf{politica di opacità del sistema (\textit{system opacity}):} al fine di prevenire tentativi di \textit{prompt leakage}\footnote{prompt leakage:}, i modelli sono vincolati da rigide regole di riservatezza. Qualora una query dovesse essere identificata come malevola o tenti di trarre informazioni inerenti ai system prompt dell'LLM, il sistema la rigetterà automaticamente, informando l'utente mediante un messaggio generico. Grazie a questo approccio, il potenziale attaccante non è in grado di reperire informazioni sul prompt di sistema, e dunque sulle regole imposte ai modelli, per incrementare le probabilità di successo di un attacco.    
+    \item \textbf{politica di opacità del sistema (\textit{system opacity}):} al fine di prevenire tentativi di \textit{prompt leakage}\footnote{prompt leakage: particolari attacchi aventi come obiettivo principale quello di estrarre informazioni riguardo il prompt di sistema utilizzato per istruire il modello.}, i modelli sono vincolati da rigide regole di riservatezza. Qualora una query dovesse essere identificata come malevola o tenti di trarre informazioni inerenti ai system prompt dell'LLM, il sistema la rigetterà automaticamente, informando l'utente mediante un messaggio generico. Grazie a questo approccio, il potenziale attaccante non è in grado di reperire informazioni sul prompt di sistema, e dunque sulle regole imposte ai modelli, per incrementare le probabilità di successo di un attacco.    
 \end{itemize}
 
 Per mostrare l'efficacia di tali mitigazioni, si veda il seguente esempio in cui si tenta, senza successo e per mezzo di diversi prompt malevoli, a superare le barriere imposte con l'obiettivo di compromettere la sicurezza dell'applicazione.
 
-\textbf{[FOTO TENTATIVO FALLIMENTARE PROMPT-INJECTION QUI]}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{sdc-prompt-injection-attempt.png}
+    \caption{Neutralizzazione di un tentativo di prompt injection: la query viene ignorata.}
+    \label{fig:sdc-prompt-injection-attempt}
+\end{figure}
 
 \section{Valutazione delle prestazioni e benchmark della pipeline RAG}
 Sapienza-DC ha ottenuto, su un benchmark qualitativo\footnote{il benchmark è stato effettuato autonomamente, usufruendo di casi di test generati attraverso l'uso di un LLM. I punteggi per ogni query sono stati assegnati secondo la seguente logica: risposta corretta = 1; risposta parzialmente corretta = 0.5\,-\,0.8; risposta errata (o informazioni insufficienti) = 0.} caratterizzato da 34 interrogazioni di complessità crescente incentrate su diversi ambiti della conoscenza umana (cultura generale, notizie recenti, storia, geografia, filosofia, scienze, fisica, \textit{etc.}) un punteggio pari a \textbf{83 su 100}.
 
-Il benchmark prevedeva inoltre 10 test volti a stabilire la capacità del sistema di individuare e neutralizzare correttamente prompt malevoli volti a sabotare l'integrità della pipeline. A tal riguardo, Sapienza-DC è stato in grado di gestire correttamente ogni singolo \textit{test case}\footnote{test case}, rifiutando istantaneamente i prompt malevoli e ottenendo pertanto un punteggio \textbf{eccellente}.
+Il benchmark prevedeva inoltre 10 test volti a stabilire la capacità del sistema di individuare e neutralizzare correttamente prompt malevoli volti a sabotare l'integrità della pipeline. A tal riguardo, Sapienza-DC è stato in grado di gestire correttamente ogni singolo \textit{test case}\footnote{test case: caso di test, di prova.}, rifiutando istantaneamente i prompt malevoli e ottenendo pertanto un punteggio \textbf{eccellente}.
 
 Un'altra interessante metrica consiste indubbiamente nei tempi di risposta dell'LLM, cioè nell'intervallo di tempo trascorso dall'invio da parte dell'utente della propria query all'istante in cui il sistema comincia ad emettere la risposta generata del modello. 
 
 Si tenga in considerazione come i dati proposti di seguito siano tutt'altro che oggettivi né sono da considerare attendibili, giacché dipendono da innumerevoli fattori quali latenza di rete, presenza o meno di informazioni già estratte sul database (cache hit/miss), prestazioni dell'hardware, disponibilità o meno di una GPU in caso di caricamento locale del modello e svariati altri. Pertanto, quanto misurato in fase di testing potrebbe variare considerevolmente su altre macchine o configurazioni. 
 
-Ciononostante è possibile notare con piacere come non si debba attendere eccessivamente, eccezion fatta naturalmente per il caso in cui si esegua l'LLM localmente sulla propria CPU, per ricevere la risposta alla propria query. Questo non significa però che un qualunque utente sprovvisto di GPU sia impossibilitato a interrogare il sistema, poiché, come ribadito più volte, quest'ultimo può in ogni caso avvalersi di API remote gratuite per avere inferenza\footnote{inferenza:} immediata. 
+Ciononostante è possibile notare con piacere come non si debba attendere eccessivamente, eccezion fatta naturalmente per il caso in cui si esegua l'LLM localmente sulla propria CPU, per ricevere la risposta alla propria query. Questo non significa però che un qualunque utente sprovvisto di GPU sia impossibilitato a interrogare il sistema, poiché, come ribadito più volte, quest'ultimo può in ogni caso avvalersi di API remote gratuite per avere inferenza immediata. 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.75\textwidth]{sdc-perf-benchmark.png}
+    \includegraphics[width=1.0\textwidth]{sdc-perf-benchmark.png}
     \caption{Benchmark: correttezza delle risposte generate.}
     \label{fig:sdc-perf-benchmark}
 \end{figure}
@@ -102,8 +119,28 @@ Ciononostante è possibile notare con piacere come non si debba attendere eccess
 
 \section{Documentazione del codice e manutenibilità}
 \subsection{Modularità e manutenibilità del codice}
-Una suddivisione in moduli con singole responsabilità ben definite, nonché l'uso di type-hinting nonché di \textit{docstring}\footnote{docstring:} secondo lo standard Google garantisce infine sia scalabilità che manutenibilità del progetto. Ciascun metodo o funzione rilevante viene pertanto documentata secondo il seguente schema:
+Una suddivisione in moduli con singole responsabilità ben definite, nonché l'uso di type-hinting nonché di \textit{docstring}\footnote{docstring: una stringa inserita nel codice sorgente al fine di documentare funzioni, classi e metodi.} secondo lo standard Google garantisce infine sia scalabilità che manutenibilità del progetto. Ciascun metodo o funzione rilevante viene pertanto documentata secondo lo schema presentato nella pagina successiva.
 
-\textbf{[SCHEMA DOCSTRING]}
+\begin{lstlisting}[language=Python, caption={Formato Google per la documentazione del codice mediante docstring.}, label={lst:docstring_schema_google}]
+def mia_funz(param1: t1, param2: t2) -> tipo_ret:
+    """
+    Riga di riepilogo dedicata allo scopo della funzione.
+
+    Descrizione più dettagliata della funzione, che può
+    estendersi su più righe. Può contenere informazioni
+    inerenti ai parametri passati e ad eventuali valori
+    di ritorno.
+    
+    Args:
+        param1 (t1): descrizione di param1
+        param2 (t2): descrizione di param2
+
+    Returns:
+        tipo_ret: possibili valori di ritorno ed eventuali
+                  condizioni di ritorno di tali valori.    
+    """
+    # implementazione di mia_funz
+    ...
+\end{lstlisting}
 
 
