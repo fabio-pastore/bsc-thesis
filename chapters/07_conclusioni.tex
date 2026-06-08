@@ -1,2 +1,34 @@
 \chapter{Conclusioni}
-\section{Considerazioni finali e sviluppi futuri}
+\section{Considerazioni finali}
+Giunti al termine di questo elaborato, ritengo sia opportuno trarre alcune importanti considerazioni riguardo al lavoro svolto nonché ai risultati ottenuti.
+
+L'approccio modulare adottato in fase di progettazione e di sviluppo si è rivelato fondamentale per garantire \textit{in primis} la correttezza funzionale dell'intero sistema, ma in secondo luogo anche per la sua elevata flessibilità e manutenibilità futura. La pipeline realizzata, fin dall'estrazione e parsing dei contenuti web fino alla complessa generazione della risposta finale mediante l'impiego di LLM, ha difatti dimostrato di poter gestire con successo query complesse, ambigue o dannose. L'implementazione di rigorosi meccanismi di sicurezza, quali la difesa contro tentativi di prompt injection discussa nei capitoli precedenti, unitamente alle strategie di ottimizzazione introdotte, hanno contribuito a rendere l'applicativo uno strumento solido, robusto nonché performante.
+
+In aggiunta a ciò, la capacità del sistema di valutare criticamente l'affidabilità delle fonti reperite e di fornire puntualmente i riferimenti a corredo delle risposte generate, rappresenta un valore aggiunto cruciale del lavoro presentato. Tale qualità  risponde estensivamente alle esigenze di trasparenza, oggettività e verificabilità delle informazioni fornite, aspetti divenuti imprescindibili nell'odierno panorama dell'intelligenza artificiale generativa. ove il fenomeno delle cosiddette allucinazioni costituisce una problematica tutt'altro che irrilevante. I risultati ottenuti durante le fasi di benchmark qualitativo sono incoraggianti e confermano definitivamente la validità delle scelte architetturali e tecnologiche adottate nel corso dello sviluppo della pipeline RAG.
+
+\section{Sviluppi futuri}
+Nonostante gli ottimi traguardi raggiunti e le prestazioni osservate, l'architettura di Sapienza-DC è stata concepita sin dalle prime fasi di progettazione per essere estesa ulteriormente, lasciando pertanto spazio a molteplici e interessanti funzionalità aggiuntive. Di seguito vengono illustrate le principali idee che potrebbero costituire basi solide per nuove iterazioni di sviluppo del progetto.
+
+\subsection{Miglioramento della sicurezza e analisi etica delle query proposte}
+Sebbene il sistema implementi già un'architettura Zero-Trust nonché difese stratificate contro la manipolazione emotiva e attacchi di persona replacement, le tecniche di prompt injection ideate da utenti malintenzionati sono in continua e rapida evoluzione. Uno sviluppo futuro estremamente auspicabile consisterebbe nell'integrazione di un modello LLM di dimensioni contenute, o di un classificatore specializzato, dedicato esclusivamente alla \textit{sanitization}\footnote{sanitization: dall'inglese, ``sanificazione''} e al filtraggio preventivo dell'input dell'utente. 
+
+Tale componente permetterebbe in effetti di intercettare e deflettere query malevole ancor prima che queste vengano introdotte nella pipeline, riducendo drasticamente la superficie di attacco complessiva e limitando l'esposizione di quest'ultima. Si noti inoltre come l'attuale sistema di guardrail si concentri soprattutto sulla neutralizzazione di query malevoli, volutamente inviate da potenziali attaccanti, il cui pericolo è concreto per il sistema stesso. 
+
+Dunque, appare immediata la necessità di verificare, in un secondo momento, anche la correttezza etica dell'interrogazione proposta e se quest'ultima possa comportare o meno l'ottenimento, da parte dell'utente, di informazioni pericolose. Questo è un dettaglio di cui il sistema ancora non tiene conto estensivamente.      
+
+\subsection{Gestione di più utenti, funzionalità di login e autenticazione}
+Allo stato attuale, l'applicativo è pensato per l'utilizzo da parte di un singolo utente, in un ambiente di esecuzione esclusivamente locale. Un'evoluzione naturale e necessaria del progetto, qualora si desiderasse proporlo su più vasta scala, prevedrebbe l'introduzione di un sistema di autenticazione e autorizzazione. 
+
+Tale integrazione consentirebbe di gestire molteplici sessioni simultanee e cronologie di chat isolate per ciascun utente, permettendo quindi la fruizione dell'applicativo come servizio web distribuito su cloud e accessibile contemporaneamente da numerosi utenti.
+
+\subsection{Elaborazione di documenti e file locali con finalità di RAG}
+L'estrazione della conoscenza avviene attualmente analizzando e parsando in via esclusiva pagine web per mezzo dei rispettivi URL. Al fine di rendere Sapienza-DC uno strumento di ricerca ancora più versatile, potente e indipendente dalla disponibilità di rete, sarebbe di inestimabile utilità introdurre la possibilità per l'utente di effettuare l'upload di documenti testuali (quali PDF, file di testo o presentazioni). 
+
+Il sistema dovrebbe pertanto essere esteso affinché risulti in grado di estrarre il testo da tali formati senza alcuna connettività, processarlo, effettuandone l'embedding e salvandolo in un'infrastruttura vettoriale locale, consentendo all'LLM di rispondere a query inerenti anche a basi di conoscenza esclusivamente private e fornite dall'utente stesso. Questo richiederebbe, oltre all'abilità di estrarre informazioni da varie tipologie di file, anche la necessità di introdurre un database vettoriale\footnote{base di dati vettoriale: }.
+
+\subsection{Valutazione rigorosa mediante benchmark standardizzati}
+Infine, benché il sistema sia stato sottoposto a un benchmark che ne abbia accertato la solidità operativa, al fine di avere una validazione formale nonché rigorosa dei risultati ottenuti sarebbe opportuno condurre test sistematici e automatizzati.
+
+L'adozione di una pipeline di valutazione fondata su framework dedicati, quali RAGAS (Retrieval-Augmented Generation \textit{Assessment}\footnote{assessment: dall'inglese, ``valutazione''.}) o TruLens, permetterebbe di quantificare oggettivamente metriche fondamentali come la \textit{context relevance}\footnote{context relevance: rilevanza del contesto estratto.}, l'\textit{answer faithfulness}\footnote{answer faithfulness: fedeltà della risposta al contesto.} e l'\textit{answer relevance}\footnote{answer relevance: pertinenza della risposta alla query posta.}. 
+
+Un simile approccio offrirebbe la possibilità di confrontare empiricamente le prestazioni del sistema al variare dei modelli LLM adottati o dei parametri delle varie componenti di retrieval, guidando così futuri interventi di \textit{fine-tuning}\footnote{fine-tuning: messa a punto, perfezionamento.} della pipeline.
