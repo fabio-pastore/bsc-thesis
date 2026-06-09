@@ -37,10 +37,10 @@ A partire dalle ultime implementazioni del progetto, si è deciso di fare in mod
 \section{Ricerca degli URL e parsing delle pagine web}
 Data una query dell'utente e il dominio assegnato a quest'ultima è necessario trovare gli URL delle pagine che contengono le informazioni necessarie a rispondere ad essa.
 
-Ci si è ben presto resi conto che ottenere in maniera programmatica i risultati di una ricerca su web da un search engine non fosse semplice. In effetti, tutte le API rese disponibili per questo scopo si sono rivelate essere a pagamento oppoure con limiti di utilizzo particolarmente stringenti.
+Ci si è ben presto resi conto che ottenere in maniera programmatica i risultati di una ricerca su web da un search engine non fosse semplice. In effetti, tutte le API rese disponibili per questo scopo si sono rivelate essere a pagamento oppure con limiti di utilizzo particolarmente stringenti.
 
 \subsection{DDGS - Duck Duck Go Search}
-Una prima soluzione alla quale si è giunti consistenva nell'utilizzo della libreria \texttt{DDGS}, basata sul motore di ricerca Duck Duck Go. Questa soluzione si è rivelata tutto fuorché ottimale poiché dopo poche ricerche il motore ha segnalato le nostre richieste come sospette e ha cominciato a non restituire più alcun risultato.
+Una prima soluzione alla quale si è giunti consisteva nell'utilizzo della libreria \texttt{DDGS}, basata sul motore di ricerca Duck Duck Go. Questa soluzione si è rivelata tutto fuorché ottimale poiché dopo poche ricerche il motore ha segnalato le nostre richieste come sospette e ha cominciato a non restituire più alcun risultato.
 
 \subsection{SearXNG e qwant}
 Un tentativo successivo ha visto l'impiego di SearXNG, un \textit{metasearch engine} open-source che aggrega risultati di ricerche web dai principali servizi di ricerca disponibili (Google, Bing, Brave, etc.). L'unico servizio di ricerca che si è rivelato essere realmente utilizzabile è stato \textbf{qwant}, dal momento che tutti gli altri motori hanno cominciato a bloccare immediatamente le richieste provenienti dal nostro IP.
