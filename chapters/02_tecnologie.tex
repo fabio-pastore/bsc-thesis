@@ -79,15 +79,15 @@ SentenceTransformers~\cite{sentencetransformers_docs} è un framework ideato per
 \subsection{Ollama e llama.cpp}
 Ollama~\cite{ollama_docs} è un framework open source concepito per semplificare l'esecuzione, la configurazione e la gestione locale degli LLM su sistemi operativi come macOS, Windows e Linux.
 
-Il framework espone un set di API RESTful standard che consente di interagire programmaticamente con i modelli scaricati. Grazie al supporto di librerie ufficiali e sviluppate dalla community per linguaggi come Python e JavaScript, è possibile integrare le capacità di ragionamento degli LLM all'interno di applicazioni, script o flussi di lavoro aziendali in modo estremamente semplice.
+Il framework espone una serie di API RESTful standard che consentono di interagire programmaticamente con i modelli scaricati localmente. Grazie al supporto di librerie ufficiali e sviluppate dalla community per linguaggi come Python e JavaScript, è possibile inoltre integrare le capacità di ragionamento degli LLM all'interno di applicazioni, script o flussi di lavoro aziendali in modo estremamente semplice.
 
 Ollama offre, oltretutto, un'immagine Docker ufficiale da eseguire in un opportuno container. Maggiori informazioni su Docker e sul concetto di container verranno fornite nella relativa sezione di questo capitolo.
 
-Si noti per di più che, poiché i modelli sono eseguiti interamente in locale, il sistema non trasmette alcuna informazione a server esterni, garantendo massima privacy e totale indipendenza da connessioni internet o provider terzi.
+Si noti per di più che, poiché i modelli sono eseguiti interamente in locale, il sistema non trasmette alcuna informazione a server esterni, garantendo massima privacy e totale indipendenza da connessioni internet o provider di terza parte.
 
-Inoltre, giacché l'elaborazione grava esclusivamente sull'hardware dell'utente, il costo marginale per ogni singola query posta all'LLM diviene fondamentalmente nullo.
+Inoltre, giacché l'elaborazione viene effettuata direttamente sull'hardware dell'utente, il costo di ogni singola query posta all'LLM diviene fondamentalmente nullo.
 
-In aggiunta a ciò, il framework supporta e aggiorna costantemente una libreria di modelli open weights, tra cui Llama, Mistral, Gemma e Phi-3, permettendo di selezionare l'architettura più idonea in base al caso d'uso specifico.
+In aggiunta a ciò, il framework supporta e aggiorna costantemente una libreria di modelli pubblici, tra cui Llama, Mistral, Gemma e Phi-3, permettendo di selezionare l'architettura più idonea alle proprie necessità.
 
 \begin{figure}[htbp]
     \centering
@@ -99,7 +99,7 @@ In aggiunta a ciò, il framework supporta e aggiorna costantemente una libreria 
 
 Per permettere a reti neurali complesse di funzionare su hardware consumer, Ollama implementa un processo noto come quantizzazione dei modelli. Questa tecnica riduce la precisione matematica dei pesi dell'LLM, abbattendo pertanto in maniera drastica la quantità di RAM nonché la potenza di calcolo richieste per l'esecuzione del modello.
 
-Tuttavia, questo approccio comporta alcuni trade-off inevitabili. In primis, a causa dei limiti hardware dei dispositivi consumer, i modelli eseguiti localmente presentano un numero di parametri inferiore e, conseguentemente, una qualità dell'output e capacità di ragionamento più limitate.
+Tuttavia, questo approccio comporta alcuni \textit{trade-off}\footnote{tradeoff: compromesso per il quale al fine di ottenere un vantaggio si accetta di cedere o rinunciare a qualcos'altro.}  inevitabili. In primis, a causa dei limiti hardware dei dispositivi consumer, i modelli eseguiti localmente presentano un numero di parametri inferiore e, conseguentemente, una qualità dell'output e capacità di ragionamento più limitate.
 
 In secondo luogo, l'effettiva velocità di esecuzione di Ollama è rigidamente vincolata all'hardware della macchina ospitante, prediligendo architetture basate su GPU a quelle CPU. Naturalmente, l'esecuzione di un LLM tramite Ollama è comunque possibile su macchine sprovviste di GPU, a patto di accettare un'inferenza più lenta del modello.
 
@@ -169,7 +169,8 @@ Alcuni vantaggi di questo approccio includono, ad esempio, una migliore scalabil
 \begin{figure}[H]
     \centering
     \includegraphics[width=1.0\textwidth]{diagramma_architettura_client_server.png}
-    \caption{Diagramma sull'architettura client-server.}
+    \caption{Diagramma\protect\footnotemark\ sull'architettura client-server.}
     \label{fig:diagramma_architettura_client_server}
 \end{figure}
 
+\footnotetext{\textbf{N.B.} Immagine di base generata dall'autore mediante IA (\textit{Nano Banana}, modello basato su Google Gemini) in data \textit{4 Giugno 2026}. A tal riguardo, è stato utilizzato il seguente prompt: \textit{«A clean vector illustration of a client-server architecture. On the left, a modern laptop representing the client. On the right, a server rack with a small database icon next to it. In the top center, a simple cloud icon representing the internet. Employ a minimalist tech style, white background, isometric perspective, containing the most relevant facts regarding this type of architecture.»}. L'immagine generata è stata successivamente rielaborata, modificata e annotata manualmente dall'autore.}

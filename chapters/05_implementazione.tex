@@ -112,7 +112,7 @@ A questo punto, dati gli URL ottenuti da una query al motore di ricerca e il dom
     \label{fig:mwp_parsing_rag}
 \end{figure}
 
-Naturalmente, come già precedentemente sottolineato, risulta impossibile effettuare quest'operazione senza introdurre una quantità minima di rumore (dati inutili) dovuto alla sostanziale differenza che si può avere tra pagine di domini diversi. Si tratta di un \textit{trade-off}\footnote{tradeoff: compromesso per il quale al fine di ottenere un vantaggio si accetta di cedere o rinunciare a qualcos'altro.} che abbiamo ritenuto accettabile.
+Naturalmente, come già precedentemente sottolineato, risulta impossibile effettuare quest'operazione senza introdurre una quantità minima di rumore (dati inutili) dovuto alla sostanziale differenza che si può avere tra pagine di domini diversi. Si tratta di un trade-off che abbiamo ritenuto accettabile.
 
 \subsection{Supplemento dei dati ottenuti tramite generic parsing}
 Per permettere all'LLM che risponde alla query dell'utente di disporre della massima quantità di informazioni relative all'argomento della conversazione, ogni ricerca per il dominio \textit{X} viene supplementata con i primi \textit{k} risultati della stessa ricerca effettuata su domini generici, purché il dominio scelto dal guardrail non sia già \texttt{"⁎"}.
