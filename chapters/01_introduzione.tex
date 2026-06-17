@@ -6,7 +6,7 @@ Eppure, nonostante le loro straordinarie potenzialità, gli LLM presentano limit
 
 Secondariamente, i modelli linguistici sono soggetti alle cosiddette allucinazioni, ossia tendono a generare risposte linguisticamente corrette e apparentemente plausibili, ma profondamente errate, qualora non dispongano delle reali informazioni necessarie a soddisfare la richiesta dell'utente.
 
-Per ovviare a tali problematiche, ad oggi viene impiegato un paradigma architetturale noto come Retrieval-Augmented Generation (RAG). Questa innovativo approccio unisce le abilità generative tipiche di un LLM con un robusto sistema di recupero (\textit{retrieval}) delle informazioni, il quale si occupa della ricerca e dell'estrazione dinamica di documenti pertinenti, provenienti da fonti esterne e aggiornate. 
+Per ovviare a tali problematiche, ad oggi viene impiegato un paradigma architetturale noto come Retrieval-Augmented Generation (RAG). Questo innovativo approccio unisce le abilità generative tipiche di un LLM con un robusto sistema di recupero (\textit{retrieval}) delle informazioni, il quale si occupa della ricerca e dell'estrazione dinamica di documenti pertinenti, provenienti da fonti esterne e aggiornate. 
 
 Iniettando successivamente il contesto supplementare, ottenuto a partire dalle informazioni estratte, all'interno del prompt fornito al modello in fase di inferenza, il processo di RAG consente di generare risposte \textit{non solum} sostanzialmente più accurate, contestualizzate e pertinenti, \textit{sed etiam} facilmente verificabili. Il sistema, infatti, è tipicamente istruito per citare puntualmente le fonti consultate per la formulazione della risposta finale. 
 

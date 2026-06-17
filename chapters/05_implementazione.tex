@@ -28,7 +28,7 @@ Quando ciò accade si tenta di cercare le informazioni necessarie per rispondere
     \label{fig:assegnazione_query_llm}
 \end{figure}
 
-La peculiarità di questo procedimento consiste nel fatto che l'output dell'LLM dipenda anche dalla \textit{chat history}, vale a dire la cronologia delle interazioni precedenti con l'utente
+La peculiarità di questo procedimento consiste nel fatto che l'output dell'LLM dipenda anche dalla \textit{chat history}, vale a dire la cronologia delle interazioni precedenti con l'utente.
 
 In altre parole, se è stato richiesto all'utente un chiarimento sulla query iniziale, sia essa ad esempio \texttt{"parlami di Mercurio"} e l'utente ha disambiguato con \texttt{"mi riferisco al pianeta"}, l'LLM non proporrà come \texttt{search\_query} \texttt{"pianeta"}, ma \texttt{"pianeta mercurio"}. Il sistema è pertanto in grado di mantenere il contesto nonché filo logico della conversazione, anche qualora l'utente dovesse disconnettersi, grazie alla memorizzazione persistente sul database.
 
@@ -138,8 +138,8 @@ def process_query(
 
     # fallback a API OpenSearch di Wikipedia in caso di necessità
     if not search_results:
-        print(f"[QueryHandler] StartpageUrlRetriever returned 0 
-        results for '{search_query}'. Falling back to Wikipedia
+        print(f"[QueryHandler] StartpageUrlRetriever returned 0\ 
+        results for '{search_query}'. Falling back to Wikipedia\
         OpenSearch API...")
         wiki_urls = self.wiki_retriever.\
         retrieve_relevant_urls(search_query)
