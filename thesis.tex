@@ -1,6 +1,6 @@
 %!TeX encoding = UTF-8
 %!TeX program = pdflatex
-% !TeX spellcheck = it_IT
+%!TeX spellcheck = it_IT
 
 \documentclass[binding=0.6cm, noexaminfo]{sapthesis}
 
@@ -21,16 +21,14 @@
 \setlength{\headheight}{23.5pt}
 \setlength{\topmargin}{-11.5pt}
 
-% --- PALETTE NEUTRA AD ALTO CONTRASTO (HIGH-CONTRAST ACADEMIC) ---
-\definecolor{backcolour}{rgb}{0.95, 0.95, 0.95}     % Grigio chiaro elegante e neutro
-\definecolor{commentcolor}{rgb}{0.4, 0.4, 0.4}      % Grigio scuro nitido per i commenti
-\definecolor{keywordcolor}{rgb}{0.0, 0.18, 0.45}    % Blu notte intenso ad alto contrasto per le keyword
-\definecolor{stringcolor}{rgb}{0.5, 0.05, 0.05}     % Rosso cremisi scuro e netto per le stringhe
-\definecolor{numbercolor}{rgb}{0.5, 0.5, 0.5}      % Grigio medio per i numeri di riga
+\definecolor{backcolour}{rgb}{0.95, 0.95, 0.95}     % default text
+\definecolor{commentcolor}{rgb}{0.4, 0.4, 0.4}      % comments
+\definecolor{keywordcolor}{rgb}{0.0, 0.18, 0.45}    % keywords
+\definecolor{stringcolor}{rgb}{0.5, 0.05, 0.05}     % strings
+\definecolor{numbercolor}{rgb}{0.5, 0.5, 0.5}       % line numbers
 
 \lstset{
     backgroundcolor=\color{backcolour},   
-    % basicstyle imposta ora esplicitamente il colore NERO per identificatori e underscore
     basicstyle=\ttfamily\footnotesize\color{black},                 
     commentstyle=\color{commentcolor}\itshape,  
     keywordstyle=\color{keywordcolor}\bfseries,  
@@ -60,7 +58,6 @@
              {Ù}{{\`U}}1                                   
 }
 
-% Traduzione delle didascalie in italiano
 \renewcommand{\lstlistingname}{Listato}
 % \renewcommand{\lstlistlistingname}{Elenco dei listati}
 
@@ -82,8 +79,6 @@
 \advisor{Prof. Roberto Navigli}
 \authoremail{pastore.2129632@studenti.uniroma1.it}
 
-% Scommenta la riga seguente e specifica il file (o i file separati da virgola) a cui stai lavorando
-% Questo velocizzerà drasticamente la compilazione saltando gli altri capitoli, ma mantenendone riferimenti e numeri di pagina.
 % \includeonly{chapters/04_architettura}
 
 \begin{document}
@@ -94,7 +89,6 @@
 \dedication{Sapere aude.}
 
 \begin{abstract}
-% This is where you write the abstract of your thesis. It provides a brief summary of your research, methodology, and conclusions.
 Nella seguente tesi viene descritta la realizzazione di Sapienza-DC,
 un chatbot RAG multi-dominio capace di rispondere alle richieste degli
 utenti mediante analisi e validazione di informazioni estratte da pagine web, fornendo risposte coerenti affiancate da un punteggio di affidabilità nonché dalle fonti utilizzate dall'LLM per rispondere.
@@ -115,10 +109,10 @@ I capitoli contenuti in questo elaborato tratteranno gli obiettivi fondamentali 
 \include{chapters/07_conclusioni}
 \backmatter
 
-% If you have a bibliography, uncomment the lines below:
+
 \cleardoublepage
-\phantomsection % Questo assicura che se l'indice è cliccabile, porti alla pagina giusta
-\addcontentsline{toc}{chapter}{\bibname} % Aggiunge la voce "Bibliografia" all'indice
+\phantomsection 
+\addcontentsline{toc}{chapter}{\bibname}
 \bibliographystyle{plain}
 \bibliography{references}
 
