@@ -1,7 +1,7 @@
 \chapter{Progettazione dell'applicazione}
 Avendo ora a disposizione le conoscenze preliminari necessarie a comprendere l'impiego dei principali strumenti utilizzati per sviluppare Sapienza-DC, è bene effettuare, prima dell'implementazione vera e propria dell'applicativo, alcune dovute considerazioni riguardo la progettazione delle componenti fondamentali che andranno a costituire l'architettura finale del progetto.
 
-Si noti che, come già menzionato, la metodologia di sviluppo agile non prevede obbligatoriamente una raccolta estensiva di requisiti (se non le principali funzionalità ricercate nell'applicativo) né tantomeno la realizzazione iniziale di diagrammi e modelli tipici dell'approccio a cascata. Difatti, l'assenza di requisiti altamente specifici richiede uno sviluppo dinamico e soggetto a continui cambiamenti, motivo per cui i diagrammi che proporremo di seguito rispecchiano il risultato di quanto ottenuto a fine progetto.   
+Si noti che, come già menzionato, la metodologia di sviluppo agile non prevede obbligatoriamente una raccolta estensiva di requisiti (se non per quanto concerne le principali funzionalità ricercate nell'applicativo) né tantomeno la realizzazione iniziale di diagrammi e modelli tipici dell'approccio a cascata. Difatti, l'assenza di requisiti altamente specifici richiede uno sviluppo dinamico e soggetto a continui cambiamenti, motivo per cui i diagrammi che proporremo di seguito rispecchiano il risultato di quanto ottenuto a fine progetto.   
 
 \section{Diagramma delle classi UML}
 Un diagramma delle classi UML (\textit{Unified Modeling Language}) è un diagramma strutturale utilizzato per definire le principali classi, i loro attributi e le relazioni che legano queste ultime. Durante l'esecuzione del software una classe può essere istanziata sotto forma di uno o più oggetti, che definiscono il livello estensionale di quest'ultima. 
@@ -10,7 +10,7 @@ Nella programmazione orientata agli oggetti, il diagramma delle classi diviene u
 
 A puro scopo nozionistico, si noti che ciascuna classe nel diagramma è contraddistinta da un nome, una serie di attributi locali, ciascuno con il proprio tipo, e da una serie di operazioni associate ad essa.
 
-Per evitare di appesantire il diagramma UML che presenteremo di seguito, si è deciso di non includere nelle specifiche delle operazioni di ciascuna classe i tipi dei parametri in input, così come si è preferito sostituire con la dicitura (...) i parametri accettati dalle operazioni, qualora ve ne fossero in numero elevato.
+Per evitare di appesantire il diagramma UML che presenteremo di seguito, si è deciso di non includere nelle specifiche delle operazioni di ciascuna classe i tipi dei parametri in input, così come si è preferito sostituire con la dicitura \texttt{(...)} i parametri accettati dalle operazioni, qualora ve ne fossero in numero elevato.
 
 \begin{sidewaysfigure}[htbp]
     \centering
@@ -25,12 +25,12 @@ Per evitare di appesantire il diagramma UML che presenteremo di seguito, si è d
 \section{Modello ER}
 Il modello Entità-Relazione (ER) è un modello di dati impiegato per la progettazione concettuale di basi di dati. La rappresentazione di tali schemi concettuali avviene tipicamente in modo grafico, mediante diagrammi Entità-Relazione. Ogni schema descrive l'aspetto intensionale dei dati; a uno stesso schema possono corrispondere, nel tempo, più istanze, le quali ne costituiscono invece l'aspetto estensionale.
 
-Analogamente a quanto illustrato per i diagrammi delle classi UML, anche il modello ER introduce costrutti simili. Tra questi figurano le entità (analogo delle classi UML), gli attributi di entità, le relazioni (o associazioni) a cui ciascuna entità partecipa con il rispettivo ruolo, gli attributi di relazione, le gerarchie di generalizzazione e specializzazione (IS-A), nonché alcuni vincoli di integrità caratteristici del modello Entità-Relazione.
+Analogamente a quanto illustrato per i diagrammi delle classi UML, anche il modello ER introduce costrutti simili. Tra questi figurano le entità (analogo delle classi UML), gli attributi di entità, le relazioni (o associazioni) a cui ciascuna entità coinvolta partecipa con il rispettivo ruolo, gli attributi di relazione, le gerarchie di generalizzazione e specializzazione (IS-A), nonché alcuni vincoli di integrità caratteristici del modello Entità-Relazione.
 
 Come per il diagramma delle classi UML, anche per lo schema concettuale del modello ER, ottenuto mediante la corrispettiva progettazione concettuale, verrà fornito direttamente nella sua versione finale, ossia quanto ottenuto al termine dell'implementazione di Sapienza-DC.
 
 \subsection{Progettazione concettuale}
-La progettazione concettuale prevede la traduzione dei requisiti forniti nel relativo schema concettuale del modello ER. Nel nostro caso, poiché l'applicazione non deve gestire quantità ingenti di dati, ma solo tenere traccia delle conversazioni e dei messaggi inviati dall'utente, nonché garantire il salvataggio dei dati estratti dalle pagine web (identificate tramite URL), ai fini di \textit{caching}\footnote{caching: processo di archiviazione temporanea di copie di dati, effettuato con lo scopo di garantire latenza minore in fase di recupero delle informazioni.}, lo schema concettuale risultante è piuttosto semplice.
+La progettazione concettuale prevede la traduzione dei requisiti forniti nel relativo schema concettuale del modello ER. Nel nostro caso, poiché l'applicazione non deve gestire quantità ingenti di dati, ma solo tenere traccia delle conversazioni e dei messaggi inviati dall'utente, nonché garantire il salvataggio dei dati estratti dalle pagine web (ognuna avente un proprio URL), ai fini di \textit{caching}\footnote{caching: processo di archiviazione temporanea di copie di dati, effettuato con lo scopo di garantire latenza minore in fase di recupero delle informazioni.}, lo schema concettuale risultante è piuttosto semplice.
 
 \begin{figure}[H]
     \centering
@@ -43,7 +43,7 @@ La progettazione concettuale prevede la traduzione dei requisiti forniti nel rel
 \subsection{Progettazione logica}
 La progettazione logica permette di tradurre lo schema concettuale ottenuto al termine della fase di progettazione concettuale in uno schema relazionale per la nostra base di dati. 
 
-Un accorgimento di vitale importanza da tenere presente in questa fase della progettazione è il seguente: si vuole evitare ad ogni costo la perdita di informazioni nel passaggio da uno schema all'altro, affinché anche lo schema relazionale continui a rispettare i requisiti imposti inizialmente. 
+Un accorgimento di vitale importanza da tenere presente in questa fase della progettazione è il seguente: si vuole evitare, ad ogni costo, la perdita di informazioni nel passaggio da uno schema all'altro, affinché anche lo schema relazionale continui a rispettare i requisiti imposti inizialmente. 
 
 \subsubsection{Ristrutturazione dello schema concettuale}
 La prima fase della progettazione logica prevede la ristrutturazione dello schema concettuale precedentemente ottenuto. Essa si articola nei seguenti sei passaggi:
@@ -57,7 +57,7 @@ La prima fase della progettazione logica prevede la ristrutturazione dello schem
     \item specifica degli ulteriori vincoli esterni.
 \end{enumerate}
 
-Giacché lo schema concettuale da ristrutturare è elementare, l'unico passo applicabile è il quinto. In particolare, si sceglie come identificatore principale dell'entità ParsedURL l'attributo \textit{id}. Le rimanenti scelte sono immediate e non vengono dunque esplicitate. Lo schema ristrutturato appare pertanto fondamentalmente invariato, così come i vincoli esterni definiti in precedenza.      
+Giacché lo schema concettuale da ristrutturare è elementare, l'unico passo applicabile è il quinto. In particolare, si sceglie come identificatore principale dell'entità \texttt{ParsedURL} l'attributo \textit{id}. Le rimanenti scelte sono immediate e non vengono dunque esplicitate. Lo schema ristrutturato appare pertanto fondamentalmente invariato, così come i vincoli esterni definiti in precedenza.      
 
 \begin{figure}[H]
     \centering
