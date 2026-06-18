@@ -40,8 +40,8 @@ def chat(message: ChatInput) -> StreamingResponse:
 \end{lstlisting}
 
 \subsection{Da Ollama a llama.cpp}
-Anche questa modifica era in realtà stata anticipata nei precedenti capitoli. In un secondo momento, si è deciso di sostituire \texttt{Ollama} direttamente con \textbf{llama.cpp}, permettendo di caricare nonché gestire direttamente modelli \texttt{.gguf} quantizzati a 4-bit (\textit{i.e.} \texttt{Ministral-3-3B-Instruct-2512-Q4\_K\_M}), permettendo di ridurre sostanzialmente l'overhead dovuto al \textit{wrapper} e l'uso di RAM.
-Tale configurazione permette anche agli utenti che non dispongono di una GPU e che fanno girare l'LLM direttamente su CPU, caricandolo in memoria, di eseguire il progetto con requisiti di sistema meno stringenti.
+Anche questa modifica era in realtà stata anticipata nei precedenti capitoli. In un secondo momento, si è deciso di sostituire Ollama direttamente con \textbf{llama.cpp}, permettendo di caricare nonché gestire direttamente modelli \texttt{.gguf} quantizzati a 4-bit (\textit{i.e.} \texttt{Ministral-3-3B-Instruct-2512-Q4\_K\_M}), permettendo di ridurre sostanzialmente l'overhead dovuto al wrapper e l'uso di RAM.
+Tale configurazione permette anche agli utenti che non dispongono di una GPU e che usufruiscono dell'LLM attraverso inferenza locale su CPU, caricandolo in memoria, di eseguire il progetto con requisiti di sistema meno stringenti.
 
 \subsection{BYOK (Bring Your Own Key)}
 È stata introdotta tramite interfaccia grafica la possibilità di scegliere a runtime il \textit{provider}\footnote{provider: dall'inglese, ``fornitore''} LLM. L'utente può infatti scegliere tra un modello a suo piacimento, caricato localmente nella directory di progetto \texttt{models/}, e API remote compatibili con OpenAI, per le quali possiede un'opportuna \texttt{API\_KEY}\footnote{API key: è una chiave univoca utilizzata per identificare un utente o un'applicazione che accede a un determinato servizio tramite una chiamata API.}. A seguire viene proposta un'immagine raffigurante il menu reso disponibile all'utente al fine di scegliere il fornitore del modello utilizzato dal sistema.
@@ -58,7 +58,7 @@ Come menzionato nella sezione precedente, l'utente è libero di scegliere il mod
 Si noti che la pipeline è stata testata esclusivamente mediante \texttt{Ministral-3-3B-Instruct-2512-Q4\_K\_M} e che i risultati ottenuti in seguito a una stessa query potrebbero variare a seconda del modello utilizzato.
 
 \subsection{Docker-compose per build CPU e GPU}
-L'utente può scegliere se sfruttare la propria \textit{GPU}, qualora presente sul sistema, per eseguire i modelli molto più velocemente. Per fare ciò, è sufficiente effettuare la \textit{build} del progetto utilizzando \texttt{docker-compose.gpu.yaml}, senza necessità di modificare la directory\footnote{directory: cartella} del progetto o di effettuare il download di nuovi file manualmente.
+L'utente può scegliere se sfruttare la propria GPU, qualora presente sul sistema, per eseguire i modelli molto più velocemente. Per fare ciò, è sufficiente effettuare la \textit{build} del progetto utilizzando \texttt{docker-compose.gpu.yaml}, senza necessità di modificare la directory\footnote{directory: cartella} del progetto o di effettuare il download di nuovi file manualmente.
 \section{Sicurezza e mitigazione di prompt injection}
 Una delle principali problematiche riscontrate in fase di testing consisteva nel fatto che ciascun livello della pipeline fosse altamente sensibile ad attacchi di prompt injection o \textit{persona replacement}\footnote{persona replacement: tecnica di prompt injection mediante cui un attaccante tenta di modificare le istruzioni fornite al modello, con lo scopo di fare assumere a quest'ultimo un'identità diversa da quella originalmente assegnatagli.}. Per rammentare quanto già spiegato nei primi capitoli riguardo questo tipo di attacchi, essi  si riducono a un tentativo da parte di un utente malintenzionato di introdurre istruzioni malevoli nel flusso di input (\texttt{user\_query}) al fine di sovrascrivere le direttive di sistema (\texttt{system\_prompt}\footnote{system prompt: prompt di sistema, vale a dire l'insieme di istruzioni ``segrete'' (cioè che l'utente non vede esternamente) volte a definire la personalità, il ruolo e i limiti di un modello.}), alterando il comportamento previsto del modello o provocando talvolta l'esfiltrazione di dati sensibili in un processo noto come \textit{data hijacking}.
 
@@ -69,14 +69,14 @@ L'architettura implementa, a tal scopo, una strategia di difesa a più strati ba
 \begin{itemize}
     \item \textbf{realizzazione di prompt mediante tag XML:} al fine di impedire al modello di confondere le istruzioni operative con i dati non fidati provenienti dall'esterno, nel modulo \texttt{PromptBuilder} vi è una rigida separazione tra porzione di prompt proveniente dal sistema e input esterni a quest'ultimo. In particolare, i dati inseriti dall'utente e la cronologia delle conversazioni vengono incapsulati all'interno di tag XML quali \texttt{<query>} e \texttt{<chat\_history>}. Così facendo, ogni LLM è istruito a trattare tutto ciò che risiede all'interno di tali tag come puro contenuto informativo da analizzare, e mai come direttive algoritmiche da eseguire;
     
-    \item \textbf{direttive esplicite anti-injection}: all'interno del prompt di sistema viene iniettata una regola a priorità assoluta che istruisce il a ignorare qualsivoglia comando tenti di alterare la sua \textit{persona} o di invalidare le regole precedenti impostegli;
+    \item \textbf{direttive esplicite anti-injection}: all'interno del prompt di sistema viene iniettata una regola a priorità assoluta che istruisce il modello a ignorare qualsivoglia comando tenti di alterare la sua persona o di invalidare le regole precedenti impostegli;
     
     \item \textbf{neutralizzazione di tentativi di manipolazione emotiva}: gli attacchi di \textit{jailbreaking}\footnote{jailbreaking: tentativo malevolo di aggirare le restrizioni di sicurezza o le linee guida di un LLM.} moderni sfruttano spesso meccanismi di leva psicologica o scenari ipotetici per indurre il modello a violare i propri vincoli operativi. Le direttive di sistema inibiscono sistematicamente questo tipo di attacchi, imponendo all'LLM un'assoluta obiettività distaccata: nessuna supplica emotiva o scenario fittizio potrà costituire una deroga alle policy\footnote{policy: letteralmente ``politica'', in questo caso da intendere al plurale.} di sicurezza stabilite.
     
     \item \textbf{politica di opacità del sistema (\textit{system opacity}):} al fine di prevenire tentativi di \textit{prompt leakage}\footnote{prompt leakage: particolari attacchi aventi come obiettivo principale quello di estrarre informazioni riguardo il prompt di sistema utilizzato per istruire il modello.}, i modelli sono vincolati da rigide regole di riservatezza. Qualora una query dovesse essere identificata come malevola o tenti di trarre informazioni inerenti ai system prompt dell'LLM, il sistema la rigetterà automaticamente, informando l'utente mediante un messaggio generico. Grazie a questo approccio, il potenziale attaccante non è in grado di reperire informazioni sul prompt di sistema, e dunque sulle regole imposte ai modelli, per incrementare le probabilità di successo di un attacco.    
 \end{itemize}
 
-Per mostrare l'efficacia di tali mitigazioni, si veda il seguente esempio in cui si tenta, senza successo e per mezzo di diversi prompt malevoli, a superare le barriere imposte con l'obiettivo di compromettere la sicurezza dell'applicazione.
+Per mostrare l'efficacia di tali mitigazioni, si faccia riferimento al seguente esempio in cui si tenta, senza successo, di superare le barriere imposte all'LLM con l'obiettivo di compromettere la sicurezza dell'applicazione.
 
 \begin{figure}[H]
     \centering
@@ -92,9 +92,9 @@ Il benchmark prevedeva inoltre 10 test volti a stabilire la capacità del sistem
 
 Un'altra interessante metrica consiste indubbiamente nei tempi di risposta dell'LLM, cioè nell'intervallo di tempo trascorso dall'invio da parte dell'utente della propria query all'istante in cui il sistema comincia ad emettere la risposta generata del modello. 
 
-Si tenga in considerazione come i dati proposti di seguito siano tutt'altro che oggettivi né sono da considerare attendibili, giacché dipendono da innumerevoli fattori quali latenza di rete, presenza o meno di informazioni già estratte sul database (cache hit/miss), prestazioni dell'hardware, disponibilità o meno di una GPU in caso di caricamento locale del modello e svariati altri. Pertanto, quanto misurato in fase di testing potrebbe variare considerevolmente su altre macchine o configurazioni. 
+Si tenga in considerazione come i dati proposti di seguito siano tutt'altro che oggettivi, né sono da considerare attendibili, giacché dipendono da innumerevoli fattori quali latenza di rete, presenza o meno di informazioni già estratte sul database (cache hit/miss), prestazioni dell'hardware, disponibilità o meno di una GPU in caso di caricamento locale del modello e svariati altri. Pertanto, quanto misurato in fase di testing potrebbe variare considerevolmente su altre macchine o configurazioni. 
 
-Ciononostante è possibile notare con piacere come non si debba attendere eccessivamente, eccezion fatta naturalmente per il caso in cui si esegua l'LLM localmente sulla propria CPU, per ricevere la risposta alla propria query. Questo non significa però che un qualunque utente sprovvisto di GPU sia impossibilitato a interrogare il sistema, poiché, come ribadito più volte, quest'ultimo può in ogni caso avvalersi di API remote gratuite per avere inferenza immediata. 
+Ciononostante, è possibile notare con piacere come non si debba attendere eccessivamente, eccezion fatta naturalmente per il caso in cui si esegua l'LLM localmente sulla propria CPU, per ricevere la risposta alla propria query. Questo non significa però che un qualunque utente sprovvisto di GPU sia impossibilitato a interrogare il sistema, poiché, come ribadito più volte, quest'ultimo può in ogni caso avvalersi di API remote gratuite per avere inferenza immediata. 
 
 \begin{figure}[H]
     \centering
@@ -119,7 +119,7 @@ Ciononostante è possibile notare con piacere come non si debba attendere eccess
 
 \section{Documentazione del codice e manutenibilità}
 \subsection{Modularità e manutenibilità del codice}
-Una suddivisione in moduli con singole responsabilità ben definite, nonché l'uso di type-hinting nonché di \textit{docstring}\footnote{docstring: una stringa inserita nel codice sorgente al fine di documentare funzioni, classi e metodi.} secondo lo standard Google garantisce infine sia scalabilità che manutenibilità del progetto. Ciascun metodo o funzione rilevante viene pertanto documentata secondo lo schema presentato nella pagina successiva.
+Una suddivisione in moduli con singole responsabilità ben definite, nonché l'uso di type-hinting e di \textit{docstring}\footnote{docstring: una stringa inserita nel codice sorgente al fine di documentare funzioni, classi e metodi.} secondo lo standard Google garantisce infine sia scalabilità che manutenibilità del progetto. Ciascun metodo o funzione rilevante viene pertanto documentata secondo lo schema presentato nella pagina successiva.
 
 \begin{lstlisting}[language=Python, caption={Formato Google per la documentazione del codice mediante docstring.}, label={lst:docstring_schema_google}]
 def mia_funz(param1: t1, param2: t2) -> tipo_ret:

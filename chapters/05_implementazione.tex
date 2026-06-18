@@ -1,6 +1,6 @@
 \chapter{Implementazione della pipeline RAG}
 
-In questo capitolo tratteremo estensivamente la fase implementativa del progetto e, come preannunciato, quali siano state le principali sfide da risolvere durante lo sviluppo di quest'ultimo. Per ragioni di brevità, ci concentreremo principalmente sull'implementazione della componente essenziale, e a mio avviso maggiormente affascinante, di Sapienza-DC: la pipeline RAG. In ciascuna delle sezioni presentate, descriveremo le varie componenti della pipeline di retrieval-augmented generation, ciascuna avente un obiettivo ben preciso, evidenziando gli approcci nonché tecnologie impiegate al fine di raggiungere quest'ultimo.    
+In questo capitolo tratteremo estensivamente la fase implementativa del progetto e, come preannunciato, quali siano state le principali sfide da risolvere durante lo sviluppo di quest'ultimo. Per ragioni di brevità, ci concentreremo principalmente sull'implementazione della componente essenziale, e a mio avviso maggiormente affascinante, di Sapienza-DC: la pipeline RAG. In ciascuna delle sezioni presentate, descriveremo le varie componenti della pipeline di Retrieval-Augmented Generation, ciascuna avente un obiettivo ben preciso, evidenziando gli approcci nonché tecnologie impiegate al fine di raggiungere quest'ultimo.    
 \section{Processamento preliminare della query dell'utente e disambiguazione}
 Si è pensato fin da subito di processare la richiesta dell'utente tramite un LLM (detto \textit{guardrail}\footnote{guardrail: blocco di sicurezza progettato per impedire a un LLM di generare contenuti dannosi o pericolosi.}), richiedendo a quest'ultimo, mediante un prompt adeguato, di classificare la query come \texttt{ACCEPTED} o \texttt{REJECTED}. Nel caso in cui dovesse essere rifiutata, l'utente viene notificato con il messaggio \texttt{"Your query appears to be meaningless or invalid. Please ask a clear, answerable question"}. 
 
@@ -30,9 +30,9 @@ Quando ciò accade si tenta di cercare le informazioni necessarie per rispondere
 
 La peculiarità di questo procedimento consiste nel fatto che l'output dell'LLM dipenda anche dalla \textit{chat history}, vale a dire la cronologia delle interazioni precedenti con l'utente.
 
-In altre parole, se è stato richiesto all'utente un chiarimento sulla query iniziale, sia essa ad esempio \texttt{"parlami di Mercurio"} e l'utente ha disambiguato con \texttt{"mi riferisco al pianeta"}, l'LLM non proporrà come \texttt{search\_query} \texttt{"pianeta"}, ma \texttt{"pianeta mercurio"}. Il sistema è pertanto in grado di mantenere il contesto nonché filo logico della conversazione, anche qualora l'utente dovesse disconnettersi, grazie alla memorizzazione persistente sul database.
+In altre parole, se è stato richiesto all'utente un chiarimento sulla query iniziale, sia essa ad esempio \texttt{"parlami di Mercurio"}, e l'utente ha disambiguato con \texttt{"mi riferisco al pianeta"}, l'LLM non proporrà come \texttt{search\_query} \texttt{"pianeta"}, ma \texttt{"pianeta mercurio"}. Il sistema è pertanto in grado di mantenere il contesto nonché filo logico della conversazione, anche qualora l'utente dovesse disconnettersi, grazie alla memorizzazione persistente sul database.
 
-A partire dalle ultime implementazioni del progetto, si è deciso di fare in modo che l'LLM, data la query in input, non ritornasse esclusivamente la singola query per il search engine, ma una coppia <\texttt{search\_query}, \texttt{user\_query}>, in modo tale da poter passare la \texttt{user\_query} all'LLM responsabile di fornire la risposta all'utente, senza perdere informazioni sulla domanda fatta originariamente. Un esempio di ciò è facilmente consultabile nell'immagine riportata nella pagina precedente.
+A partire dalle ultime implementazioni del progetto, si è deciso di fare in modo che l'LLM, data la query in input, non restituisca esclusivamente la singola query per il search engine, ma una coppia <\texttt{search\_query}, \texttt{user\_query}>, in modo tale da poter passare la \texttt{user\_query} all'LLM responsabile di fornire la risposta all'utente, senza perdere informazioni sulla domanda fatta originariamente. Un esempio di ciò è facilmente consultabile nell'immagine riportata nella pagina precedente.
 
 \section{Ricerca degli URL e parsing delle pagine web}
 Data una query dell'utente e il dominio assegnato a quest'ultima è necessario trovare gli URL delle pagine che contengono le informazioni necessarie a rispondere ad essa.
@@ -103,7 +103,7 @@ def retrieve_relevant_urls(
 \end{figure}
 
 \subsection{Estrazione dei dati dagli URL selezionati}
-A questo punto, dati gli URL ottenuti da una query al motore di ricerca e il dominio target è immediato estrarne in contenuti in formato markdown. Tuttavia, bisogna tenere presente che a una determinata query \textit{q}, in caso di fallback, può essere assegnato un dominio generico \texttt{"⁎"}. Anche in questo caso abbiamo dovuto modificare leggermente il progetto di esonero, aggiungendo un secondo parser, \texttt{GenericParser}, adatto ad estrarre in modo approssimativo i contenuti di una qualunque pagina web.
+A questo punto, dati gli URL ottenuti da una query al motore di ricerca e il dominio target, è immediato estrarne in contenuti in formato markdown. Tuttavia, bisogna tenere presente che a una determinata query \textit{q}, in caso di fallback, può essere assegnato un dominio generico \texttt{"⁎"}. Anche in questo caso abbiamo dovuto modificare leggermente il progetto di esonero, aggiungendo un secondo parser, \texttt{GenericParser}, adatto ad estrarre in modo approssimativo i contenuti di una qualunque pagina web.
 
 \begin{figure}[H]
     \centering
@@ -152,7 +152,7 @@ def process_query(
 \section{Selezione dei contenuti rilevanti, generazione e gestione del contesto per l'LLM}
 In questa sezione verrà trattato il processo tramite cui si è in grado di scegliere quali testi (\texttt{parsed\_text}) e quali porzioni di questi ultimi sono da considerare rilevanti e dunque da fornire all'LLM che risponde alla query dell'utente. Si tratta fondamentalmente della sfida più ardua nella costruzione della pipeline RAG: il contesto dell'LLM non è infinito e va dunque gestito opportunamente in modo tale da non saturarlo.
 
-Difatti, se decidessimo di fornire pagine intere come fonti di riferimento al modello, non solo rischieremmo di esaurire la context window ma introdurremmo un notevole overhead in fase di risposta, diminuendo notevolmente il throughput della pipeline. L'idea alla base è quella di stilare una classifica dei pezzi (o chunk) di testo che contengono, con maggiore probabilità, la risposta alla domanda dell'utente.
+Difatti, se decidessimo di fornire pagine intere come fonti di riferimento al modello, non solo rischieremmo di esaurire la context window ma introdurremmo un notevole overhead in fase di risposta, diminuendo sostanzialmente il throughput della pipeline. L'idea alla base è quella di stilare una classifica delle porzioni (o chunk) di testo che contengono, con maggiore probabilità, la risposta alla domanda dell'utente.
 
 Una volta ottenuta la classifica (o ranking) di questi ultimi, è sufficiente prendere i primi \textit{k} chunk, i quali andranno a costituire il \texttt{query\_context} dell'LLM, ossia l'insieme di testi di riferimento nonché informazioni che il modello utilizzerà per rispondere all'utente, purché in essi vi sia la risposta alla query.
 
@@ -236,7 +236,7 @@ Tale implementazione assicura che, qualora le informazioni estratte, o quantomen
 \section{Iniezione del \texttt{query\_context} nel contesto dell'LLM e generazione della risposta finale per l'utente}
 Si tratta difatti del passaggio più semplice tra tutti quelli visti finora. L'unica difficoltà consiste nell'effettuare \textit{grounding} dell'LLM, vale a dire evitare, attraverso \textit{prompt engineering}, che il modello utilizzi informazioni di cui è già in possesso per rispondere alla domanda dell'utente.
 
-L'obiettivo è proprio quello di avere un modello che sia in grado di rispondere alla \texttt{user\_query} se e solo se la risposta è effettivamente contenuta nelle fonti ad esso fornite. Ora è sufficiente iniettare la \texttt{user\_query} nel prompt dell'LLM assieme al contesto della query (\texttt{query\_context}) e attendere la sua risposta.
+L'obiettivo è proprio quello di avere un modello che sia in grado di rispondere alla \texttt{user\_query} se e solo se la risposta è effettivamente contenuta nelle fonti ad esso fornite. Ora, è sufficiente iniettare la \texttt{user\_query} nel prompt dell'LLM assieme al contesto della query (\texttt{query\_context}) e attendere la sua risposta.
 
 \subsection{Stima dell'affidabilità ed assegnazione da parte dell'LLM del relativo score}
 Al termine della propria risposta, una regola ferrea stabilita in fase di prompting impone all'LLM di emettere obbligatoriamente una breve sezione denominata ``affidabilità'', costituita da un breve commento sulla propria risposta, in cui il modello specifica quante delle informazioni fornite derivino direttamente dal testo e quanto queste ultime siano da ritenere pertanto attendibili.

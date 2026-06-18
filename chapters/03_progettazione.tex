@@ -77,7 +77,7 @@ una chiave di una relazione $\mathscr{R}_2$; è un'asserzione che impone
 che per ogni istanza $\mathscr{B}$ della base di dati ogni combinazione di
 valori su $\mathcal{X}$ che non contengono NULL e che sono presenti
 nella istanza di $\mathscr{R}_1$ in $\mathscr{B}$ compaia come combinazione di valori
-su $\mathcal{Y}$ nella istanza di $\mathscr{R}_2$ in $\mathscr{B}$.}, inclusioni, vincoli di chiave o ulteriori vincoli di tupla o inter-tupla sono da definire al di sotto della relazione stessa.
+su $\mathcal{Y}$ nella istanza di $\mathscr{R}_2$ in $\mathscr{B}$.}, inclusioni, vincoli di chiave oppure ulteriori vincoli di tupla (o inter-tupla) sono da definire al di sotto della relazione stessa.
 
 Una volta terminata la traduzione diretta, otteniamo il seguente schema $\mathcal{S}$ per la nostra base di dati $\mathscr{B}$:\\
 
@@ -103,12 +103,12 @@ Una volta terminata la traduzione diretta, otteniamo il seguente schema $\mathca
 \indent\indent foreign key: Contains[session] $\subseteq$ Session[session\_id]\\
 \indent\indent vincolo esterno: $(m, s) \in \text{Contains} \Rightarrow \text{timestamp}(m) > \text{timestamp}(s)$\\
 
-Si noti infine che si è scelto di assegnare, per comodità, opportuni valori di default agli attributi \textit{title} e \textit{last\_domain} della tabella Session.
+Si noti infine che si è scelto di assegnare, per comodità, opportuni valori di default agli attributi \textit{title} e \textit{last\_domain} della tabella \texttt{Session}.
 
 \subsubsection{Ristrutturazione dello schema logico}
 L'ultima fase della progettazione logica prevedere una ristrutturazione dello schema relazionale per motivi di efficienza. Ai fini della nostra applicazione, è di interesse conoscere, ogni qualvolta si accede a un messaggio $m$, la sessione $s$ a cui esso appartiene.
 
-Notando a questo punto che le tabelle Message e Contains sono fortemente accoppiate, si predispone l'accorpamento di Contains a Message, ottenendo il seguente schema relazionale finale per la nostra base di dati:\\
+Notando a questo punto che le tabelle \texttt{Message} e \texttt{Contains} sono fortemente accoppiate, si predispone l'accorpamento di \texttt{Contains} a \texttt{Message}, ottenendo il seguente schema relazionale finale per la nostra base di dati:\\
 
 \indent
 \textbf{Session}(\underline{session\_id}, title*, last\_domain*, created\_at)\\
@@ -145,7 +145,8 @@ CREATE TABLE IF NOT EXISTS messages (
     role VARCHAR(20) NOT NULL,
     content TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (session_id) REFERENCES sessions(session_id) ON DELETE CASCADE
+    FOREIGN KEY (session_id) REFERENCES sessions(session_id) ON 
+    DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS parsed_urls (
@@ -157,6 +158,6 @@ CREATE TABLE IF NOT EXISTS parsed_urls (
 
 \end{lstlisting}
 
-Si noti infine l'aggiunta della clausola ON DELETE CASCADE, la quale predispone l'eliminazione automatica e coerente di tutti i messaggi associati a una determinata sessione nel caso in cui quest'ultima dovesse essere eliminata. Questa scelta permette di mantenere, in ogni istante, l'integrità referenziale del database.   
+Si noti infine l'aggiunta della clausola \texttt{ON DELETE CASCADE}, la quale predispone l'eliminazione automatica e coerente di tutti i messaggi associati a una determinata sessione, nel caso in cui quest'ultima dovesse essere eliminata. Questa scelta permette di mantenere, in ogni istante, l'integrità referenziale del database.   
 
 
