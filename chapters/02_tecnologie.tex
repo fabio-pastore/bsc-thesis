@@ -49,15 +49,15 @@ Nella fase di implementazione, utilizzeremo i cross-encoder, in seguito a un fil
 \subsection{FastAPI}
 FastAPI~\cite{fastapi_docs} è un framework web moderno, open source e ad alte prestazioni, progettato per la sviluppo di API\footnote{API - \textit{Application Programming Interface}: un insieme di regole e protocolli che permettono a due applicazioni di comunicare correttamente.} REST (\textit{REpresentational State Transfer}) in Python.
 
-Rilasciato nel 2018, FastAPI è ben presto divenuto uno degli standard per lo sviluppo backend in Python, grazie alla sua efficienza nonché facilità di utilizzo.
+Grazie alla sua efficienza nonché facilità di utilizzo, FastAPI è divenuto uno strumento utilizzato estensivamente per lo sviluppo backend in Python.
 
-Il framework usufruisce di due librerie fondamentali quali Starlette, un toolkit web ASGI (\textit{Asynchronous Server Gateway Interface}) per la gestione di servizi asincroni, e Pydantic, grazie a cui è possibile una validazione automatica e personalizzabile dei dati e la creazione di modelli Pydantic per la definizione dei tipi di input e output di ciascun \textit{endpoint}\footnote{endpoint: nell'ambito delle API, un URL specifico tramite cui un'applicazione riceve ed elabora richieste API}.
+Il framework usufruisce di alcune librerie fondamentali quali Starlette, ASGI (\textit{Asynchronous Server Gateway Interface}) per la gestione di servizi asincroni, e Pydantic, grazie a cui è possibile implementare una validazione programmatica ed altamente personalizzabile dei dati, assieme alla creazione di modelli Pydantic per la definizione dei tipi di input e output di ciascun \textit{endpoint}\footnote{endpoint: nell'ambito delle API, un URL specifico tramite cui un'applicazione riceve ed elabora richieste API}.
 
-Tali funzionalità facilitano e rendono estremamente intuitivo lo sviluppo di backend, garantendo prestazioni equiparabili ad altre tecnologie popolari come Node.js per lo sviluppo server-side.
+Tali funzionalità facilitano e rendono pertanto estremamente intuitivo lo sviluppo di backend, garantendo prestazioni equiparabili ad altre tecnologie apprezzate, come Node.js, per lo sviluppo server-side.
 
-Tra le funzionalità più apprezzate di FastAPI risalta la generazione automatica della documentazione API. Ogni qualvolta viene definito un nuovo endpoint, FastAPI genera automaticamente documentazione e interfacce Web UI (Swagger UI) mediante cui inviare richieste ai fini, ad esempio, di testing dell'applicazione.
+A risaltare in particolar modo tra le funzionalità più apprezzate del framework vi è la generazione automatica della documentazione API. Ogni qualvolta viene definito un nuovo endpoint, FastAPI genera automaticamente documentazione e interfacce Web UI (Swagger UI) mediante cui inviare richieste ai fini, ad esempio, di testing dell'applicazione.
 
-Infine, il framework segue e adotta i principali standard web moderni per lo sviluppo di API basate su HTTP (\textit{Hypertext Transfer Protocol}), quali OpenAPI e JSON Schema per la validazione nonché serializzazione dei dati scambiati.    
+Infine, FastAPI segue e adotta i principali standard web moderni per lo sviluppo di API basate su HTTP (\textit{Hypertext Transfer Protocol}), quali OpenAPI e JSON Schema per la validazione nonché serializzazione dei dati scambiati.    
 
 \subsection{LangChain}
 LangChain~\cite{langchain_docs} è un framework open source progettato per facilitare lo sviluppo di applicazioni che fanno uso di LLM.
@@ -77,17 +77,17 @@ SentenceTransformers~\cite{sentencetransformers_docs} è un framework ideato per
 
 
 \subsection{Ollama e llama.cpp}
-Ollama~\cite{ollama_docs} è un framework open source concepito per semplificare l'esecuzione, la configurazione e la gestione locale degli LLM su sistemi operativi come macOS, Windows e Linux.
+Ollama~\cite{ollama_docs} è un framework open source ideato per semplificare l'esecuzione, la configurazione e la gestione locale degli LLM su svariati sistemi operativi come macOS, Windows e Linux.
 
-Il framework espone una serie di API RESTful standard che consentono di interagire programmaticamente con i modelli scaricati localmente. Grazie al supporto di librerie ufficiali e sviluppate dalla community per linguaggi come Python e JavaScript, è possibile inoltre integrare le capacità di ragionamento degli LLM all'interno di applicazioni, script o flussi di lavoro aziendali in modo estremamente semplice.
+Il framework espone una serie di API RESTful standard che consentono di interagire programmaticamente con i modelli scaricati localmente. Attraverso il supporto di librerie ufficiali, sviluppate dalla community, è inoltre possibile l'integrazione delle capacità di ragionamento degli LLM all'interno di applicazioni, script o pipeline in modo estremamente intuitivo. Trarremo vantaggio da tali API proprio durante la realizzazione del progetto.  
 
 Ollama offre, oltretutto, un'immagine Docker ufficiale da eseguire in un opportuno \textit{container}. Maggiori informazioni su Docker e sul concetto di container verranno fornite nella relativa sezione di questo capitolo.
 
-Si noti per di più che, poiché i modelli sono eseguiti interamente in locale, il sistema non trasmette alcuna informazione a server esterni, garantendo massima privacy e totale indipendenza da connessioni internet o provider di terza parte.
+Si noti per di più che, poiché i modelli sono eseguiti interamente in locale, il sistema non trasmette alcuna informazione a servizi esterni, garantendo quindi privacy e indipendenza da connessioni internet o provider di terza parte (\textit{third-party}) all'utente che ne usufruisce.
 
-Inoltre, giacché l'elaborazione viene effettuata direttamente sull'hardware dell'utente, il costo di ogni singola query posta all'LLM diviene fondamentalmente nullo.
+Inoltre, giacché l'elaborazione, necessaria all'inferenza del modello, grava direttamente sull'hardware dell'utente, il costo derivante dall'interazione con l'LLM diviene fondamentalmente trascurabile.
 
-In aggiunta a ciò, il framework supporta e aggiorna costantemente una libreria di modelli pubblici, tra cui Llama, Mistral, Gemma e Phi-3, permettendo di selezionare l'architettura più idonea alle proprie necessità.
+In aggiunta a ciò, il framework supporta e aggiorna assiduamente una libreria di modelli pubblici, tra cui Llama, Mistral, Gemma e Phi-3, permettendo di selezionare il modello più adatto alle proprie necessità.
 
 \begin{figure}[htbp]
     \centering
@@ -97,17 +97,17 @@ In aggiunta a ciò, il framework supporta e aggiorna costantemente una libreria 
 \end{figure}
 
 
-Per permettere a reti neurali complesse di funzionare su hardware \textit{consumer}, Ollama implementa un processo noto come quantizzazione dei modelli. Questa tecnica riduce la precisione matematica dei pesi dell'LLM, abbattendo pertanto in maniera drastica la quantità di RAM nonché la potenza di calcolo richieste per l'esecuzione del modello.
+Per permettere a reti neurali complesse di funzionare su hardware non particolarmente performante, Ollama implementa un processo noto come quantizzazione dei modelli. Questa tecnica consiste nella riduzione della precisione matematica dei pesi dell'LLM, abbattendo pertanto notevolmente la quantità di RAM nonché la potenza di calcolo richieste per l'esecuzione del modello.
 
-Tuttavia, questo approccio comporta alcuni \textit{trade-off}\footnote{trade-off: compromesso per il quale al fine di ottenere un vantaggio si accetta di cedere o rinunciare a qualcos'altro.}  inevitabili. \textit{In primis}, a causa dei limiti hardware dei dispositivi consumer, i modelli eseguiti localmente presentano un numero di parametri inferiore e, conseguentemente, una qualità dell'output e capacità di ragionamento più limitate.
+Tuttavia, questo approccio comporta alcuni \textit{trade-off}\footnote{trade-off: compromesso per il quale al fine di ottenere un vantaggio si accetta di cedere o rinunciare a qualcos'altro.}  inevitabili. \textit{In primis}, a causa dei limiti hardware presenti sulla stragrande maggioranza dei dispositivi \textit{consumer-grade} (ossia dispositivi aventi specifiche hardware nella media), i modelli eseguiti localmente presentano un numero di parametri inferiore e, conseguentemente, una qualità dell'output e capacità di ragionamento più limitate.
 
-In secondo luogo, l'effettiva velocità di esecuzione di Ollama è rigidamente vincolata all'hardware della macchina ospitante, prediligendo architetture basate su GPU (\textit{Graphics Processing Unit}) a quelle CPU (\textit{Central Processing Unit}). Naturalmente, l'esecuzione di un LLM tramite Ollama è comunque possibile su macchine sprovviste di GPU, a patto di accettare un'inferenza più lenta del modello.
+In secondo luogo, l'effettiva velocità di esecuzione di Ollama è rigidamente vincolata, come già detto, all'hardware della macchina ospitante, prediligendo peraltro architetture basate su GPU (\textit{Graphics Processing Unit}) a quelle CPU (\textit{Central Processing Unit}), per ovvi motivi. Naturalmente, l'esecuzione di un LLM tramite Ollama è comunque possibile su macchine sprovviste di GPU, a patto di accettare un'inferenza più lenta del modello.
 
 L'obiettivo di Sapienza-DC consisterà difatti nel permettere a qualsiasi utente, dotato di una scheda video o anche semplicemente del proprio processore, di eseguire il progetto localmente, fornendo la possibilità di affidarsi, in caso di necessità, anche ad API esterne, qualora l'hardware della propria macchina dovesse risultare non sufficientemente performante. Entreremo maggiormente nei dettagli di questa tematica nei capitoli successivi.
 
 A tal proposito, vedremo come sia possibile utilizzare direttamente llama.cpp per gestire manualmente il caricamento, la gestione, nonché l'esecuzione di query verso LLM locali, con lo scopo di ridurre l'overhead introdotto da Ollama, il quale non è altro che un \textit{wrapper} di quest'ultimo.
 
-Brevemente, llama.cpp è un'implementazione in linguaggio C/C++ del codice di inferenza dei modelli LLaMA (Large Language Model Meta AI), successivamente esteso a molteplici altre architetture, il cui scopo fondamentale consiste nel massimizzare la velocità di esecuzione locale di LLM. Rimuovendo l'overhead dovuto a Ollama e accettando la maggiore difficoltà implementativa che consegue da questa scelta, saremo in grado di minimizzare i requisiti hardware richiesti per eseguire modelli localmente, soprattutto su macchine sprovviste di GPU.     
+Brevemente, llama.cpp è un'implementazione in linguaggio C/C++ del codice di inferenza dei modelli LLaMA (Large Language Model Meta AI), esteso, in un secondo momento, a molteplici altre architetture. Lo scopo fondamentale di quest'ultimo consiste nel massimizzare la velocità di esecuzione locale di LLM. Rimuovendo difatti l'overhead dovuto a Ollama e accettando la maggiore difficoltà implementativa che consegue da questa scelta, saremo in grado di minimizzare i requisiti hardware richiesti per eseguire modelli localmente, soprattutto su macchine sprovviste di GPU.     
 
 \subsection{SearXNG}
 Utilizzato in una prima versione del progetto, SearXNG~\cite{searxng_docs} è un metamotore di ricerca che aggrega risultati da svariati servizi di ricerca e database\footnote{database: base di dati, una raccolta organizzata di informazioni o dati strutturati.}. Garantisce anonimità e privacy per gli utenti che lo utilizzano, i quali non subiscono \textit{tracking} né profilazione.   
