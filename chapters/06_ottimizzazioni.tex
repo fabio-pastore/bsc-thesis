@@ -40,7 +40,7 @@ def chat(message: ChatInput) -> StreamingResponse:
 \end{lstlisting}
 
 \subsection{Da Ollama a llama.cpp}
-Anche questa modifica era in realtà stata anticipata nei precedenti capitoli. In un secondo momento, si è deciso di sostituire Ollama direttamente con \textbf{llama.cpp}, permettendo di caricare nonché gestire direttamente modelli \texttt{.gguf} quantizzati a 4-bit (\textit{i.e.} \texttt{Ministral-3-3B-Instruct-2512-Q4\_K\_M}), permettendo di ridurre sostanzialmente l'overhead dovuto al wrapper e l'uso di RAM.
+Anche questa modifica era in realtà stata anticipata nei precedenti capitoli. In un secondo momento, si è deciso di sostituire Ollama direttamente con \textbf{llama.cpp}, permettendo di caricare nonché gestire direttamente modelli \texttt{.gguf} quantizzati a 4-bit (\textit{i.e.} \texttt{Ministral-3-3B-Instruct-2512-Q4\_K\_M}), riducendo così in modo sostanziale l'overhead dovuto al wrapper e l'uso di RAM.
 Tale configurazione permette anche agli utenti che non dispongono di una GPU e che usufruiscono dell'LLM attraverso inferenza locale su CPU, caricandolo in memoria, di eseguire il progetto con requisiti di sistema meno stringenti.
 
 \subsection{BYOK (Bring Your Own Key)}

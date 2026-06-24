@@ -106,7 +106,7 @@ Una volta terminata la traduzione diretta, otteniamo il seguente schema $\mathca
 Si noti infine che si è scelto di assegnare, per comodità, opportuni valori di default agli attributi \textit{title} e \textit{last\_domain} della tabella \texttt{Session}.
 
 \subsubsection{Ristrutturazione dello schema logico}
-L'ultima fase della progettazione logica prevedere una ristrutturazione dello schema relazionale per motivi di efficienza. Ai fini della nostra applicazione, è di interesse conoscere, ogni qualvolta si accede a un messaggio $m$, la sessione $s$ a cui esso appartiene.
+L'ultima fase della progettazione logica prevede una ristrutturazione dello schema relazionale per motivi di efficienza. Ai fini della nostra applicazione, è di interesse conoscere, ogni qualvolta si accede a un messaggio $m$, la sessione $s$ a cui esso appartiene.
 
 Notando a questo punto che le tabelle \texttt{Message} e \texttt{Contains} sono fortemente accoppiate, si predispone l'accorpamento di \texttt{Contains} a \texttt{Message}, ottenendo il seguente schema relazionale finale per la nostra base di dati:\\
 
