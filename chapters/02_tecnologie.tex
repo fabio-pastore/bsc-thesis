@@ -77,17 +77,17 @@ SentenceTransformers~\cite{sentencetransformers_docs} è un framework ideato per
 
 
 \subsection{Ollama e llama.cpp}
-Ollama~\cite{ollama_docs} è un framework open source ideato per semplificare l'esecuzione, la configurazione e la gestione locale degli LLM su svariati sistemi operativi come macOS, Windows e Linux.
+Ollama~\cite{ollama_docs} è un framework open source ideato per semplificare l'esecuzione, la configurazione e la gestione locale dei modelli linguistici su svariati sistemi operativi come macOS, Windows e Linux.
 
 Il framework espone una serie di API RESTful standard che consentono di interagire programmaticamente con i modelli scaricati localmente. Attraverso il supporto di librerie ufficiali, sviluppate dalla community, è inoltre possibile l'integrazione delle capacità di ragionamento degli LLM all'interno di applicazioni, script o pipeline in modo estremamente intuitivo. Trarremo vantaggio da tali API proprio durante la realizzazione del progetto.  
 
 Ollama offre, oltretutto, un'immagine Docker ufficiale da eseguire in un opportuno \textit{container}. Maggiori informazioni su Docker e sul concetto di container verranno fornite nella relativa sezione di questo capitolo.
 
-Si noti per di più che, poiché i modelli sono eseguiti interamente in locale, il sistema non trasmette alcuna informazione a servizi esterni, garantendo quindi privacy e indipendenza da connessioni internet o provider di terza parte (\textit{third-party}) all'utente che ne usufruisce.
+Si noti per di più che, poiché i modelli sono eseguiti interamente in locale, il sistema non ha necessità di comunicare con servizi esterni, garantendo quindi privacy e indipendenza da connessioni internet o provider di terza parte (\textit{third-party}) all'utente che ne usufruisce.
 
-Inoltre, giacché l'elaborazione, necessaria all'inferenza del modello, grava direttamente sull'hardware dell'utente, il costo derivante dall'interazione con l'LLM diviene fondamentalmente trascurabile.
+Inoltre, giacché l'elaborazione, necessaria all'inferenza del modello, grava direttamente sull'hardware dell'utente, il costo derivante dall'interazione con l'LLM diviene fondamentalmente trascurabile. Questo rappresenta, evidentemente, un grande vantaggio per quanto concerne l'esecuzione locale di LLM.
 
-In aggiunta a ciò, il framework supporta e aggiorna assiduamente una libreria di modelli pubblici, tra cui Llama, Mistral, Gemma e Phi-3, permettendo di selezionare il modello più adatto alle proprie necessità.
+In aggiunta a ciò, il framework supporta e aggiorna assiduamente una collezione di modelli pubblici (Llama~\cite{llamaai_docs}, Mistral~\cite{mistralai_docs}, Gemma~\cite{gemmaai_docs}, Phi-3~\cite{phi3ai_docs}, etc.), permettendo di selezionare quello più adatto alle proprie necessità.
 
 \begin{figure}[htbp]
     \centering
@@ -97,13 +97,13 @@ In aggiunta a ciò, il framework supporta e aggiorna assiduamente una libreria d
 \end{figure}
 
 
-Per permettere a reti neurali complesse di funzionare su hardware non particolarmente performante, Ollama implementa un processo noto come quantizzazione dei modelli. Questa tecnica consiste nella riduzione della precisione matematica dei pesi dell'LLM, abbattendo pertanto notevolmente la quantità di RAM nonché la potenza di calcolo richieste per l'esecuzione del modello.
+Per consentire a reti neurali complesse di funzionare su hardware non particolarmente performante, Ollama implementa un processo noto come \textbf{quantizzazione} dei modelli. Questa tecnica consiste nella riduzione della precisione matematica dei pesi dell'LLM, abbattendo pertanto notevolmente i requisiti di sistema richiesti per l'esecuzione del modello.
 
-Tuttavia, questo approccio comporta alcuni \textit{trade-off}\footnote{trade-off: compromesso per il quale al fine di ottenere un vantaggio si accetta di cedere o rinunciare a qualcos'altro.}  inevitabili. \textit{In primis}, a causa dei limiti hardware presenti sulla stragrande maggioranza dei dispositivi \textit{consumer-grade} (ossia dispositivi aventi specifiche hardware nella media), i modelli eseguiti localmente presentano un numero di parametri inferiore e, conseguentemente, una qualità dell'output e capacità di ragionamento più limitate.
+Tuttavia, questo approccio richiede l'accettazione preliminare di alcuni \textit{trade-off}\footnote{trade-off: compromesso per il quale al fine di ottenere un vantaggio si accetta di cedere o rinunciare a qualcos'altro.} inevitabili. \textit{In primis}, a causa dei limiti hardware presenti sulla stragrande maggioranza dei dispositivi \textit{consumer-grade} (ossia dispositivi aventi specifiche hardware nella media), i modelli eseguiti localmente presentano un numero di parametri inferiore e, conseguentemente, una qualità dell'output e capacità di ragionamento necessariamente più limitate.
 
-In secondo luogo, l'effettiva velocità di esecuzione di Ollama è rigidamente vincolata, come già detto, all'hardware della macchina ospitante, prediligendo peraltro architetture basate su GPU (\textit{Graphics Processing Unit}) a quelle CPU (\textit{Central Processing Unit}), per ovvi motivi. Naturalmente, l'esecuzione di un LLM tramite Ollama è comunque possibile su macchine sprovviste di GPU, a patto di accettare un'inferenza più lenta del modello.
+In secondo luogo, l'effettiva velocità di esecuzione di Ollama è rigidamente vincolata, come già detto, all'hardware della macchina ospitante, prediligendo peraltro architetture basate su GPU (\textit{Graphics Processing Unit}) a quelle CPU (\textit{Central Processing Unit}), essendo le schede video progettate per l'elaborazione parallela. Naturalmente, l'esecuzione di un LLM tramite Ollama è comunque possibile su macchine sprovviste di GPU, a patto di accettare un'inferenza più lenta del modello.
 
-L'obiettivo di Sapienza-DC consisterà difatti nel permettere a qualsiasi utente, dotato di una scheda video o anche semplicemente del proprio processore, di eseguire il progetto localmente, fornendo la possibilità di affidarsi, in caso di necessità, anche ad API esterne, qualora l'hardware della propria macchina dovesse risultare non sufficientemente performante. Entreremo maggiormente nei dettagli di questa tematica nei capitoli successivi.
+L'obiettivo di Sapienza-DC consisterà difatti nel permettere a qualsiasi utente, dotato di una GPU o anche semplicemente del proprio processore, di eseguire il progetto localmente, fornendo la possibilità di affidarsi, in caso di necessità, anche ad API esterne, qualora l'hardware della propria macchina dovesse risultare non sufficientemente performante. Entreremo maggiormente nei dettagli di questa tematica nei capitoli successivi.
 
 A tal proposito, vedremo come sia possibile utilizzare direttamente llama.cpp per gestire manualmente il caricamento, la gestione, nonché l'esecuzione di query verso LLM locali, con lo scopo di ridurre l'overhead introdotto da Ollama, il quale non è altro che un \textit{wrapper} di quest'ultimo.
 

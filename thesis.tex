@@ -17,6 +17,10 @@
 \usepackage[hang]{footmisc}
 \usepackage{listings}
 \usepackage{xcolor}
+\usepackage{csquotes}
+
+\usepackage[backend=biber, style=alphabetic, sorting=nyt]{biblatex}
+\addbibresource{references.bib}
 
 \setlength{\headheight}{23.5pt}
 \setlength{\topmargin}{-11.5pt}
@@ -113,7 +117,6 @@ I capitoli contenuti in questo elaborato tratteranno gli obiettivi fondamentali 
 \cleardoublepage
 \phantomsection 
 \addcontentsline{toc}{chapter}{\bibname}
-\bibliographystyle{plain}
-\bibliography{references}
+\printbibliography
 
 \end{document}

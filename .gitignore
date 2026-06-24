@@ -4,6 +4,7 @@
 *.out
 *.toc
 *.synctex.gz
+*.bat
 
 # File generati per la bibliografia
 *.bbl
