@@ -245,34 +245,34 @@ Si noti che, come già asserito, l'LLM è istruito in modo tale da utilizzare es
 
 \begin{lstlisting}[language=Python, caption={Porzione di prompt che gestisce il grounding dell'LLM.}, label={lst:grounding_prompt}]
 @staticmethod
-    def build_answer_user_query_prompt(
-        query: str, 
-        query_context_data: str
-        ) -> str:
+def build_answer_user_query_prompt(
+    query: str, 
+    query_context_data: str
+    ) -> str:
 
-        prompt = f"""
-        ...
-        1. RELIABILITY DETERMINATION (HIGHEST PRIORITY): At the end 
-        of EVERY answer UNLESS you are using the exact fallback 
-        string from Rule 5, you MUST add a new line containing 
-        the reliability score.
-        - If the Question is in Italian: 'Affidabilità: 
-        <comment> (<score>/5)'
-        - If the Question is in English: 'Reliability: 
-        <comment> (<score>/5)'
-        The <comment> MUST briefly justify the score based 
-        on how well the reference texts support the answer. [...]
+    prompt = f"""
+    ...
+    1. RELIABILITY DETERMINATION (HIGHEST PRIORITY): At the end 
+    of EVERY answer UNLESS you are using the exact fallback 
+    string from Rule 5, you MUST add a new line containing 
+    the reliability score.
+    - If the Question is in Italian: 'Affidabilità: 
+    <comment> (<score>/5)'
+    - If the Question is in English: 'Reliability: 
+    <comment> (<score>/5)'
+    The <comment> MUST briefly justify the score based 
+    on how well the reference texts support the answer. [...]
 
-        2. STRICT GROUNDING: You must ONLY use facts explicitly 
-        mentioned in the <reference_texts>. [...] 
-        NEVER use outside knowledge.
-        ...
-        5. INSUFFICIENT INFO: If the <reference_texts> do not 
-        contain any information to answer the question, output 
-        EXACTLY this string and NOTHING ELSE:
-            - For Italian: 'Mi dispiace, ma non ho abbastanza 
-            informazioni per rispondere a questa domanda.'
-        ...
+    2. STRICT GROUNDING: You must ONLY use facts explicitly 
+    mentioned in the <reference_texts>. [...] 
+    NEVER use outside knowledge.
+    ...
+    5. INSUFFICIENT INFO: If the <reference_texts> do not 
+    contain any information to answer the question, output 
+    EXACTLY this string and NOTHING ELSE:
+        - For Italian: 'Mi dispiace, ma non ho abbastanza 
+        informazioni per rispondere a questa domanda.'
+    ...
 
 \end{lstlisting}
 
