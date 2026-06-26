@@ -12,7 +12,7 @@ Successivamente, ciascun token viene trasformato, mediante opportune tecniche di
 A partire dai dati così ottenuti, vengono estratte ulteriori informazioni mediante opportune tecniche computazionali, al fine di identificare ruoli grammaticali delle parole, argomenti e \textit{sentiment}, vale a dire il tono emotivo del testo. Infine, le nozioni raccolte vengono utilizzate per addestrare modelli di machine learning, capaci di apprendere tali relazioni e utilizzarle, una volta completato l'addestramento, per generare linguaggio naturale.         
 
 \subsection{Large Language Model (LLM)}
-Un LLM è un particolare tipo di modello linguistico capace di generare linguaggio naturale mediante addestramento su una grande quantità di dati. Il termine ``large'' deriva dal grande (spesso nell'ordine di miliardi) numero di parametri del modello probabilistico appresi in fase di training. Gli LLM sono basati su deep learning e utilizzano come componenti fondamentali reti neurali e trasformatori\footnote {trasformatore: particolare architettura di rete neurale artificiale che permette l'elaborazione parallela di diverse porzioni di testo, cogliendo inoltre eventuali relazioni tra parole distanti nel testo grazie a un meccanismo noto come self-attention.} (\textit{transformers}).
+Un LLM è un particolare tipo di modello linguistico capace di generare linguaggio naturale mediante addestramento su una grande quantità di dati. Il termine ``large'' deriva dal grande (spesso nell'ordine di miliardi) numero di parametri del modello probabilistico appresi in fase di training. Gli LLM sono basati su deep learning e utilizzano come componenti fondamentali reti neurali e trasformatori\footnote {trasformatore: particolare architettura di rete neurale artificiale che permette l'elaborazione parallela di diverse porzioni di testo, cogliendo inoltre eventuali relazioni tra parole distanti nel testo grazie a un meccanismo noto come \textit{self-attention}.} (\textit{transformers}).
 
 Un LLM genera testo in modo puramente statistico, infatti, se \((w_1, w_2,\, \dots \,, w_T)\) sono parole che costituiscono una frase $f$, allora la probabilità che l'LLM $\mathscr{L}$ generi $f$ è data da: 
 \[\mathbb{P}(w_1, w_2,\, \dots \,, w_T) = \prod_{j=1}^{T} \mathbb{P}(w_j \, | \, w_1, w_2,\, \dots \,, w_{j-1})\]
@@ -23,7 +23,7 @@ Retrieval-Augmented Generation, ossia la generazione potenziata mediante recuper
 
 RAG prevede l'estrazione di informazioni e conoscenze utili da fonti autorevoli, al fine di accrescere le nozioni possedute dal modello. Tale strategia diviene estremamente utile quando è necessario che l'LLM fornisca una risposta a query altamente specifiche o inerenti a fatti recenti, altrimenti non contenuti nel dataset di addestramento dell'LLM.
 
-Questa tecnica è adottata da Sapienza-DC per estrarre contenuti ed informazioni domain-specific con lo scopo di generare una risposta alle query proposte al chatbot da parte dell'utente. 
+Questa tecnica è adottata da Sapienza-DC per estrarre contenuti ed informazioni \textit{domain-specific} con lo scopo di generare una risposta alle query proposte al chatbot da parte dell'utente. 
 
 \begin{figure}[htbp]
     \centering
@@ -36,11 +36,11 @@ Questa tecnica è adottata da Sapienza-DC per estrarre contenuti ed informazioni
 \subsection{Bi-encoder, cross-encoder}
 Un \textit{bi-encoder} (o \textit{dual-encoder}) è un modello utilizzato per convertire testo in vettori di reali, detti embedding dell'informazione di partenza. Il nome deriva dall'utilizzo di due reti neurali separate aventi lo scopo di trasformare rispettivamente query e documenti di riferimento nei relativi embedding.
 
-L'idea a questo punto è molto semplice: verificare, mediante opportune operazioni sui vettori così ottenuti, quali documenti, o porzioni di essi, risultino più semanticamente affini alla query fornita dallo user. Un approccio utile a questo scopo che vedremo successivamente consisterà nel calcolo della \textit{cosine similarity} tra $v_q$ e $v_c$, vettori rispettivamente della query $q$ e del chunk $c$, appartenente a un determinato documento ottenuto dalla corrispettiva pagina web (oppure già disponibile localmente).
+L'idea a questo punto è molto semplice: verificare, mediante opportune operazioni sui vettori così ottenuti, quali documenti, o porzioni di essi, risultino più semanticamente affini alla query fornita dallo user. Un approccio utile a questo scopo, che vedremo successivamente, consisterà nel calcolo della \textit{cosine similarity} tra $v_q$ e $v_c$, vettori rispettivamente della query $q$ e del chunk $c$, appartenente a un determinato documento, ottenuto dalla corrispettiva pagina web (oppure già disponibile localmente).
 
-I bi-encoder sono notoriamente veloci, tuttavia, analizzando separatamente query e chunk dei documenti non godono di un'accuratezza eccellente. Per questo motivo, è necessario utilizzare anche i \textit{cross-encoder}. Questi ultimi sono modelli aventi lo stesso identico scopo, ma che offrono una precisione molto maggiore dei dual-encoder, a discapito di un maggiore costo computazionale.
+I bi-encoder sono notoriamente veloci, tuttavia, analizzando separatamente query e chunk dei documenti, non godono di un'accuratezza eccellente. Per questo motivo, è necessario utilizzare anche i \textit{cross-encoder}. Questi ultimi sono modelli aventi lo stesso identico scopo, ma che offrono una precisione molto maggiore dei dual-encoder, a discapito di un maggiore costo computazionale.
 
-In particolare, i cross-encoder devono necessariamente elaborare contemporaneamente query e chunk di testo, sfruttando i meccanismi di attenzione offerti dai transformer affinché sia colto il contesto della domanda e la reale pertinenza tra quest'ultima e la porzione di documento sotto esame. L'output di un cross-encoder non consiste in un vettore, ma in uno \textit{score} (punteggio), indice del grado di rilevanza del chunk $c$ rispetto alla query $q$.
+In particolare, i cross-encoder devono necessariamente elaborare contemporaneamente query e chunk di testo, sfruttando i meccanismi di attenzione offerti dai transformer, affinché sia colto il contesto della domanda e la reale pertinenza tra quest'ultima e la porzione di documento sotto esame. L'output di un cross-encoder non consiste in un vettore, ma in uno \textit{score} (punteggio), indice del grado di rilevanza del chunk $c$ rispetto alla query $q$.
 
 Nella fase di implementazione, utilizzeremo i cross-encoder, in seguito a un filtraggio preliminare mediante bi-encoder e cosine similarity, per effettuare \textit{reranking} (riordinamento) dei vari chunk estratti dalle fonti di interesse.
 
@@ -51,13 +51,13 @@ FastAPI~\cite{fastapi_docs} è un framework web moderno, open source e ad alte p
 
 Grazie alla sua efficienza nonché facilità di utilizzo, FastAPI è divenuto uno strumento utilizzato estensivamente per lo sviluppo backend in Python.
 
-Il framework usufruisce di alcune librerie fondamentali quali Starlette, ASGI (\textit{Asynchronous Server Gateway Interface}) per la gestione di servizi asincroni, e Pydantic, grazie a cui è possibile implementare una validazione programmatica ed altamente personalizzabile dei dati, assieme alla creazione di modelli Pydantic per la definizione dei tipi di input e output di ciascun \textit{endpoint}\footnote{endpoint: nell'ambito delle API, un URL specifico tramite cui un'applicazione riceve ed elabora richieste API}.
+Il framework usufruisce di alcune librerie fondamentali quali Starlette, ASGI (\textit{Asynchronous Server Gateway Interface}), per la gestione di servizi asincroni, e Pydantic, grazie a cui è possibile implementare una validazione programmatica ed altamente personalizzabile dei dati, assieme alla creazione di modelli Pydantic per la definizione dei tipi di input e output di ciascun \textit{endpoint}\footnote{endpoint: nell'ambito delle API, un URL specifico tramite cui un'applicazione riceve ed elabora richieste API}.
 
-Tali funzionalità facilitano e rendono pertanto estremamente intuitivo lo sviluppo di backend, garantendo prestazioni equiparabili ad altre tecnologie apprezzate, come Node.js, per lo sviluppo server-side.
+Tali funzionalità facilitano e rendono pertanto estremamente intuitivo la realizzazione di backend, garantendo prestazioni equiparabili ad altre tecnologie apprezzate, come Node.js, per lo sviluppo server-side.
 
 A risaltare in particolar modo tra le funzionalità più apprezzate del framework vi è la generazione automatica della documentazione API. Ogni qualvolta viene definito un nuovo endpoint, FastAPI genera automaticamente documentazione e interfacce Web UI (Swagger UI) mediante cui inviare richieste ai fini, ad esempio, di testing dell'applicazione.
 
-Infine, FastAPI segue e adotta i principali standard web moderni per lo sviluppo di API basate su HTTP (\textit{Hypertext Transfer Protocol}), quali OpenAPI e JSON Schema per la validazione nonché serializzazione dei dati scambiati.    
+Infine, FastAPI segue e adotta i principali standard web moderni per lo sviluppo di API basate su HTTP (\textit{Hypertext Transfer Protocol}), quali OpenAPI~\cite{openapi_docs} e JSON Schema~\cite{jsonschema_docs} per la validazione nonché serializzazione dei dati scambiati.    
 
 \subsection{LangChain}
 LangChain~\cite{langchain_docs} è un framework open source progettato per facilitare lo sviluppo di applicazioni che fanno uso di LLM.
@@ -65,15 +65,15 @@ LangChain~\cite{langchain_docs} è un framework open source progettato per facil
 Gli impieghi possibili di LangChain sono numerosi, ma ai fini dello sviluppo di Sapienza-DC ci limiteremo a utilizzare la classe \texttt{RecursiveCharacterTextSplitter} per l'estrazione di chunk coerenti dalle fonti di riferimento, preservando la semantica delle informazioni originali.   
 
 \subsection{Hugging Face}
-Hugging Face~\cite{huggingface_docs} è una piattaforma open source dedicata all'intelligenza artificiale e al machine learning. Grazie alla libreria Model Hub è possibile il download di modelli già addestrati per svariati scopi, tra cui quelli di cui usufruiremo ai fini dello sviluppo del progetto.
+Hugging Face~\cite{huggingface_docs} è una piattaforma open source dedicata all'intelligenza artificiale e al machine learning. Grazie alla libreria Model Hub è possibile il download di LLM già addestrati per svariati scopi, tra cui i modelli di cui usufruiremo ai fini dello sviluppo del progetto.
 
 \subsubsection{FastEmbed}
-FastEmbed~\cite{fastembed_docs} è una libreria Python adatta a generare embedding di testi e immagini. Come già accennato in precedenza l'embedding permette di ottenere un vettore di reali che mantenga la semantica linguistica, nel caso di testo, del dato originale.
+FastEmbed~\cite{fastembed_docs} è una libreria Python adatta a generare embedding di testi e immagini. Come già accennato in precedenza, l'embedding permette di ottenere un vettore di reali che mantenga la semantica linguistica, nel caso di testo, del dato originale.
 
-Tra gli innumerevoli modelli offerti da FastEmbed si è scelto di utilizzare \texttt{intfloat/multilingual-e5-small} come bi-encoder, il cui download è possibile grazie alla Model Hub di Hugging Face.
+Tra gli innumerevoli modelli offerti da FastEmbed, si è scelto di utilizzare \texttt{intfloat/multilingual-e5-small} come bi-encoder, il cui download è possibile grazie alla Model Hub di Hugging Face.
 
 \subsubsection{SentenceTransformers}
-SentenceTransformers~\cite{sentencetransformers_docs} è un framework ideato per la computazione di embedding e l'utilizzo di modelli di reranking. Utilizzeremo quest'ultimo per poter disporre di \texttt{ms-marco-MiniLM-L-6-v2}, un cross-encoder adatto ai nostri scopi. Anche in questo caso il download del modello avverrà automaticamente tramite Hugging Face, durante l'inizializzazione della nostra applicazione.
+SentenceTransformers~\cite{sentencetransformers_docs} è un framework ideato per la computazione di embedding e l'utilizzo di modelli di reranking. Utilizzeremo quest'ultimo per poter disporre di \texttt{ms-marco-MiniLM-L-6-v2}, un cross-encoder adatto ai nostri scopi. Anche in questo caso, il download del modello avverrà automaticamente tramite Hugging Face, durante l'inizializzazione della nostra applicazione.
 
 
 \subsection{Ollama e llama.cpp}
@@ -117,13 +117,13 @@ Crawl4AI~\cite{crawl4ai_docs} è una libreria Python open source impiegata princ
 
 In realtà, Sapienza-DC non utilizza direttamente questa libreria, ma fa affidamento a un secondo progetto precedentemente sviluppato, MWP~\cite{mwp_repo} (Minerva Web Parser), per effettuare scraping e parsing di pagine web mediante Crawl4AI. Maggiori informazioni sul funzionamento di MWP verranno presentate nei capitoli successivi.
 
-Minerva Web Parser è stato realizzato come progetto di esonero (al quale si accennava nell'introduzione di questo elaborato) per il corso di Laboratorio di Ingegneria Informatica, ed è stato successivamente aggiornato per includere nuove funzionalità durante lo sviluppo di Sapienza-DC stesso.  
+Minerva Web Parser è stato realizzato come progetto di esonero (al quale si accennava nell'introduzione di questo elaborato) per il corso di Laboratorio di Ingegneria Informatica, ed è stato successivamente aggiornato per includere nuove funzionalità, durante lo sviluppo di Sapienza-DC stesso.  
 \subsection{Jinja2}
 Jinja2~\cite{jinja2_docs} è un engine di \textit{templating} utilizzato per definire pagine web generiche contenenti opportuni segnaposto da popolare a \textit{runtime} tramite chiamate API al backend.
 
 Verrà utilizzato per implementare un frontend in grado di servire, previa ottenimento di dati dal server API, pagine HTML (\textit{HyperText Markup Language}) dinamiche.  
 \subsection{TailwindCSS}
-TailwindCSS~\cite{tailwindcss_docs} è un framework CSS\footnote{CSS - \textit{Cascading Style Sheets}: linguaggio utilizzato per definire la formattazione e il layout di documenti HTML.} open source per lo sviluppo di UI moderne ed eleganti. Tailwind mette a disposizione una serie di classi CSS dette di ``\textit{utility}'' da combinare e utilizzare insieme ad altre classi per definire lo stile di ciascun elemento in modo intuitivo e modulare.
+TailwindCSS~\cite{tailwindcss_docs} è un framework CSS\footnote{CSS - \textit{Cascading Style Sheets}: linguaggio utilizzato per definire la formattazione e il layout di documenti HTML.} open source per lo sviluppo di UI moderne ed eleganti. Tailwind mette a disposizione una serie di classi CSS, dette di ``\textit{utility}'', da combinare e utilizzare insieme ad altre classi, per definire lo stile di ciascun elemento in modo intuitivo e modulare.
 
 \subsubsection{Utility class}
 
@@ -150,14 +150,14 @@ Per orchestrare ciascun container viene inoltre reso disponibile Docker Compose,
 \section{Database relazionale}
 Un database relazionale è un particolare tipo di base di dati in cui i dati sono organizzati sotto forma di righe e di colonne. Ciascuna tabella della base di dati rappresenta una determinata relazione $\mathscr{R} \subseteq S_1 \times S_2 \times \dots \times S_n$, cioè un sottoinsieme del prodotto cartesiano di $n$ insiemi. Ciascuna tupla $t \in \mathscr{R}$ sarà nella forma $t = (s_1, s_2, \, \dots \,, s_n)$, dove $s_1 \in S_1, s_2 \in S_2 \, \dots \, , s_n \in S_n$. Nella pratica, ogni riga della tabella consisterà in una $n$-upla di elementi che assumono valori in un dominio (un intero, una stringa. etc.) della corrispettiva colonna, detta attributo o campo. Si noti infine che, essendo $\mathscr{R}$ un insieme, $\neg \exists \,(t,\, \hat{t}\,) \in \mathscr{R} \, | \, t = \hat{t}$, cioè $\mathscr{R}$ non ammette tuple duplicate.
 \subsection{SQL}
-SQL (\textit{Structured Query Language}) è il linguaggio utilizzato per interagire programmaticamente con un RDBMS (\textit{Relational DataBase Management System}), al fine di aggiungere, modificare, eliminare o ricercare informazioni all'interno delle tabelle della base di dati (DML\footnote{DML: \textit{Data Manipulation Language}}); gestire la struttura del database e delle tabelle che compongono quest'ultimo (DDL\footnote{DDL: \textit{Data Definition Language}}); la concessione e la revoca di permessi relativi alla base di dati (DCL\footnote{DCL: \textit{Data Control Language}}); controllo e gestione delle transazioni, ossia insiemi di operazioni che devono essere eseguite in modo atomico (TCL\footnote{TCL: \textit{Transaction Control Language}}).         
+SQL (\textit{Structured Query Language}) è il linguaggio utilizzato per interagire programmaticamente con un RDBMS (\textit{Relational DataBase Management System}), al fine di aggiungere, modificare, eliminare o ricercare informazioni all'interno delle tabelle della base di dati (DML\footnote{DML: \textit{Data Manipulation Language}}); gestire la struttura del database e delle tabelle che compongono quest'ultimo (DDL\footnote{DDL: \textit{Data Definition Language}}); permettere la concessione e la revoca di permessi relativi alla base di dati (DCL\footnote{DCL: \textit{Data Control Language}}); consentire il controllo e la gestione delle transazioni, ossia insiemi di operazioni che devono essere eseguite in modo atomico (TCL\footnote{TCL: \textit{Transaction Control Language}}).         
 \subsection{MariaDB}
 MariaDB~\cite{mariadb_docs} è un sistema di gestione di basi di dati relazionali open source. In particolare, non è altro che un \textit{fork} di MySQL~\cite{mysql_docs}. Progettato per garantire compatibilità con MySQL stesso, MariaDB offre un'immagine Docker per la gestione l'interazione con database mediante container.
 
 \section{Metodologia di sviluppo agile}
 La metodologia agile consiste in un approccio allo sviluppo basato sulla distribuzione di software implementati secondo un processo rapido e iterativo. Contrapponendosi ai modelli tradizionali di sviluppo del software, come ad esempio il modello a cascata (\textit{waterfall model}\footnote{waterfall model: metodologia di sviluppo software basata sulla definizione precisa e strutturata di un insieme di requisiti iniziali da rispettare, seguita da un'implementazione prevedibile e lineare di questi ultimi.}), la metodologia agile propone un approccio meno strutturato e incentrato sulla consegna ripetuta nel tempo di diversi MVP\footnote{MVP - \textit{Minimum Viable Product}: una versione basilare di un prodotto o servizio volta ad offrire solo le funzionalità essenziali richieste dal cliente.}.
 
-Questi ultimi vengono sottoposti, volta per volta, ad analisi da parte dei clienti nonché degli sviluppatori con l'obiettivo di rifinire l'approccio utilizzato, modificando anche completamente la soluzione proposta qualora ritenuto necessario, per il raggiungimento di un prodotto migliore nella successiva iterazione. Si tratta di una metodologia frequentemente impiegata in progetti dinamici e adattivi, come, ad esempio, Sapienza-DC.
+Questi ultimi vengono sottoposti, volta per volta, ad analisi da parte dei clienti nonché degli sviluppatori, con l'obiettivo di rifinire l'approccio utilizzato, modificando, anche completamente, la soluzione proposta qualora ritenuto necessario, per il raggiungimento di un prodotto migliore nella successiva iterazione. Si tratta di una metodologia frequentemente impiegata in progetti dinamici e adattivi, come, ad esempio, Sapienza-DC.
 
 \section{Paradigma client-server}
 Il paradigma client-server rappresenta uno dei modelli più importanti per la comunicazione web e lo sviluppo di sistemi distribuiti. Il modello si fonda sulla separazione netta tra entità che richiedono un certo numero di servizi o risorse, detti client, e i fornitori di questi ultimi, detti server, che si occupano di servire le richieste ricevute dai client.

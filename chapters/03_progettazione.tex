@@ -1,7 +1,7 @@
 \chapter{Progettazione dell'applicazione}
 Avendo ora a disposizione le conoscenze preliminari necessarie a comprendere l'impiego dei principali strumenti utilizzati per sviluppare Sapienza-DC, è bene effettuare, prima dell'implementazione vera e propria dell'applicativo, alcune dovute considerazioni riguardo la progettazione delle componenti fondamentali che andranno a costituire l'architettura finale del progetto.
 
-Si noti che, come già menzionato, la metodologia di sviluppo agile non prevede obbligatoriamente una raccolta estensiva di requisiti (se non per quanto concerne le principali funzionalità ricercate nell'applicativo) né tantomeno la realizzazione iniziale di diagrammi e modelli tipici dell'approccio a cascata. Difatti, l'assenza di requisiti altamente specifici richiede uno sviluppo dinamico e soggetto a continui cambiamenti, motivo per cui i diagrammi che proporremo di seguito rispecchiano il risultato di quanto ottenuto a fine progetto.   
+Si noti che, come già menzionato, la metodologia di sviluppo agile non prevede obbligatoriamente una raccolta estensiva di requisiti (se non per quanto concerne le principali funzionalità ricercate nell'applicativo), né tantomeno la realizzazione iniziale di diagrammi e modelli tipici dell'approccio a cascata. Difatti, l'assenza di requisiti altamente specifici richiede uno sviluppo dinamico e soggetto a continui cambiamenti, motivo per cui i diagrammi che proporremo di seguito rispecchiano il risultato di quanto ottenuto a fine progetto.   
 
 \section{Diagramma delle classi UML}
 Un diagramma delle classi UML (\textit{Unified Modeling Language}) è un diagramma strutturale utilizzato per definire le principali classi, i loro attributi e le relazioni che legano queste ultime. Durante l'esecuzione del software una classe può essere istanziata sotto forma di uno o più oggetti, che definiscono il livello estensionale di quest'ultima. 
@@ -82,28 +82,28 @@ su $\mathcal{Y}$ nella istanza di $\mathscr{R}_2$ in $\mathscr{B}$.}, inclusioni
 Una volta terminata la traduzione diretta, otteniamo il seguente schema $\mathcal{S}$ per la nostra base di dati $\mathscr{B}$:\\
 
 \indent
-\textbf{Session}(\underline{session\_id}, title*, last\_domain*, created\_at)\\
-\indent\indent vincolo di tupla: title is NULL $\Rightarrow $ title = ``New Chat''\\
-\indent\indent vincolo di tupla: last\_domain is NULL $\Rightarrow$ last\_domain = ``''\\
-\indent\indent vincolo di tupla: last\_domain is not NULL $\Rightarrow$ last\_domain $\in$ \{``www.marvel.com'',\\ 
+\textbf{Session}(\underline{\texttt{session\_id}}, \texttt{title}*, \texttt{last\_domain}*, \texttt{created\_at})\\
+\indent\indent vincolo di tupla: \texttt{title} is NULL $\Rightarrow $ \texttt{title} = ``New Chat''\\
+\indent\indent vincolo di tupla: \texttt{last\_domain} is NULL $\Rightarrow$ \texttt{last\_domain} = ``''\\
+\indent\indent vincolo di tupla: \texttt{last\_domain} is not NULL $\Rightarrow$ \texttt{last\_domain} $\in$ \{``www.marvel.com'',\\ 
 \indent\indent\indent\indent\indent\indent\,\,\,\, ``www.ipsos.com'', ``www.raiplaysound.com'', ``it.wikipedia.org'',\\
 \indent\indent\indent\indent\indent\indent\,\,\,\, ``*''\}\\
 \indent
-\textbf{Message}(\underline{id}, role, content, created\_at)\\
-\indent\indent foreign key: Message[id] $\subseteq$ Contains[message]\\
-\indent\indent vincolo di tupla: role $\in$ \{``user'', ``assistant''\}\\
+\textbf{Message}(\underline{\texttt{id}}, \texttt{role}, \texttt{content}, \texttt{created\_at})\\
+\indent\indent foreign key: Message[\texttt{id}] $\subseteq$ Contains[\texttt{message}]\\
+\indent\indent vincolo di tupla: \texttt{role} $\in$ \{``user'', ``assistant''\}\\
 \indent
-\textbf{ParsedURL}(\underline{id}, url, parsed\_text*, created\_at)\\
-\indent\indent chiave: url\\
-\indent\indent vincolo esterno: parsed\_text is not NULL $\Rightarrow$ parsed\_text is in MD format\\
-\indent\indent vincolo esterno: url is a valid URL\\ 
+\textbf{ParsedURL}(\underline{\texttt{id}}, \texttt{url}, \texttt{parsed\_text}*, \texttt{created\_at})\\
+\indent\indent chiave: \texttt{url}\\
+\indent\indent vincolo esterno: \texttt{parsed\_text} is not NULL $\Rightarrow$ \texttt{parsed\_text} is in MD format\\
+\indent\indent vincolo esterno: \texttt{url} is a valid URL\\ 
 \indent
-\textbf{Contains}(\underline{message}, session)\\
-\indent\indent foreign key: Contains[message] $\subseteq$ Message[id]\\
-\indent\indent foreign key: Contains[session] $\subseteq$ Session[session\_id]\\
-\indent\indent vincolo esterno: $(m, s) \in \text{Contains} \Rightarrow \text{timestamp}(m) > \text{timestamp}(s)$\\
+\textbf{Contains}(\underline{\texttt{message}}, \texttt{session})\\
+\indent\indent foreign key: Contains[\texttt{message}] $\subseteq$ Message[\texttt{id}]\\
+\indent\indent foreign key: Contains[\texttt{session}] $\subseteq$ Session[\texttt{session\_id}]\\
+\indent\indent vincolo esterno: $(m, s) \in \text{Contains} \Rightarrow \text{\textit{timestamp}}(m) > \text{\textit{timestamp}}(s)$\\
 
-Si noti infine che si è scelto di assegnare, per comodità, opportuni valori di default agli attributi \textit{title} e \textit{last\_domain} della tabella \texttt{Session}.
+Si noti infine che si è scelto di assegnare, per comodità, opportuni valori di default agli attributi \texttt{title} e \texttt{last\_domain} della tabella \texttt{Session}.
 
 \subsubsection{Ristrutturazione dello schema logico}
 L'ultima fase della progettazione logica prevede una ristrutturazione dello schema relazionale per motivi di efficienza. Ai fini della nostra applicazione, è di interesse conoscere, ogni qualvolta si accede a un messaggio $m$, la sessione $s$ a cui esso appartiene.
@@ -111,22 +111,22 @@ L'ultima fase della progettazione logica prevede una ristrutturazione dello sche
 Notando a questo punto che le tabelle \texttt{Message} e \texttt{Contains} sono fortemente accoppiate, si predispone l'accorpamento di \texttt{Contains} a \texttt{Message}, ottenendo il seguente schema relazionale finale per la nostra base di dati:\\
 
 \indent
-\textbf{Session}(\underline{session\_id}, title*, last\_domain*, created\_at)\\
-\indent\indent vincolo di tupla: title is NULL $\Rightarrow $ title = ``New Chat''\\
-\indent\indent vincolo di tupla: last\_domain is NULL $\Rightarrow$ last\_domain = ``''\\
-\indent\indent vincolo di tupla: last\_domain is not NULL $\Rightarrow$ last\_domain $\in$ \{``www.marvel.com'',\\ 
+\textbf{Session}(\underline{\texttt{session\_id}}, \texttt{title}*, \texttt{last\_domain}*, \texttt{created\_at})\\
+\indent\indent vincolo di tupla: \texttt{title} is NULL $\Rightarrow $ \texttt{title} = ``New Chat''\\
+\indent\indent vincolo di tupla: \texttt{last\_domain} is NULL $\Rightarrow$ \texttt{last\_domain} = ``''\\
+\indent\indent vincolo di tupla: \texttt{last\_domain} is not NULL $\Rightarrow$ \texttt{last\_domain} $\in$ \{``www.marvel.com'',\\ 
 \indent\indent\indent\indent\indent\indent\,\,\,\, ``www.ipsos.com'', ``www.raiplaysound.com'', ``it.wikipedia.org'',\\
 \indent\indent\indent\indent\indent\indent\,\,\,\, ``*''\}\\
 \indent
-\textbf{Message}(\underline{id}, session, role, content, created\_at)\\
-\indent\indent foreign key: Message[session] $\subseteq$ Session[session\_id]\\
-\indent\indent vincolo di tupla: role $\in$ \{``user'', ``assistant''\}\\
-\indent\indent vincolo esterno: $m \in \text{Message} \Rightarrow \text{m.created\_at} > \text{timestamp}(\text{m.session})$\\
+\textbf{Message}(\underline{\texttt{id}}, \texttt{session}, \texttt{role}, \texttt{content}, \texttt{created\_at})\\
+\indent\indent foreign key: Message[\texttt{session}] $\subseteq$ Session[\texttt{session\_id}]\\
+\indent\indent vincolo di tupla: \texttt{role} $\in$ \{``user'', ``assistant''\}\\
+\indent\indent vincolo esterno: $m \in \text{Message} \Rightarrow \text{m.\texttt{created\_at}} > \text{\textit{timestamp}}(\text{m.\texttt{session}})$\\
 \indent
-\textbf{ParsedURL}(\underline{id}, url, parsed\_text*, created\_at)\\
-\indent\indent chiave: url\\
-\indent\indent vincolo esterno: parsed\_text is not NULL $\Rightarrow$ parsed\_text is in MD format\\
-\indent\indent vincolo esterno: url is a valid URL\\ 
+\textbf{ParsedURL}(\underline{\texttt{id}}, \texttt{url}, \texttt{parsed\_text}*, \texttt{created\_at})\\
+\indent\indent chiave: \texttt{url}\\
+\indent\indent vincolo esterno: \texttt{parsed\_text} is not NULL $\Rightarrow$ \texttt{parsed\_text} is in MD format\\
+\indent\indent vincolo esterno: \texttt{url} is a valid URL\\ 
 
 La progettazione della nostra base di dati è a questo punto ultimata. Per completezza, si fornisce di seguito il codice SQL per la definizione delle tabelle del database definitivo.
 
