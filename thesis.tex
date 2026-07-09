@@ -7,7 +7,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[italian]{babel}
 \usepackage{microtype}
-\usepackage{hyperref}
+\usepackage[hidelinks]{hyperref}
 \usepackage{mathrsfs}
 \usepackage{enumitem}
 \usepackage{float}
@@ -18,6 +18,10 @@
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{csquotes}
+
+\hypersetup{
+    pdfborder = {0 0 0}
+}
 
 \usepackage[backend=biber, style=alphabetic, sorting=nyt]{biblatex}
 \addbibresource{references.bib}
