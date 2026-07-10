@@ -23,3 +23,6 @@
 *.ilg
 *.bcf
 *.run.xml
+
+# Backup immagini
+images/backup/
