@@ -1,4 +1,4 @@
-## 🎓 BSc thesis in Computer & Control Engineering
+# 🎓 BSc thesis in Computer & Control Engineering
 
 This repository is entirely dedicated to my bachelor thesis in Computer & Control Engineering, titled "**Sapienza-DC: design and development of a domain-aware RAG system**".
 
@@ -7,7 +7,7 @@ To download the thesis, please click <a href=https://raw.githubusercontent.com/f
 Please note that, as of right now, the thesis is only available in Italian.
 
 
-### Abstract
+## Abstract
 
 This thesis details the development of <a href=https://github.com/fabio-pastore/sapienza-DC>Sapienza-DC</a>, a multi-domain Retrieval-Augmented Generation (RAG) chatbot capable of fulfilling user requests by analyzing and validating information extracted from web pages. The system yields coherent responses, augmented with a reliability score, alongside the specific sources utilized by the Large Language Model (LLM) to generate the output.
 
