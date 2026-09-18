@@ -6,7 +6,6 @@ To download the thesis, please click <a href=https://raw.githubusercontent.com/f
 
 Please note that, as of right now, the thesis is only available in Italian.
 
-
 ## Abstract
 
 This thesis details the development of <a href=https://github.com/fabio-pastore/sapienza-DC>Sapienza-DC</a>, a multi-domain Retrieval-Augmented Generation (RAG) chatbot capable of fulfilling user requests by analyzing and validating information extracted from web pages. The system yields coherent responses, augmented with a reliability score, alongside the specific sources utilized by the Large Language Model (LLM) to generate the output.
@@ -14,3 +13,9 @@ This thesis details the development of <a href=https://github.com/fabio-pastore/
 The chapters within this manuscript address the fundamental objectives of Sapienza-DC and the elicitation of project requirements (Chapter I); an analysis of the technologies and methodologies employed (Chapter II); the system design (Chapter III); the architectural framework (Chapter IV); the implementation phase and chronological progression of the project (Chapter V); and a concise overview of the applied optimizations, the security of the pipeline against prompt injection vulnerabilities, and a qualitative benchmark evaluation of the overall system (Chapter VI).
 
 Finally, the dissertation concludes with reflections on the conducted work, the milestones achieved, and potential future developments for the project (Chapter VII).
+
+## License 
+
+The thesis document is licensed under the <a href=https://github.com/fabio-pastore/bsc-thesis/blob/main/LICENSE>Creative Commons Attribution 4.0 International (CC BY 4.0)</a> license. 
+© 2026 Fabio Pastore. You are free to share and adapt this work for any purpose, including commercially, provided appropriate credit is given.
+
